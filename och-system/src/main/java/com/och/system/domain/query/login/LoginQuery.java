@@ -27,10 +27,6 @@ public class LoginQuery {
     @Schema(description = "用户密码")
     private String password;
 
-    @Schema(description = "X坐标")
-    private Integer x = 0;
-    @Schema(description = "Y坐标")
-    private Integer y = 0;
 
     @Schema(description = "登录类型 1-账号登录 2-手机号登录  默认为1")
     private String loginType = "1";

@@ -53,23 +53,10 @@ public class LoginServiceImpl implements ILoginService {
     public LoginUserVo login(LoginQuery query) {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
         HttpSession httpSession = request.getSession();
-//        if(Objects.isNull(httpSession.getAttribute("ImageX")) || Objects.isNull(httpSession.getAttribute("ImageY"))){
-//            throw new LoginException(ExceptionStatusEnum.ERROR_LOGIN_VERIFY.getCode(), ExceptionStatusEnum.ERROR_LOGIN_VERIFY.getMsg());
-//        }
-//        String ImageX = String.valueOf(httpSession.getAttribute("ImageX"));
-//        String ImageY = String.valueOf(httpSession.getAttribute("ImageY"));
-        //计算验证图片坐标的误差值
-//        int absX = Math.abs(query.getX() - Integer.parseInt(ImageX));
-//        int absY = Math.abs(query.getY() - Integer.parseInt(ImageY));
-//        if (absX > 6 || absY > 6) {
-//            throw new LoginException(ExceptionStatusEnum.ERROR_LOGIN_VERIFY.getCode(), ExceptionStatusEnum.ERROR_LOGIN_VERIFY.getMsg());
-//        }
-
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 query.getUsername(),
                 query.getPassword()
         ));
-
         LoginUserInfo loginUserInfo = (LoginUserInfo) authenticate.getPrincipal();
         String jwtToken = JWT.create()
                 .withClaim(SecurityConstants.USER_ID, loginUserInfo.getUserId())
