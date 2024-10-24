@@ -425,6 +425,10 @@ public class RedisService {
         return redisTemplate.opsForValue().increment(key);
     }
 
+    public Long increment(String key, long delta) {
+        return redisTemplate.opsForValue().increment(key,delta);
+    }
+
     /**
      * 自减
      *

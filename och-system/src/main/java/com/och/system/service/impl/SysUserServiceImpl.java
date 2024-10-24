@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class SysSysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
+public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
     @Autowired
     private ISysRoleService iSysRoleService;
@@ -191,6 +191,7 @@ public class SysSysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUse
                 .set(SysUser::getPassword, SecurityUtils.encryptPassword(query.getPassword()))
                 .eq(SysUser::getUserId, query.getUserId()));
     }
+
 
     public static void main(String[] args) {
         String s = SecurityUtils.encryptPassword("12345678");

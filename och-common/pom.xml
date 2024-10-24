@@ -144,6 +144,12 @@
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
         </dependency>
+
+        <!-- 基于 JAVA实现的行为验证码 -->
+        <dependency>
+            <groupId>cloud.tianai.captcha</groupId>
+            <artifactId>tianai-captcha</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
