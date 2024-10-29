@@ -111,10 +111,6 @@ public class CallInfo {
      */
     private Integer calleeTimeOut = 10;
 
-    /**
-     * 租户ID
-     */
-    private Integer tenantId;
 
     /**
      * 话单通知地址

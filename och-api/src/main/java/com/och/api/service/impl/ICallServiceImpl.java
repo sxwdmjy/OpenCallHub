@@ -67,7 +67,7 @@ public class ICallServiceImpl implements ICallService {
         //构建呼叫总线
         CallInfo callInfo = CallInfo.builder().callId(callId)
                 .agentId(sipAgent.getId()).agentNumber(sipAgent.getAgentNumber()).agentName(sipAgent.getName())
-                .tenantId(query.getTenantId()).caller(sipAgent.getAgentNumber()).callee(query.getCallee()).direction(DirectionEnum.OUTBOUND.getType())
+                .caller(sipAgent.getAgentNumber()).callee(query.getCallee()).direction(DirectionEnum.OUTBOUND.getType())
                 .callTime(DateUtil.current()).hiddenCustomer(query.getHiddenCustomer())
                 .calleeTimeOut(query.getCalleeTimeOut()).routeType(3).build();
 

@@ -24,7 +24,7 @@ import java.util.List;
  **/
 @Tag(name = "日程管理")
 @RestController
-@RequestMapping("/call/v1//schedule")
+@RequestMapping("/call/v1/schedule")
 public class CallScheduleController extends BaseController {
 
     @Autowired

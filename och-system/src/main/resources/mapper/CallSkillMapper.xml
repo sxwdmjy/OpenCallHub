@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.system.mapper.CallSkillMapper">
+
+    <resultMap type="com.och.system.domain.entity.CallSkill" id="CallSkillMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="groupId" column="group_id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="afterTime" column="after_time" jdbcType="INTEGER"/>
+        <result property="priority" column="priority" jdbcType="INTEGER"/>
+        <result property="describe" column="describe" jdbcType="VARCHAR"/>
+        <result property="strategyType" column="strategy_type" jdbcType="INTEGER"/>
+        <result property="fullBusyType" column="full_busy_type" jdbcType="INTEGER"/>
+        <result property="overflowType" column="overflow_type" jdbcType="INTEGER"/>
+        <result property="overflowValue" column="overflow_value" jdbcType="VARCHAR"/>
+        <result property="timeOut" column="time_out" jdbcType="INTEGER"/>
+        <result property="queueLength" column="queue_length" jdbcType="INTEGER"/>
+        <result property="queueVoice" column="queue_voice" jdbcType="INTEGER"/>
+        <result property="queueVoiceValue" column="queue_voice_value" jdbcType="VARCHAR"/>
+        <result property="agentVoice" column="agent_voice" jdbcType="INTEGER"/>
+        <result property="agentVoiceValue" column="agent_voice_value" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.och.system.domain.vo.skill.CallSkillVo" id="CallSkillDetailMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="groupId" column="group_id" jdbcType="INTEGER"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="describe" column="describe" jdbcType="VARCHAR"/>
+        <result property="afterTime" column="after_time" jdbcType="INTEGER"/>
+        <result property="priority" column="priority" jdbcType="INTEGER"/>
+        <result property="strategyType" column="strategy_type" jdbcType="INTEGER"/>
+        <result property="fullBusyType" column="full_busy_type" jdbcType="INTEGER"/>
+        <result property="overflowType" column="overflow_type" jdbcType="INTEGER"/>
+        <result property="overflowValue" column="overflow_value" jdbcType="VARCHAR"/>
+        <result property="timeOut" column="time_out" jdbcType="INTEGER"/>
+        <result property="queueLength" column="queue_length" jdbcType="INTEGER"/>
+        <result property="queueVoice" column="queue_voice" jdbcType="INTEGER"/>
+        <result property="queueVoiceValue" column="queue_voice_value" jdbcType="VARCHAR"/>
+        <result property="agentVoice" column="agent_voice" jdbcType="INTEGER"/>
+        <result property="agentVoiceValue" column="agent_voice_value" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="agentList" ofType="com.och.system.domain.vo.skill.CallSkillAgentRelVo">
+            <result property="id" column="rel_id" jdbcType="INTEGER"/>
+            <result property="agentId" column="agent_id" jdbcType="INTEGER"/>
+            <result property="agentName" column="agent_name" jdbcType="VARCHAR"/>
+            <result property="level" column="level" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <sql id="selectLfsSkillInfoVo">
+        select id,
+               group_id,
+               name,
+               `describe`,
+               priority,
+               after_time,
+               strategy_type,
+               full_busy_type,
+               overflow_type,
+               overflow_value,
+               time_out,
+               queue_length,
+               queue_voice,
+               queue_voice_value,
+               agent_voice,
+               agent_voice_value,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               del_flag
+        from lfs_skill
+    </sql>
+
+    <sql id="selectInfoVo">
+        select lsk.id,
+               lsk.group_id,
+               if(lsk.group_id = 1, '默认分组', lc.name) as group_name,
+               lsk.name,
+               lsk.`describe`,
+               lsk.priority,
+               lsk.after_time,
+               lsk.strategy_type,
+               lsk.full_busy_type,
+               lsk.overflow_type,
+               lsk.overflow_value,
+               lsk.time_out,
+               lsk.queue_length,
+               lsk.queue_voice,
+               lsk.queue_voice_value,
+               lsk.agent_voice,
+               lsk.agent_voice_value,
+               lsk.create_by,
+               lsk.create_time,
+               lsk.update_by,
+               lsk.update_time,
+               lsar.id         as rel_id,
+               lsar.agent_id,
+               la.name      as agent_name,
+               lsar.`level`
+        from lfs_skill lsk
+                 left join lfs_skill_agent_rel lsar on lsar.skill_id = lsk.id and lsar.del_flag = 0
+                 left join lfs_agent la on la.id = lsar.agent_id
+                 left join lfs_category lc on lc.id = lsk.group_id
+    </sql>
+
+    <select id="getDetail" resultMap="CallSkillDetailMap">
+        <include refid="selectInfoVo"/>
+        <where>
+            and lsk.id = #{id}
+        </where>
+    </select>
+
+    <select id="getIdsByQuery" resultType="java.lang.Long">
+        select distinct lsk.id
+        from lfs_skill lsk
+        left join lfs_skill_agent_rel lsar on lsar.skill_id = lsk.id and lsar.del_flag = 0
+        left join lfs_agent la on la.id = lsar.agent_id
+        left join lfs_category lc on lc.id = lsk.group_id
+        <where>
+            <if test="groupId != null">
+                and lsk.group_id = #{groupId}
+            </if>
+            <if test="name != null and name != ''">
+                and lsk.name like concat('%',#{name},'%')
+            </if>
+            <if test="describe != null and describe != ''">
+                and lsk.`describe` like concat('%',#{describe},'%')
+            </if>
+            <if test="agentId != null">
+                and la.id = #{agentId}
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and la.name like concat('%',#{agentName},'%')
+            </if>
+            and lsk.del_flag = 0
+        </where>
+    </select>
+
+    <select id="getList" resultMap="CallSkillDetailMap">
+        <include refid="selectInfoVo"/>
+        <where>
+            <if test="id != null ">
+                and lsk.id = #{id}
+            </if>
+            <if test="ids != null and ids.size() > 0">
+                and lsk.id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="groupId != null">
+                and lsk.group_id = #{groupId}
+            </if>
+            <if test="name != null and name != ''">
+                and lsk.name like concat('%',#{name},'%')
+            </if>
+            <if test="describe != null and describe != ''">
+                and lsk.`describe` like concat('%',#{describe},'%')
+            </if>
+            <if test="agentId != null">
+                and la.id = #{agentId}
+            </if>
+            <if test="agentName != null and agentName != ''">
+                and la.name like concat('%',#{agentName},'%')
+            </if>
+            and lsk.del_flag = 0
+        </where>
+    </select>
+
+    <select id="getListByIds" resultMap="CallSkillDetailMap">
+        <include refid="selectInfoVo"/>
+        <where>
+            <if test="ids != null and ids.size() > 0">
+                and lsk.id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>
+

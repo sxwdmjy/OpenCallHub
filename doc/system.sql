@@ -596,7 +596,47 @@ create table call_display
 ) comment '显号管理';
 
 
+create table call_skill
+(
+    id                bigint auto_increment comment '主键ID'
+        primary key,
+    group_id          bigint                             null comment '分组ID',
+    name              varchar(128)                       null comment '技能名称',
+    after_time        int      default 0                 null comment '话后空闲时间 1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h',
+    priority          int      default 0                 not null comment '优先级',
+    `describe`        varchar(128)                       null comment '描述',
+    strategy_type     tinyint  default 0                 not null comment '策略类型 0-随机 1-轮询 2-最长空闲时间 3-当天最少应答次数 4-最长话后时长',
+    full_busy_type    tinyint  default 0                 null comment '全忙 0-排队 1-溢出 2-挂机',
+    overflow_type     tinyint  default 0                 null comment '溢出策略 0-挂机 1-转IVR',
+    overflow_value    varchar(32)                        null comment '溢出策略值',
+    time_out          int                                null comment '排队超时时间（秒）',
+    queue_length      int                                null comment '最大排队人数',
+    queue_voice       bigint                             null comment '排队音',
+    queue_voice_value varchar(64)                        null comment '排队音',
+    agent_voice       bigint                             null comment '转坐席音',
+    agent_voice_value varchar(64)                        null comment '转坐席音名称',
+    create_by         bigint                             null comment '创建人',
+    create_time       datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_by         bigint                             null comment '更新人',
+    update_time       datetime                           null comment '修改时间',
+    del_flag          tinyint  default 0                 not null comment '删除标识 0 有效 1删除'
+)
+    ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment '技能表';
 
+create table call_skill_agent_rel
+(
+    id          bigint auto_increment comment '主键ID'
+        primary key,
+    skill_id    bigint                             null comment '技能ID',
+    agent_id    varchar(128)                       null comment '坐席ID',
+    level       int                                null comment '级别',
+    create_by   bigint                             null comment '创建人',
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_by   bigint                             null comment '更新人',
+    update_time datetime                           null comment '修改时间',
+    del_flag    tinyint  default 0                 not null comment '删除标识 0 有效 1删除'
+)
+    ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment '技能坐席关联表';
 
 
 

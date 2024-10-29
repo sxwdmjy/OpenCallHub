@@ -17,8 +17,6 @@ public class FsEslMsg {
     //发送员工ID
     private Long userId;
 
-    //发送企业ID
-    private Integer tenantId;
 
     //消息
     private EslEvent eslEvent;

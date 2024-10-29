@@ -34,6 +34,4 @@ public class CallQuery extends BaseQuery {
     @Schema(description = "是否隐藏客户号码(0-不隐藏 1-隐藏)")
     private Integer hiddenCustomer = 0;
 
-    @Schema(description = "租户ID")
-    private Integer tenantId;
 }

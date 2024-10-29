@@ -100,12 +100,6 @@ public class CallSchedule extends BaseEntity implements Serializable {
     private String workCycle;
 
 
-    /**
-     * 租户ID
-     */
-    @Schema(description = "租户ID")
-    @TableField("tenant_id")
-    private Integer tenantId;
 
 
     public void setQuery2Entity(CallScheduleAddQuery query) {
