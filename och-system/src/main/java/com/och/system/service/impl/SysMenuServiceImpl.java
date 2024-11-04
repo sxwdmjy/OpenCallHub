@@ -71,7 +71,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu> 
             treeNode.putExtra("orderNum", sysMenu.getOrderNum());
             treeNode.putExtra("menuType", sysMenu.getMenuType());
             treeNode.putExtra("component", sysMenu.getComponent());
-            treeNode.putExtra("icon", sysMenu.getIcon());
+            treeNode.putExtra("iconName", sysMenu.getIcon());
             treeNode.putExtra("isFrame", sysMenu.getIsFrame());
             treeNode.putExtra("perms", sysMenu.getPerms());
             treeNode.putExtra("visible", sysMenu.getVisible());

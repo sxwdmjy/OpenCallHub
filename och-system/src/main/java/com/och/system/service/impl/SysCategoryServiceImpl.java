@@ -94,9 +94,10 @@ public class SysCategoryServiceImpl extends BaseServiceImpl<SysCategoryMapper, S
         return TreeUtil.build(list, 0L, treeNodeConfig, ((category, treeNode) -> {
             treeNode.setId(category.getId());//id
             treeNode.setParentId(category.getParentId());//父id
-            treeNode.putExtra("name", category.getName());
+            treeNode.putExtra("title", category.getName());
             treeNode.putExtra("type", category.getType());
             treeNode.putExtra("flag", category.getFlag());
+            treeNode.putExtra("key", category.getId());
         }));
     }
 
