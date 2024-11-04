@@ -43,6 +43,8 @@ public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implem
             throw new CommonException("规则表ID不能为空");
         }
         FsAcl fsAcl = new FsAcl();
+        fsAcl.setName(query.getName());
+        fsAcl.setDefaultType(query.getDefaultType());
         fsAcl.setListId(query.getListId());
         fsAcl.setCidr(query.getCidr());
         fsAcl.setNodeType(query.getNodeType());
@@ -72,6 +74,8 @@ public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implem
         FsAcl updateFsAcl = new FsAcl();
         updateFsAcl.setId(query.getId());
         updateFsAcl.setListId(query.getListId());
+        fsAcl.setName(query.getName());
+        fsAcl.setDefaultType(query.getDefaultType());
         updateFsAcl.setCidr(query.getCidr());
         updateFsAcl.setNodeType(query.getNodeType());
         updateFsAcl.setDomain(query.getDomain());
@@ -113,6 +117,11 @@ public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implem
         }
         query.setIds(ids);
         List<FsAclVo> list = getList(query);
+        if(CollectionUtil.isNotEmpty(list)){
+            for (FsAclVo fsAclVo : list) {
+                fsAclVo.setNodeList(fsAclVo.getNodeList().stream().filter(item -> Objects.nonNull(item.getId())).toList());
+            }
+        }
         PageInfo<Long> pageIdInfo = new PageInfo<>(ids);
         PageInfo<FsAclVo> pageInfo = new PageInfo<>(list);
         pageInfo.setTotal(pageIdInfo.getTotal());

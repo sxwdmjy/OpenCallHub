@@ -50,7 +50,6 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu> 
 
     @Override
     public void delete(SysMenuQuery query) {
-
         Optional.ofNullable(query.getMenuIds()).orElseGet(ArrayList::new).add(query.getMenuId());
         if (!CollectionUtils.isEmpty(query.getMenuIds())) {
             update(new LambdaUpdateWrapper<SysMenu>().set(SysMenu::getDelFlag, DeleteStatusEnum.DELETE_YES.getIndex())
@@ -74,6 +73,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu> 
             treeNode.putExtra("component", sysMenu.getComponent());
             treeNode.putExtra("icon", sysMenu.getIcon());
             treeNode.putExtra("isFrame", sysMenu.getIsFrame());
+            treeNode.putExtra("perms", sysMenu.getPerms());
             treeNode.putExtra("visible", sysMenu.getVisible());
             treeNode.putExtra("path", sysMenu.getPath());
             treeNode.putExtra("status", sysMenu.getStatus());

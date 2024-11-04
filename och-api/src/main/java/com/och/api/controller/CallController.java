@@ -28,7 +28,7 @@ public class CallController extends BaseController {
      * 创建呼叫
      * @return
      */
-    @PostMapping("makeCall")
+    @PostMapping("/create")
     public ResResult makeCall(@RequestBody CallQuery query){
         Long callId = iCallService.makeCall(query);
         return success(callId);

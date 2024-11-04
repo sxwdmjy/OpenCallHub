@@ -20,6 +20,20 @@ public class FsAclNodeAddQuery {
     private Long listId;
 
     /**
+     * 网关名称
+     */
+    @NotEmpty(message = "名称不能为空")
+    @Schema(description = "名称",requiredMode = Schema.RequiredMode.REQUIRED)
+    private String name;
+
+
+    /**
+     * 类型 allow-允许 deny-拒绝
+     */
+    @Schema(description = "类型 allow-允许 deny-拒绝",requiredMode = Schema.RequiredMode.REQUIRED)
+    private String defaultType;
+
+    /**
      * 规则类型 allow-允许 deny-拒绝
      */
     @NotEmpty(message = "规则类型不能为空")
@@ -39,4 +53,5 @@ public class FsAclNodeAddQuery {
      */
     @Schema(description = "域地址",requiredMode = Schema.RequiredMode.REQUIRED)
     private String domain;
+
 }
