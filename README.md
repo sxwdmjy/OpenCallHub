@@ -1,7 +1,7 @@
 # openCallHub
 OpenCallHub 是一个强大且灵活的开源呼叫中心解决方案，旨在提供全面的客户服务和支持功能
 
-#### 项目地址 [GitHub](https://github.com/iFindCallCenter/openCallHub)
+#### 演示地址 http://59.110.143.217/
 
 ## 1、项目结构
 
@@ -40,11 +40,11 @@ openCallHub/doc/system.sql 创建数据库表
 mvn clean install
 java -jar och-api.0.0.1.jar
 ```
-5. 访问地址 http://localhost:8080/swagger-ui.html
+5. [前端地址](https://gitee.com/zhongjiawei999/waihu-app) `https://gitee.com/zhongjiawei999/waihu-app`
 
 6. 登录账号 admin/12345678
 
-7. 联系方式： 有前端能力可加微信交流
+7. 联系方式： 有能力可加微信交流
 
 ![微信](image.png)
 
