@@ -53,7 +53,7 @@ public class FsModules extends BaseEntity implements Serializable {
      * 类型 xml格式,json格式
      */
     @Schema(description = "类型 xml格式,json格式")
-    @TableField("type")
+    @TableField("`type`")
     private String type;
 
 
@@ -69,7 +69,7 @@ public class FsModules extends BaseEntity implements Serializable {
      * 描述
      */
     @Schema(description = "描述")
-    @TableField("describe")
+    @TableField("`describe`")
     private String describe;
 
 

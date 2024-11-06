@@ -8,7 +8,6 @@ import com.och.common.enums.DeleteStatusEnum;
 import com.och.system.domain.entity.SipAgent;
 import com.och.system.domain.query.agent.SipAgentAddQuery;
 import com.och.system.domain.query.agent.SipAgentQuery;
-import com.och.system.domain.vo.agent.SipAgentListVo;
 import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.mapper.SipAgentMapper;
 import com.och.system.service.ISipAgentService;
@@ -71,9 +70,10 @@ public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgen
     }
 
     @Override
-    public PageInfo<SipAgentListVo> getPageList(SipAgentQuery query) {
+    public PageInfo<SipAgentVo> getPageList(SipAgentQuery query) {
         startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
-        return null;
+        List<SipAgentVo> resList = getInfoByQuery(query);
+        return new PageInfo<>(resList);
     }
 
     @Override

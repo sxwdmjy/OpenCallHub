@@ -5,7 +5,6 @@ import com.och.common.base.IBaseService;
 import com.och.system.domain.entity.SipAgent;
 import com.och.system.domain.query.agent.SipAgentAddQuery;
 import com.och.system.domain.query.agent.SipAgentQuery;
-import com.och.system.domain.vo.agent.SipAgentListVo;
 import com.och.system.domain.vo.agent.SipAgentVo;
 
 import java.util.List;
@@ -26,7 +25,7 @@ public interface ISipAgentService extends IBaseService<SipAgent> {
 
     SipAgentVo getDetail(Long id);
 
-    PageInfo<SipAgentListVo> getPageList(SipAgentQuery query);
+    PageInfo<SipAgentVo> getPageList(SipAgentQuery query);
 
     List<SipAgentVo> getInfoByQuery(SipAgentQuery query);
 

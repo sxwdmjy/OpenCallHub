@@ -45,8 +45,8 @@ public class FsSipGateway extends BaseEntity implements Serializable {
      * 账号
      */
     @Schema(description = "账号")
-    @TableField("uer_name")
-    private String uerName;
+    @TableField("user_name")
+    private String userName;
 
 
     /**

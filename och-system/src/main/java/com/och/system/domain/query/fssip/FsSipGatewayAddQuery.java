@@ -30,7 +30,7 @@ public class FsSipGatewayAddQuery {
      * 账号
      */
     @Schema(description = "账号",requiredMode = Schema.RequiredMode.REQUIRED)
-    private String uerName;
+    private String userName;
 
 
     /**

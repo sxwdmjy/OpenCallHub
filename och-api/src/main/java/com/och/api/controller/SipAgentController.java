@@ -9,7 +9,6 @@ import com.och.common.enums.SipAgentStatusEnum;
 import com.och.common.exception.CommonException;
 import com.och.system.domain.query.agent.SipAgentAddQuery;
 import com.och.system.domain.query.agent.SipAgentQuery;
-import com.och.system.domain.vo.agent.SipAgentListVo;
 import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.service.ISipAgentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,8 +75,8 @@ public class SipAgentController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:agent:page:list')")
     @Operation(summary = "坐席列表", method = "POST")
     @PostMapping("/page/list")
-    public ResResult<PageInfo<SipAgentListVo>> getPageList(@RequestBody SipAgentQuery query) {
-        PageInfo<SipAgentListVo> list = iSipAgentService.getPageList(query);
+    public ResResult<PageInfo<SipAgentVo>> getPageList(@RequestBody SipAgentQuery query) {
+        PageInfo<SipAgentVo> list = iSipAgentService.getPageList(query);
         return success(list);
     }
 

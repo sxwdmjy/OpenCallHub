@@ -240,8 +240,8 @@ public class FsSipGatewayXmlCurlHandler implements FsXmlCurlEventStrategy {
             paramList.add(new Param(SipGatewayParamEnum.EXPIRE_SECONDS.key, String.valueOf(gatewayVo.getExpireTime())));
         }
 
-        if (StringUtils.isNotBlank(gatewayVo.getUerName())) {
-            paramList.add(new Param(SipGatewayParamEnum.USERNAME.key, gatewayVo.getUerName()));
+        if (StringUtils.isNotBlank(gatewayVo.getUserName())) {
+            paramList.add(new Param(SipGatewayParamEnum.USERNAME.key, gatewayVo.getUserName()));
         }
 
         if (StringUtils.isNotBlank(gatewayVo.getPassword())) {

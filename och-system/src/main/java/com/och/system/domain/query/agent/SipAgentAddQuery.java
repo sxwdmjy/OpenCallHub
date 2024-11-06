@@ -40,11 +40,6 @@ public class SipAgentAddQuery {
     @Schema(description = "坐席账号", requiredMode = Schema.RequiredMode.REQUIRED)
     private String agentNumber;
 
-    /**
-     * 外显号码
-     */
-    @Schema(description = "外显号码")
-    private String agentDisplay;
 
     /**
      * 状态 0-未开通 1-开通

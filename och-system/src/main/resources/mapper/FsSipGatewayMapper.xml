@@ -5,7 +5,7 @@
     <resultMap type="com.och.system.domain.entity.FsSipGateway" id="FsSipGatewayResult">
                 <result property="id" column="id" jdbcType="INTEGER"/>
                 <result property="name" column="name" jdbcType="VARCHAR"/>
-                <result property="uerName" column="uer_name" jdbcType="VARCHAR"/>
+                <result property="userName" column="user_name" jdbcType="VARCHAR"/>
                 <result property="password" column="password" jdbcType="VARCHAR"/>
                 <result property="realm" column="realm" jdbcType="VARCHAR"/>
                 <result property="proxy" column="proxy" jdbcType="VARCHAR"/>
@@ -24,7 +24,7 @@
             </resultMap>
 
     <sql id="selectFsSipGatewayVo">
-        select id, name, uer_name, password, realm, proxy, register, transport, from_domain, retry_time, ping_time,expire_time,caller_id_in_from, create_by, create_time, update_by, update_time, del_flag from fs_sip_gateway
+        select id, name, user_name, password, realm, proxy, register, transport, from_domain, retry_time, ping_time,expire_time,caller_id_in_from, create_by, create_time, update_by, update_time, del_flag from fs_sip_gateway
     </sql>
 
     <select id="getList" resultMap="FsSipGatewayResult">

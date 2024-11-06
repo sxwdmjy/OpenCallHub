@@ -26,5 +26,6 @@ public interface SipAgentMapper extends BaseMapper<SipAgent> {
     SipAgentVo getInfoByAgent(@Param("agentNum") String agentNum);
 
     SipAgentVo getDetail(@Param("id") Long id);
+
 }
 
