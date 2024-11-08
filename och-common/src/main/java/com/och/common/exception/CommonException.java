@@ -1,5 +1,6 @@
 package com.och.common.exception;
 
+import com.och.common.enums.ExceptionStatusEnum;
 import lombok.Data;
 
 /**
@@ -25,6 +26,11 @@ public class CommonException extends RuntimeException{
     {
         this.code=code;
         this.message = message;
+    }
+
+    public CommonException(ExceptionStatusEnum statusEnum){
+        this.code = statusEnum.getCode();
+        this.message = statusEnum.getMsg();
     }
 
     @Override

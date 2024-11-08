@@ -20,6 +20,7 @@ public enum ExceptionStatusEnum {
     ERROR_USERID_NOT_NULL(1000,"用户ID不能为空"),
     ERROR_USER_NAME_EXISTENCE(1001,"用户名称已存在"),
     ERROR_CORP_USER_ID_EXISTENCE(1002,"用户企业ID已存在"),
+    ERROR_USERID_NOT_EXIST(1003,"用户不存在"),
 
     /**
      * 1100菜单

@@ -164,11 +164,15 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void edit(SysUserUpdateQuery query) {
+        SysUser user = getById(query.getUserId());
+        if(Objects.isNull(user)){
+            throw new CommonException(ExceptionStatusEnum.ERROR_USERID_NOT_EXIST);
+        }
         //校验用户名称
         SysUserQuery userQuery = new SysUserQuery();
         userQuery.setUserName(query.getUserName());
-        if (checkUserName(userQuery)) {
-            throw new CommonException(ExceptionStatusEnum.ERROR_USER_NAME_EXISTENCE.getCode(), ExceptionStatusEnum.ERROR_USER_NAME_EXISTENCE.getMsg());
+        if (!StringUtils.equals(query.getUserName(), user.getUserName()) && checkUserName(userQuery)) {
+            throw new CommonException(ExceptionStatusEnum.ERROR_USER_NAME_EXISTENCE);
         }
 
         SysUser sysUser = new SysUser();
