@@ -30,6 +30,8 @@ public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgen
     @Override
     public void add(SipAgentAddQuery query) {
         SipAgent lfsAgent = new SipAgent();
+        lfsAgent.setName(query.getName());
+        lfsAgent.setStatus(query.getStatus());
         lfsAgent.setUserId(query.getUserId());
         lfsAgent.setAgentNumber(query.getAgentNumber());
         save(lfsAgent);
@@ -37,10 +39,23 @@ public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgen
 
     @Override
     public void update(SipAgentAddQuery query) {
-        SipAgent lfsAgent = new SipAgent();
-        lfsAgent.setUserId(query.getUserId());
-        lfsAgent.setAgentNumber(query.getAgentNumber());
-        update(lfsAgent, new LambdaQueryWrapper<SipAgent>().eq(SipAgent::getId, query.getId()));
+        SipAgent sipAgent = getById(query.getId());
+        if (Objects.isNull(sipAgent)) {
+            return;
+        }
+        if (!Objects.equals(sipAgent.getAgentNumber(), query.getAgentNumber())){
+            sipAgent.setAgentNumber(query.getAgentNumber());
+        }
+        if (!Objects.equals(sipAgent.getUserId(), query.getUserId())){
+            sipAgent.setUserId(query.getUserId());
+        }
+        if (!Objects.equals(sipAgent.getName(), query.getName())){
+            sipAgent.setName(query.getName());
+        }
+        if (!Objects.equals(sipAgent.getStatus(), query.getStatus())){
+            sipAgent.setStatus(query.getStatus());
+        }
+        updateById(sipAgent);
     }
 
     @Override

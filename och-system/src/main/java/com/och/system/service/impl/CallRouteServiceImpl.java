@@ -6,10 +6,12 @@ import com.och.common.enums.DeleteStatusEnum;
 import com.och.system.domain.entity.CallRoute;
 import com.och.system.domain.query.route.CallRouteAddQuery;
 import com.och.system.domain.query.route.CallRouteQuery;
+import com.och.system.domain.vo.route.CallRouteListVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.mapper.CallRouteMapper;
 import com.och.system.service.ICallRouteRelService;
 import com.och.system.service.ICallRouteService;
+import com.och.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,8 @@ public class CallRouteServiceImpl extends BaseServiceImpl<CallRouteMapper, CallR
 
     @Autowired
     private ICallRouteRelService iCallRouteRelService;
+    @Autowired
+    private ISysUserService iSysUserService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -79,14 +83,18 @@ public class CallRouteServiceImpl extends BaseServiceImpl<CallRouteMapper, CallR
     }
 
     @Override
-    public List<CallRoute> getList(CallRouteQuery query) {
+    public List<CallRouteListVo> getList(CallRouteQuery query) {
         return this.baseMapper.getList(query);
     }
 
     @Override
-    public List<CallRoute> getPageList(CallRouteQuery query) {
+    public List<CallRouteListVo> getPageList(CallRouteQuery query) {
         startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
-        return getList(query);
+        List<CallRouteListVo> list = getList(query);
+        if(CollectionUtil.isNotEmpty(list)){
+            iSysUserService.decorate(list);
+        }
+        return list;
     }
 
     @Override

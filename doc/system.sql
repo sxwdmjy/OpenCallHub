@@ -581,6 +581,23 @@ create table call_route
 )ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 comment '号码路由表';
 
 
+create table call_route_rel
+(
+    id                bigint auto_increment
+        primary key,
+    order_num         int      default 1                 not null comment '排序字段',
+    call_route_id     bigint                             not null comment '号码路由ID',
+    gateway_config_id varchar(64)                        not null comment '网关配置ID',
+    create_by         bigint                             null comment '创建人',
+    create_time       datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_by         bigint                             null comment '更新人',
+    update_time       datetime                           null comment '修改时间',
+    del_flag          tinyint  default 0                 not null comment '删除标识 0 有效 1删除'
+)
+    ENGINE = InnoDB DEFAULT CHARSET = utf8mb4  comment '号码路由网关配置关联表';
+
+
+
 create table call_display
 (
     id          bigint auto_increment comment '主键'

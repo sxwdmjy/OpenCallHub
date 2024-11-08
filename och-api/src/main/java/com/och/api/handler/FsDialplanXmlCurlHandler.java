@@ -14,6 +14,7 @@ import com.och.common.xmlcurl.dialplan.Extension;
 import com.och.system.domain.entity.FsDialplan;
 import com.och.common.domain.FsXmlCurl;
 import com.och.system.domain.query.dialplan.FsDialplanQuery;
+import com.och.system.domain.vo.dialplan.FsDialplanVo;
 import com.och.system.service.IFsDialplanService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -55,10 +56,10 @@ public class FsDialplanXmlCurlHandler implements FsXmlCurlEventStrategy {
         context.setName(name);
         FsDialplanQuery query = new FsDialplanQuery();
         query.setContextName(name);
-        List<FsDialplan> dialplanList = iFsDialplanService.getList(query);
+        List<FsDialplanVo> dialplanList = iFsDialplanService.getList(query);
         if (CollectionUtil.isNotEmpty(dialplanList)) {
             List<Extension> extensionList = new LinkedList<>();
-            for (FsDialplan fsDialplan : dialplanList) {
+            for (FsDialplanVo fsDialplan : dialplanList) {
                 Extension extension = new Extension();
                 if ("json".equals(fsDialplan.getType())) {
                     String content = fsDialplan.getContent();

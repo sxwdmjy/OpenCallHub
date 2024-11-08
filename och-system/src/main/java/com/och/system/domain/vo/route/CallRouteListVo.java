@@ -12,7 +12,7 @@ import java.util.List;
  **/
 @Schema
 @Data
-public class CallRouteVo extends BaseVo {
+public class CallRouteListVo extends BaseVo {
 
     @Schema(description = "主键ID")
     private Long id;
@@ -80,7 +80,4 @@ public class CallRouteVo extends BaseVo {
     @Schema(description = "状态  0-未启用 1-启用")
     private Integer status;
 
-
-    @Schema(description = "网关配置")
-    private List<CallRouteRelVo> gatewayList;
 }

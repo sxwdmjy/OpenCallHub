@@ -12,6 +12,8 @@ import com.och.system.domain.query.acl.FsAclQuery;
 import com.och.system.domain.vo.acl.FsAclVo;
 import com.och.system.mapper.FsAclMapper;
 import com.och.system.service.IFsAclService;
+import com.och.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 @Service
 public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implements IFsAclService {
 
+    @Autowired
+    private ISysUserService sysUserService;
 
     @Override
     public void addList(FsAclAddQuery query) {
@@ -118,8 +122,10 @@ public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implem
         query.setIds(ids);
         List<FsAclVo> list = getList(query);
         if(CollectionUtil.isNotEmpty(list)){
+            sysUserService.decorate(list);
             for (FsAclVo fsAclVo : list) {
                 fsAclVo.setNodeList(fsAclVo.getNodeList().stream().filter(item -> Objects.nonNull(item.getId())).toList());
+                sysUserService.decorate(fsAclVo.getNodeList());
             }
         }
         PageInfo<Long> pageIdInfo = new PageInfo<>(ids);

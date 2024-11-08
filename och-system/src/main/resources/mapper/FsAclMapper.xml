@@ -61,6 +61,9 @@
             <if test="name != null and name !=''">
                 and `name` like concat('%',#{name},'%')
             </if>
+            <if test="defaultType != null and defaultType !=''">
+                and `default_type` = #{defaultType}
+            </if>
             and list_id = 0 and del_flag = 0
         </where>
         order by id desc

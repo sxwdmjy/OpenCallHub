@@ -37,7 +37,7 @@
                sa.user_id,
                su.user_name,
                sa.agent_number,
-               sa.status
+               sa.status,
                sa.online_status
         from sip_agent sa
                  left join sys_user su on sa.user_id = su.user_id and su.del_flag = 0

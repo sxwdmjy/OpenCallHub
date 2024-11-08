@@ -8,8 +8,11 @@ import com.och.common.enums.DeleteStatusEnum;
 import com.och.system.domain.entity.FsDialplan;
 import com.och.system.domain.query.dialplan.FsDialplanAddQuery;
 import com.och.system.domain.query.dialplan.FsDialplanQuery;
+import com.och.system.domain.vo.dialplan.FsDialplanVo;
 import com.och.system.mapper.FsDialplanMapper;
 import com.och.system.service.IFsDialplanService;
+import com.och.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -26,6 +29,8 @@ import java.util.stream.Collectors;
 @Service
 public class FsDialplanServiceImpl extends BaseServiceImpl<FsDialplanMapper, FsDialplan> implements IFsDialplanService {
 
+    @Autowired
+    private ISysUserService sysUserService;
 
     @Override
     public void add(FsDialplanAddQuery query) {
@@ -68,13 +73,15 @@ public class FsDialplanServiceImpl extends BaseServiceImpl<FsDialplanMapper, FsD
     }
 
     @Override
-    public List<FsDialplan> getList(FsDialplanQuery query) {
+    public List<FsDialplanVo> getList(FsDialplanQuery query) {
         return this.baseMapper.getList(query);
     }
 
     @Override
-    public List<FsDialplan> getPageList(FsDialplanQuery query) {
+    public List<FsDialplanVo> getPageList(FsDialplanQuery query) {
         startPage(query.getPageIndex(), query.getPageSize(),query.getSortField(),query.getSort());
-        return getList(query);
+        List<FsDialplanVo> list = getList(query);
+        sysUserService.decorate(list);
+        return list;
     }
 }

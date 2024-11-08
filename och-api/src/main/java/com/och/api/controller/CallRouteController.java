@@ -8,6 +8,7 @@ import com.och.common.enums.BusinessTypeEnum;
 import com.och.system.domain.entity.CallRoute;
 import com.och.system.domain.query.route.CallRouteAddQuery;
 import com.och.system.domain.query.route.CallRouteQuery;
+import com.och.system.domain.vo.route.CallRouteListVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.service.ICallRouteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,9 +69,9 @@ public class CallRouteController extends BaseController {
     @PreAuthorize("@authz.hasPerm('call:rout:page:list')")
     @Operation(summary = "号码路由列表", method = "POST")
     @PostMapping("/page/list")
-    public ResResult<PageInfo<CallRoute>> pageList(@RequestBody CallRouteQuery query) {
-        List<CallRoute> list = iCallRouteService.getPageList(query);
-        PageInfo<CallRoute> pageInfo = PageInfo.of(list);
+    public ResResult<PageInfo<CallRouteListVo>> pageList(@RequestBody CallRouteQuery query) {
+        List<CallRouteListVo> list = iCallRouteService.getPageList(query);
+        PageInfo<CallRouteListVo> pageInfo = PageInfo.of(list);
         return success(pageInfo);
     }
 

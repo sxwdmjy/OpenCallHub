@@ -1,6 +1,6 @@
 package com.och.system.domain.vo.acl;
 
-import com.och.common.base.BaseEntity;
+import com.och.system.domain.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Schema
 @Data
-public class FsAclVo extends BaseEntity {
+public class FsAclVo extends BaseVo {
 
     @Schema(description = "ID", hidden = true)
     private Long id;

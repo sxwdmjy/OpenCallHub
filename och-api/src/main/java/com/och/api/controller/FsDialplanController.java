@@ -8,6 +8,7 @@ import com.och.common.enums.BusinessTypeEnum;
 import com.och.system.domain.entity.FsDialplan;
 import com.och.system.domain.query.dialplan.FsDialplanAddQuery;
 import com.och.system.domain.query.dialplan.FsDialplanQuery;
+import com.och.system.domain.vo.dialplan.FsDialplanVo;
 import com.och.system.service.IFsDialplanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -69,9 +70,9 @@ public class FsDialplanController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:dialplan:page:list')")
     @Operation(summary = "拨号计划列表(分页)", method = "POST")
     @PostMapping("/page/list")
-    public ResResult<PageInfo<FsDialplan>> pageList(@RequestBody FsDialplanQuery query) {
-        List<FsDialplan> list = iFsDialplanService.getPageList(query);
-        PageInfo<FsDialplan> pageInfo = new PageInfo<>(list);
+    public ResResult<PageInfo<FsDialplanVo>> pageList(@RequestBody FsDialplanQuery query) {
+        List<FsDialplanVo> list = iFsDialplanService.getPageList(query);
+        PageInfo<FsDialplanVo> pageInfo = new PageInfo<>(list);
         return success(pageInfo);
     }
 
@@ -79,8 +80,8 @@ public class FsDialplanController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:dialplan:list')")
     @Operation(summary = "拨号计划列表(不分页)", method = "POST")
     @PostMapping("/list")
-    public ResResult<List<FsDialplan>> list(@RequestBody FsDialplanQuery query) {
-        List<FsDialplan> list = iFsDialplanService.getList(query);
+    public ResResult<List<FsDialplanVo>> list(@RequestBody FsDialplanQuery query) {
+        List<FsDialplanVo> list = iFsDialplanService.getList(query);
         return success(list);
     }
 

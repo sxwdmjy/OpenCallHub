@@ -4,6 +4,7 @@ import com.och.common.base.IBaseService;
 import com.och.system.domain.entity.FsDialplan;
 import com.och.system.domain.query.dialplan.FsDialplanAddQuery;
 import com.och.system.domain.query.dialplan.FsDialplanQuery;
+import com.och.system.domain.vo.dialplan.FsDialplanVo;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface IFsDialplanService extends IBaseService<FsDialplan> {
 
     void delete(FsDialplanQuery query);
 
-    List<FsDialplan> getList(FsDialplanQuery query);
+    List<FsDialplanVo> getList(FsDialplanQuery query);
 
-    List<FsDialplan> getPageList(FsDialplanQuery query);
+    List<FsDialplanVo> getPageList(FsDialplanQuery query);
 }

@@ -4,6 +4,7 @@ package com.och.system.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.och.system.domain.entity.FsDialplan;
 import com.och.system.domain.query.dialplan.FsDialplanQuery;
+import com.och.system.domain.vo.dialplan.FsDialplanVo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -19,6 +20,6 @@ import java.util.List;
 public interface FsDialplanMapper extends BaseMapper<FsDialplan> {
 
 
-    List<FsDialplan> getList(FsDialplanQuery query);
+    List<FsDialplanVo> getList(FsDialplanQuery query);
 }
 

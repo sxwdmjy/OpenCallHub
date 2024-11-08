@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.och.system.mapper.CallRouteMapper">
 
-    <resultMap type="com.och.system.domain.vo.route.CallRouteVo" id="CallRouteMap">
+    <resultMap type="com.och.system.domain.vo.route.CallRouteListVo" id="CallRouteMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="callerNum" column="caller_num" jdbcType="VARCHAR"/>
         <result property="routeNum" column="route_num" jdbcType="VARCHAR"/>
@@ -17,7 +17,6 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
     </resultMap>
 
     <resultMap type="com.och.system.domain.vo.route.CallRouteVo" id="CallRouteDetailMap">
@@ -35,7 +34,6 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
         <collection property="gatewayList" ofType="com.och.system.domain.vo.route.CallRouteRelVo">
             <result property="gatewayConfigId" column="gateway_config_id" jdbcType="INTEGER"/>
             <result property="gatewayName" column="gateway_name" jdbcType="VARCHAR"/>
@@ -66,8 +64,6 @@
              lcrr.gateway_config_id,
              lgc.name as gateway_name,
              lgc.realm as gateway_address
---              lgc.coding as gateway_coding,
---              lgc.`type` as gateway_type
       from call_route lcr
       left join call_route_rel lcrr on lcr.id = lcrr.call_route_id and lcrr.del_flag = 0
       left join fs_sip_gateway lgc on lcrr.gateway_config_id = lgc.id and lgc.del_flag = 0
@@ -76,7 +72,7 @@
     <select id="getDetail" resultMap="CallRouteDetailMap">
         <include refid="selectCallRouteInfoVo"/>
         <where>
-            and id = #{id}
+            and lcr.id = #{id}
         </where>
     </select>
 
@@ -100,8 +96,8 @@
             <if test="callerNum != null and callerNum != ''">
                 and caller_num = #{callerNum}
             </if>
-            <if test="routeNum != null and routeNum != ''">
-                and route_num = #{routeNum}
+            <if test="routeNumber != null and routeNumber != ''">
+                and route_num = #{routeNumber}
             </if>
             and del_flag = 0
         </where>

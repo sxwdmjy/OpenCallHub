@@ -5,6 +5,7 @@ import com.och.common.base.IBaseService;
 import com.och.system.domain.entity.CallRoute;
 import com.och.system.domain.query.route.CallRouteAddQuery;
 import com.och.system.domain.query.route.CallRouteQuery;
+import com.och.system.domain.vo.route.CallRouteListVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 
 import java.util.List;
@@ -25,9 +26,9 @@ public interface ICallRouteService extends IBaseService<CallRoute> {
 
     CallRouteVo getDetail(Long id);
 
-    List<CallRoute> getList(CallRouteQuery query);
+    List<CallRouteListVo> getList(CallRouteQuery query);
 
-    List<CallRoute> getPageList(CallRouteQuery query);
+    List<CallRouteListVo> getPageList(CallRouteQuery query);
 
     List<CallRouteVo> listByQuery(CallRouteQuery query);
 

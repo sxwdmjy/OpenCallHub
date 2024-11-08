@@ -47,9 +47,4 @@ public class SipAgentAddQuery {
     @Schema(description = "状态 0-未开通 1-开通")
     private Integer status;
 
-    /**
-     * 状态 0-空闲  1-忙碌 2-通话中 3-离线
-     */
-    @Schema(description = "在线状态 0-空闲  1-忙碌 2-通话中 3-离线")
-    private Integer onlineStatus;
 }
