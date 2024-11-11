@@ -12,8 +12,11 @@ import com.och.system.domain.query.subsriber.SubscriberAddQuery;
 import com.och.system.domain.query.subsriber.SubscriberBatchAddQuery;
 import com.och.system.domain.query.subsriber.SubscriberQuery;
 import com.och.system.domain.query.subsriber.SubscriberUpdateQuery;
+import com.och.system.domain.vo.sip.SubscriberVo;
 import com.och.system.mapper.SubscriberMapper;
 import com.och.system.service.ISubscriberService;
+import com.och.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 @Service
 public class SubscriberServiceImpl extends BaseServiceImpl<SubscriberMapper, Subscriber> implements ISubscriberService {
 
+    @Autowired
+    private ISysUserService sysUserService;
 
     @Override
     public void add(SubscriberAddQuery query) {
@@ -41,6 +46,10 @@ public class SubscriberServiceImpl extends BaseServiceImpl<SubscriberMapper, Sub
         subscriber.setUsername(query.getUsername());
         subscriber.setPassword(query.getPassword());
         subscriber.setStatus(query.getStatus());
+        subscriber.setDomain(query.getDomain());
+        subscriber.setHa1(query.getHa1());
+        subscriber.setHa1b(query.getHa1b());
+        subscriber.setVmpin(query.getVmpin());
         save(subscriber);
     }
 
@@ -79,9 +88,35 @@ public class SubscriberServiceImpl extends BaseServiceImpl<SubscriberMapper, Sub
 
     @Override
     public void edit(SubscriberUpdateQuery query) {
-        Subscriber subscriber = new Subscriber();
-        subscriber.setPassword(query.getPassword());
-        update(new LambdaUpdateWrapper<Subscriber>().eq(Subscriber::getId, query.getId()));
+        Subscriber subscriber = getById(query.getId());
+        if (Objects.isNull(subscriber)){
+            throw new CommonException("无效ID");
+        }
+        if(!StringUtils.equals(subscriber.getUsername(), query.getUsername()) && checkUserName(query.getUsername())){
+            throw new CommonException("账号已存在");
+        }else if (StringUtils.isNotBlank(query.getUsername())) {
+            subscriber.setUsername(query.getUsername());
+        }
+
+        if (StringUtils.isNotBlank(query.getPassword())) {
+            subscriber.setPassword(query.getPassword());
+        }
+        if (StringUtils.isNotBlank(query.getDomain())) {
+            subscriber.setDomain(query.getDomain());
+        }
+        if (StringUtils.isNotBlank(query.getHa1())) {
+            subscriber.setHa1(query.getHa1());
+        }
+        if (StringUtils.isNotBlank(query.getHa1b())) {
+            subscriber.setHa1b(query.getHa1b());
+        }
+        if (StringUtils.isNotBlank(query.getVmpin())) {
+            subscriber.setVmpin(query.getVmpin());
+        }
+        if (Objects.nonNull(query.getStatus())) {
+            subscriber.setStatus(query.getStatus());
+        }
+        updateById(subscriber);
     }
 
     @Override
@@ -95,7 +130,7 @@ public class SubscriberServiceImpl extends BaseServiceImpl<SubscriberMapper, Sub
     }
 
     @Override
-    public List<Subscriber> getList(SubscriberQuery query) {
+    public List<SubscriberVo> getList(SubscriberQuery query) {
         return this.baseMapper.getList(query);
     }
 
@@ -105,9 +140,13 @@ public class SubscriberServiceImpl extends BaseServiceImpl<SubscriberMapper, Sub
     }
 
     @Override
-    public List<Subscriber> getPageList(SubscriberQuery query) {
+    public List<SubscriberVo> getPageList(SubscriberQuery query) {
         startPage(query.getPageIndex(), query.getPageSize());
-        return getList(query);
+        List<SubscriberVo> list = getList(query);
+        if (CollectionUtil.isNotEmpty(list)){
+            sysUserService.decorate(list);
+        }
+        return list;
     }
 
     public List<Subscriber> getByUserNameList(List<String> userNameList) {

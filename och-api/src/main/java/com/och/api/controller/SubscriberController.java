@@ -10,6 +10,7 @@ import com.och.system.domain.query.subsriber.SubscriberAddQuery;
 import com.och.system.domain.query.subsriber.SubscriberBatchAddQuery;
 import com.och.system.domain.query.subsriber.SubscriberQuery;
 import com.och.system.domain.query.subsriber.SubscriberUpdateQuery;
+import com.och.system.domain.vo.sip.SubscriberVo;
 import com.och.system.service.ISubscriberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 @Tag(name = "SIP号码管理")
 @RestController
-@RequestMapping("/system/v1/subscriber")
+@RequestMapping("/system/v1/sip")
 public class SubscriberController extends BaseController {
 
     @Autowired
@@ -82,9 +83,9 @@ public class SubscriberController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:subscriber:page:list')")
     @Operation(summary = "SIP号码列表", method = "POST")
     @PostMapping("/list")
-    public ResResult<PageInfo<Subscriber>> list(@RequestBody SubscriberQuery query) {
-        List<Subscriber> list = subscriberService.getPageList(query);
-        PageInfo<Subscriber> pageInfo = new PageInfo<>(list);
+    public ResResult<PageInfo<SubscriberVo>> list(@RequestBody SubscriberQuery query) {
+        List<SubscriberVo> list = subscriberService.getPageList(query);
+        PageInfo<SubscriberVo> pageInfo = new PageInfo<>(list);
         return success(pageInfo);
     }
 

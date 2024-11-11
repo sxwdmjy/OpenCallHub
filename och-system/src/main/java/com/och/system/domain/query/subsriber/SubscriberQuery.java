@@ -16,7 +16,7 @@ public class SubscriberQuery extends BaseQuery {
     private Integer id;
 
     @Schema(description = "SIP号码")
-    private String userName;
+    private String username;
 
     @Schema(description = "SIP密码")
     private String password;

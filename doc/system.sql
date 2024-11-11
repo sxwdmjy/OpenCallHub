@@ -510,6 +510,11 @@ CREATE TABLE `subscriber`
     `ha1`      varchar(128) NOT NULL DEFAULT '' COMMENT '哈希码',
     `ha1b`     varchar(128) NOT NULL DEFAULT '' COMMENT '哈希码',
     `vmpin`    varchar(8)   NOT NULL DEFAULT '1234' COMMENT '鉴权值',
+    `status`   tinyint(4) DEFAULT '0' COMMENT '状态 0-开启 1-关闭',
+    `create_by`   bigint(20) DEFAULT NULL COMMENT '创建人',
+    `create_time` datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by`   bigint(20) DEFAULT NULL COMMENT '更新人',
+    `update_time` datetime              DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `account_idx` (`username`, `domain`),
     KEY        `username_idx` (`username`)

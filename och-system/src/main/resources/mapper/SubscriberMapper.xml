@@ -10,11 +10,11 @@
         <result property="ha1" column="ha1" jdbcType="VARCHAR"/>
         <result property="ha1b" column="ha1b" jdbcType="VARCHAR"/>
         <result property="vmpin" column="vmpin" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="status" column="status" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="selectSubscriberVo">
@@ -35,15 +35,15 @@
     <select id="getByUserName" resultType="com.och.system.domain.entity.Subscriber">
         <include refid="selectSubscriberVo"/>
         <where>
-            and username = #{username}
+            and username like concat('%',#{username},'%')
         </where>
     </select>
 
-    <select id="getList" resultType="com.och.system.domain.entity.Subscriber">
-        select id, username , status ,create_by,create_time,update_by,update_time from subscriber
+    <select id="getList" resultType="com.och.system.domain.vo.sip.SubscriberVo">
+        <include refid="selectSubscriberVo"/>
         <where>
-            <if test="userName != null and userName != ''">
-                username = #{userName}
+            <if test="username != null and username != ''">
+                username like concat('%',#{username},'%')
             </if>
         </where>
     </select>

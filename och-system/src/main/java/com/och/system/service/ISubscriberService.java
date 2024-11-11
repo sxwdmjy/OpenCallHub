@@ -8,6 +8,7 @@ import com.och.system.domain.query.subsriber.SubscriberAddQuery;
 import com.och.system.domain.query.subsriber.SubscriberBatchAddQuery;
 import com.och.system.domain.query.subsriber.SubscriberQuery;
 import com.och.system.domain.query.subsriber.SubscriberUpdateQuery;
+import com.och.system.domain.vo.sip.SubscriberVo;
 
 import java.util.List;
 
@@ -29,10 +30,10 @@ public interface ISubscriberService extends IBaseService<Subscriber> {
 
     void delete(SubscriberQuery query);
 
-    List<Subscriber> getList(SubscriberQuery query);
+    List<SubscriberVo> getList(SubscriberQuery query);
 
     Subscriber getByUserName(String username);
 
 
-    List<Subscriber> getPageList(SubscriberQuery query);
+    List<SubscriberVo> getPageList(SubscriberQuery query);
 }
