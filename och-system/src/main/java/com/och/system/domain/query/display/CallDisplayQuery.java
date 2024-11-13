@@ -22,6 +22,7 @@ public class CallDisplayQuery extends BaseQuery {
     @Schema(description = "主键",hidden = true)
     private Long id;
 
+
     @Schema(description = "号码类型 1-主叫显号 2-被叫显号")
     private Integer type;
 

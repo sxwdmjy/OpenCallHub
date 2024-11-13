@@ -3,6 +3,7 @@ package com.och.system.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
+import com.och.common.utils.StringUtils;
 import com.och.system.domain.entity.CallDisplay;
 import com.och.system.domain.entity.FsAcl;
 import com.och.system.domain.query.display.CallDisplayAddQuery;
@@ -34,6 +35,7 @@ public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, C
 
     @Override
     public void add(CallDisplayAddQuery query) {
+        checkPhone(query.getPhone());
         CallDisplay callDisplay = new CallDisplay();
         BeanUtils.copyProperties(query, callDisplay);
         save(callDisplay);
@@ -41,9 +43,18 @@ public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, C
 
     @Override
     public void edit(CallDisplayAddQuery query) {
-        CallDisplay callDisplay = new CallDisplay();
-        BeanUtils.copyProperties(query, callDisplay);
-        updateById(callDisplay);
+        CallDisplay display = getById(query.getId());
+        if(Objects.isNull(display)){
+            throw new RuntimeException("无效ID");
+        }
+        if(!StringUtils.equals(query.getPhone(), display.getPhone())){
+            display.setPhone(query.getPhone());
+        }
+        if(Objects.nonNull(query.getType())){
+            display.setType(query.getType());
+        }
+        checkPhone(query.getPhone());
+        updateById(display);
     }
 
     @Override
@@ -95,5 +106,13 @@ public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, C
         return displayList;
     }
 
+    private void checkPhone(String phone) {
+        CallDisplayQuery callDisplayQuery = new CallDisplayQuery();
+        callDisplayQuery.setPhone(phone);
+        List<CallDisplayVo> list = getList(callDisplayQuery);
+        if (CollectionUtil.isNotEmpty(list)) {
+            throw new RuntimeException("号码已存在");
+        }
+    }
 }
 

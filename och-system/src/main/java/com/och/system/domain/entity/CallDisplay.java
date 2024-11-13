@@ -32,9 +32,6 @@ public class CallDisplay extends BaseEntity implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    @Schema(description = "归属组ID")
-    @TableField("group_id")
-    private Long groupId;
 
     /**
      * 电话号码

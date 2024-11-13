@@ -19,6 +19,7 @@ import com.och.system.domain.query.agent.SipAgentQuery;
 import com.och.system.domain.query.call.CallQuery;
 import com.och.system.domain.query.display.CallDisplayQuery;
 import com.och.system.domain.vo.agent.SipAgentVo;
+import com.och.system.domain.vo.display.CallDisplayVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.service.ICallDisplayService;
 import com.och.system.service.ICorpInfoService;
@@ -76,11 +77,11 @@ public class ICallServiceImpl implements ICallService {
 
         //获取被叫显号
         CallDisplayQuery poolQuery = new CallDisplayQuery();
-        List<CallDisplay> displayList = iCallDisplayService.getList(poolQuery);
+        List<CallDisplayVo> displayList = iCallDisplayService.getList(poolQuery);
         if (CollectionUtil.isEmpty(displayList)) {
             throw new CommonException("租户未配置显号");
         }
-        CallDisplay callDisplay = RandomUtil.randomEle(displayList);
+        CallDisplayVo callDisplay = RandomUtil.randomEle(displayList);
         callInfo.setCallerDisplay(query.getCallee());
         callInfo.setCalleeDisplay(callDisplay.getPhone());
 

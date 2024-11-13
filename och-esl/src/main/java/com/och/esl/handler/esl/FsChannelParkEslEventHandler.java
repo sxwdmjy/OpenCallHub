@@ -21,6 +21,7 @@ import com.och.system.domain.entity.CallDisplay;
 import com.och.system.domain.entity.CorpInfo;
 import com.och.system.domain.query.display.CallDisplayQuery;
 import com.och.system.domain.vo.agent.SipAgentVo;
+import com.och.system.domain.vo.display.CallDisplayVo;
 import lombok.extern.slf4j.Slf4j;
 import org.freeswitch.esl.client.transport.event.EslEvent;
 import org.springframework.stereotype.Component;
@@ -170,14 +171,14 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         //获取被叫显号
         CallDisplayQuery displayQuery = new CallDisplayQuery();
         displayQuery.setType(2);
-        List<CallDisplay> displayList = iCallDisplayService.getList(displayQuery);
+        List<CallDisplayVo> displayList = iCallDisplayService.getList(displayQuery);
         if(CollectionUtil.isEmpty(displayList)){
             log.error("电话外呼未查询到显号信息 callId:{}  callerNumber:{} calleeNumber:{}", callId, callerNumber, calleeNumber);
             fsClient.hangupCall(address,callId,uniqueId);
             return;
         }
 
-        CallDisplay displaySimple = RandomUtil.randomEle(displayList);
+        CallDisplayVo displaySimple = RandomUtil.randomEle(displayList);
         callInfo.setCallerDisplay(sipAgent.getAgentNumber());
         callInfo.setCalleeDisplay(displaySimple.getPhone());
 

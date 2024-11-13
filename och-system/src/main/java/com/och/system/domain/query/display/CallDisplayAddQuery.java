@@ -17,8 +17,6 @@ public class CallDisplayAddQuery {
     @Schema(description = "主键",hidden = true)
     private Long id;
 
-    @Schema(description = "归属组ID",requiredMode = Schema.RequiredMode.REQUIRED)
-    private Long groupId;
 
     /**
      *  电话号码

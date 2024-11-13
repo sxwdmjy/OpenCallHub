@@ -20,12 +20,6 @@ public class CallDisplayVo extends BaseVo {
 
     @Schema(description = "主键")
     private Long id;
-
-    @Schema(description = "归属组ID")
-    private Long groupId;
-
-    @Schema(description = "归属组名称")
-    private String groupName;
     /**
      * 电话号码
      */

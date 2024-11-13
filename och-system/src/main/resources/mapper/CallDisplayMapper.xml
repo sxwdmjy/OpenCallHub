@@ -4,8 +4,6 @@
 
     <resultMap type="com.och.system.domain.vo.display.CallDisplayVo" id="CallDisplayMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
-        <result property="groupId" column="group_id" jdbcType="INTEGER"/>
-        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="type" column="type" jdbcType="INTEGER"/>
         <result property="area" column="area" jdbcType="VARCHAR"/>
@@ -16,41 +14,24 @@
     </resultMap>
 
     <sql id="selectCallDisplayVo">
-        select id, group_id, phone, type, area, create_by, create_time, update_by, update_time, del_flag from call_display
+        select id,  phone, type, area, create_by, create_time, update_by, update_time, del_flag from call_display
     </sql>
 
     <select id="getList" resultMap="CallDisplayMap">
-        select
-        cd.id,
-        cd.group_id,
-        if(sc.group_id=1,'默认分组',sc.name) as group_name,
-        cd.phone,
-        cd.type,
-        cd.area,
-        cd.create_by,
-        cd.create_time,
-        cd.update_by,
-        cd.update_time,
-        cd.del_flag
-        from
-        call_display cd
-        left join sys_category sc on sc.id = cd.group_id
+        <include refid="selectCallDisplayVo"/>
         <where>
             <if test="id != null">
-                and cd.id = #{id}
+                and id = #{id}
             </if>
             <if test="phone != null and phone != ''">
-                and cd.phone = #{phone}
+                and phone = #{phone}
             </if>
             <if test="type != null">
-                and cd.type = #{type}
+                and type = #{type}
             </if>
-            <if test="groupId != null">
-                and cd.group_id = #{groupId}
-            </if>
-            and cd.del_flag = 0
+            and del_flag = 0
         </where>
-        order by cd.id desc
+        order by id desc
     </select>
 
 </mapper>
