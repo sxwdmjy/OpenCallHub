@@ -1,18 +1,18 @@
 package com.och.system.domain.vo.display;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.och.system.domain.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author danmo
  * @date 2023年09月26日 13:44
  */
+@EqualsAndHashCode(callSuper = true)
 @Schema
 @Data
-public class CallDisplayVo {
+public class CallDisplayVo extends BaseVo {
 
     /**
      * 主键
@@ -24,6 +24,8 @@ public class CallDisplayVo {
     @Schema(description = "归属组ID")
     private Long groupId;
 
+    @Schema(description = "归属组名称")
+    private String groupName;
     /**
      * 电话号码
      */

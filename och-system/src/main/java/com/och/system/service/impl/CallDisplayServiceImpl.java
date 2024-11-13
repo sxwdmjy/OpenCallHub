@@ -10,7 +10,9 @@ import com.och.system.domain.query.display.CallDisplayQuery;
 import com.och.system.domain.vo.display.CallDisplayVo;
 import com.och.system.mapper.CallDisplayMapper;
 import com.och.system.service.ICallDisplayService;
+import com.och.system.service.ISysUserService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -27,6 +29,9 @@ import java.util.stream.Collectors;
 @Service
 public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, CallDisplay> implements ICallDisplayService {
 
+    @Autowired
+    private ISysUserService sysUserService;
+
     @Override
     public void add(CallDisplayAddQuery query) {
         CallDisplay callDisplay = new CallDisplay();
@@ -42,8 +47,11 @@ public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, C
     }
 
     @Override
-    public CallDisplay getDetail(Long id) {
-        return getDetail(id);
+    public CallDisplayVo getDetail(Long id) {
+        CallDisplayVo callDisplayVo = new CallDisplayVo();
+        CallDisplay detail = getById(id);
+        BeanUtils.copyProperties(detail, callDisplayVo);
+        return callDisplayVo;
     }
 
     @Override
@@ -68,13 +76,23 @@ public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, C
     }
 
     @Override
-    public List<CallDisplay> getList(CallDisplayQuery query) {
+    public List<CallDisplayVo> getList(CallDisplayQuery query) {
         return baseMapper.getList(query);
     }
 
     @Override
     public void allocate(CallDisplayQuery query) {
 
+    }
+
+    @Override
+    public List<CallDisplayVo> getPageList(CallDisplayQuery query) {
+        startPage(query.getPageIndex(), query.getPageSize());
+        List<CallDisplayVo> displayList = getList(query);
+        if(CollectionUtil.isNotEmpty(displayList)){
+            sysUserService.decorate(displayList);
+        }
+        return displayList;
     }
 
 }

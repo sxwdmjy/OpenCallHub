@@ -21,13 +21,14 @@ public interface ICallDisplayService extends IBaseService<CallDisplay> {
 
     void edit(CallDisplayAddQuery query);
 
-    CallDisplay getDetail(Long id);
+    CallDisplayVo getDetail(Long id);
 
     void delete(CallDisplayQuery query);
 
-    List<CallDisplay> getList(CallDisplayQuery query);
+    List<CallDisplayVo> getList(CallDisplayQuery query);
 
     void allocate(CallDisplayQuery query);
 
+    List<CallDisplayVo> getPageList(CallDisplayQuery query);
 }
 

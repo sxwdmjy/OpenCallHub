@@ -56,7 +56,7 @@ public class CallDisplayController extends BaseController {
     @PreAuthorize("@authz.hasPerm('call:display:get')")
     @Operation(summary = "号码详情", method = "POST")
     @PostMapping("/get/{id}")
-    public ResResult<CallDisplay> get(@PathVariable("id") Long id) {
+    public ResResult<CallDisplayVo> get(@PathVariable("id") Long id) {
         return success(iCallDisplayService.getDetail(id));
     }
 
@@ -74,14 +74,15 @@ public class CallDisplayController extends BaseController {
     @Operation(summary = "号码列表(分页)", method = "POST")
     @PostMapping("/page/list")
     public ResResult<PageInfo<CallDisplayVo>> pageList(@RequestBody CallDisplayQuery query) {
-        return success();
+        List<CallDisplayVo> list = iCallDisplayService.getPageList(query);
+        return success(new PageInfo<>(list));
     }
 
 
     @Operation(summary = "号码列表(不分页)", method = "POST")
     @PostMapping("/list")
     public ResResult<List<CallDisplayVo>> list(@RequestBody CallDisplayQuery query) {
-        return success();
+        return success(iCallDisplayService.getList(query));
     }
 
 }

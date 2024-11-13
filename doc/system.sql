@@ -607,16 +607,32 @@ create table call_display
 (
     id          bigint auto_increment comment '主键'
         primary key,
-    phone       varchar(18)        not null comment '电话号码',
-    type        tinyint  default 1 not null comment '号码类型 1-主叫显号 2-被叫显号',
-    area        varchar(64) null comment '归属地',
-    create_by   bigint null comment '创建人',
+    phone       varchar(18)                        not null comment '电话号码',
+    type        tinyint  default 1                 not null comment '号码类型 1-主叫显号 2-被叫显号',
+    area        varchar(64)                        null comment '归属地',
+    create_by   bigint                             null comment '创建人',
     create_time datetime default CURRENT_TIMESTAMP null comment '创建时间',
-    update_by   bigint null comment '更新人',
-    update_time datetime null comment '更新时间',
-    del_flag    tinyint  default 0 not null comment '删除标识 0 正常 1 删除'
-) comment '显号管理';
+    update_by   bigint                             null comment '更新人',
+    update_time datetime                           null comment '更新时间',
+    del_flag    tinyint  default 0                 not null comment '删除标识 0 正常 1 删除'
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4
+    comment '号码管理';
 
+
+create table call_display_pool
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    name        varchar(18)                        not null comment '电话池名称',
+    type        tinyint  default 1                 not null comment '类型 1-随机 2-轮询',
+    create_by   bigint                             null comment '创建人',
+    create_time datetime default CURRENT_TIMESTAMP null comment '创建时间',
+    update_by   bigint                             null comment '更新人',
+    update_time datetime                           null comment '更新时间',
+    tenant_id   int(20)  default 0                 not null comment '租户ID',
+    del_flag    tinyint  default 0                 not null comment '删除标识 0 正常 1 删除'
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4
+    comment '号码池管理';
 
 create table call_skill
 (
