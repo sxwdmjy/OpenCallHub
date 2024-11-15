@@ -41,13 +41,13 @@
            cd.phone as display_number
        from call_display_pool cdp
        left join call_display_pool_rel cdpr on cdp.id = cdpr.pool_id and cdpr.del_flag = 0
-       inner join call_display cd on cd.id = cdpr.display_id
+       left join call_display cd on cd.id = cdpr.display_id
    </sql>
 
     <select id="getPoolDetail" resultMap="CallDisplayPoolDetailMap">
         <include refid="selectCallDisplayPoolInfoVo"/>
         <where>
-            and id = #{id}
+            and cdp.id = #{id}
         </where>
     </select>
 
@@ -55,11 +55,26 @@
         select
             distinct cdp.id
         from call_display_pool cdp
-                 left join call_display_pool_rel cdpr on ldp.id = cdpr.pool_id and cdpr.del_flag = 0
-                 inner join call_display cd on cd.id = cdpr.display_id
+                 left join call_display_pool_rel cdpr on cdp.id = cdpr.pool_id and cdpr.del_flag = 0
+        left join call_display cd on cd.id = cdpr.display_id and cd.del_flag = 0
         <where>
-
+            <if test="id != null ">
+                and cdp.id = #{id}
+            </if>
+            <if test="ids != null and ids.size() > 0">
+                and cdp.id in
+                <foreach collection="ids" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="name != null and name != ''">
+                and cdp.name like concat('%',#{name},'%')
+            </if>
+            <if test="type != null">
+                and cdp.`type` = #{type}
+            </if>
         </where>
+        order by cdp.id desc
     </select>
 
     <select id="getList" resultMap="CallDisplayPoolDetailMap">

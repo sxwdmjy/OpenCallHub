@@ -47,6 +47,10 @@ public class CallDisplayPoolServiceImpl extends BaseServiceImpl<CallDisplayPoolM
 
     @Override
     public void editPool(CallDisplayPoolAddQuery query) {
+        CallDisplayPool displayPool = getById(query.getId());
+        if(Objects.isNull(displayPool)){
+            throw new RuntimeException("无效ID");
+        }
         CallDisplayPool CallDisplayPool = new CallDisplayPool();
         CallDisplayPool.setId(query.getId());
         CallDisplayPool.setName(query.getName());
@@ -91,7 +95,6 @@ public class CallDisplayPoolServiceImpl extends BaseServiceImpl<CallDisplayPoolM
         List<Long> poolIds = this.baseMapper.selectIdsByQuery(query);
         if (CollectionUtil.isNotEmpty(poolIds)) {
             query.setIds(poolIds);
-            startPage(query.getPageIndex(), query.getPageSize(),query.getSortField(),query.getSort());
             List<CallDisplayPoolVo> pageList = getPoolList(query);
             poolList.addAll(pageList);
         }

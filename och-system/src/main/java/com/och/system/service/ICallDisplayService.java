@@ -5,6 +5,7 @@ import com.och.common.base.IBaseService;
 import com.och.system.domain.entity.CallDisplay;
 import com.och.system.domain.query.display.CallDisplayAddQuery;
 import com.och.system.domain.query.display.CallDisplayQuery;
+import com.och.system.domain.vo.display.CallDisplaySimpleVo;
 import com.och.system.domain.vo.display.CallDisplayVo;
 
 import java.util.List;
@@ -30,5 +31,7 @@ public interface ICallDisplayService extends IBaseService<CallDisplay> {
     void allocate(CallDisplayQuery query);
 
     List<CallDisplayVo> getPageList(CallDisplayQuery query);
+
+    List<CallDisplaySimpleVo> selectSimpleList(CallDisplayQuery query);
 }
 

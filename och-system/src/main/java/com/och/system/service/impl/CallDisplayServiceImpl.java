@@ -5,9 +5,9 @@ import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.common.utils.StringUtils;
 import com.och.system.domain.entity.CallDisplay;
-import com.och.system.domain.entity.FsAcl;
 import com.och.system.domain.query.display.CallDisplayAddQuery;
 import com.och.system.domain.query.display.CallDisplayQuery;
+import com.och.system.domain.vo.display.CallDisplaySimpleVo;
 import com.och.system.domain.vo.display.CallDisplayVo;
 import com.och.system.mapper.CallDisplayMapper;
 import com.och.system.service.ICallDisplayService;
@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -44,13 +45,13 @@ public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, C
     @Override
     public void edit(CallDisplayAddQuery query) {
         CallDisplay display = getById(query.getId());
-        if(Objects.isNull(display)){
+        if (Objects.isNull(display)) {
             throw new RuntimeException("无效ID");
         }
-        if(!StringUtils.equals(query.getPhone(), display.getPhone())){
+        if (!StringUtils.equals(query.getPhone(), display.getPhone())) {
             display.setPhone(query.getPhone());
         }
-        if(Objects.nonNull(query.getType())){
+        if (Objects.nonNull(query.getType())) {
             display.setType(query.getType());
         }
         checkPhone(query.getPhone());
@@ -100,10 +101,24 @@ public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, C
     public List<CallDisplayVo> getPageList(CallDisplayQuery query) {
         startPage(query.getPageIndex(), query.getPageSize());
         List<CallDisplayVo> displayList = getList(query);
-        if(CollectionUtil.isNotEmpty(displayList)){
+        if (CollectionUtil.isNotEmpty(displayList)) {
             sysUserService.decorate(displayList);
         }
         return displayList;
+    }
+
+    @Override
+    public List<CallDisplaySimpleVo> selectSimpleList(CallDisplayQuery query) {
+        List<CallDisplayVo> list = getList(query);
+        if (CollectionUtil.isNotEmpty(list)) {
+            return list.stream().map(displayVo -> {
+                CallDisplaySimpleVo simpleVo = new CallDisplaySimpleVo();
+                simpleVo.setDisplayId(displayVo.getId());
+                simpleVo.setDisplayNumber(displayVo.getPhone());
+                return simpleVo;
+            }).toList();
+        }
+        return new ArrayList<>();
     }
 
     private void checkPhone(String phone) {

@@ -634,6 +634,21 @@ create table call_display_pool
 )ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4
     comment '号码池管理';
 
+create table call_display_pool_rel
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    pool_id       bigint   not null comment '电话池ID',
+    display_id        bigint  not null comment '号码ID',
+    create_by   bigint                             null comment '创建人',
+    create_time datetime default CURRENT_TIMESTAMP null comment '创建时间',
+    update_by   bigint                             null comment '更新人',
+    update_time datetime                           null comment '更新时间',
+    del_flag    tinyint  default 0                 not null comment '删除标识 0 正常 1 删除'
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4
+    comment '号码池号码关联表';
+
+
 create table call_skill
 (
     id                bigint auto_increment comment '主键ID'

@@ -5,7 +5,6 @@ import com.och.common.annotation.Log;
 import com.och.common.base.BaseController;
 import com.och.common.base.ResResult;
 import com.och.common.enums.BusinessTypeEnum;
-import com.och.system.domain.entity.CallDisplay;
 import com.och.system.domain.query.display.CallDisplayAddQuery;
 import com.och.system.domain.query.display.CallDisplayQuery;
 import com.och.system.domain.vo.display.CallDisplaySimpleVo;
@@ -85,4 +84,9 @@ public class CallDisplayController extends BaseController {
         return success(iCallDisplayService.getList(query));
     }
 
+    @Operation(summary = "号码下拉列表", method = "POST")
+    @PostMapping("/select/list")
+    public ResResult<List<CallDisplaySimpleVo>> selectSimpleList(@RequestBody CallDisplayQuery query) {
+        return success(iCallDisplayService.selectSimpleList(query));
+    }
 }

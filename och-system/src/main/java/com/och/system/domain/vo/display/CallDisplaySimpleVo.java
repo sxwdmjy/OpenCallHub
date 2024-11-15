@@ -1,5 +1,6 @@
 package com.och.system.domain.vo.display;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -12,7 +13,8 @@ import lombok.Data;
 public class CallDisplaySimpleVo {
 
     @Schema(description = "显号ID")
-    private String displayId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long displayId;
 
     @Schema(description = "显号号码")
     private String displayNumber;
