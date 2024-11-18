@@ -12,8 +12,9 @@ import com.aliyun.oss.model.PutObjectResult;
 import com.aliyuncs.exceptions.ClientException;
 import com.och.common.annotation.FileUploadType;
 import com.och.common.config.oss.AliCosConfig;
-import com.och.common.domain.file.LfsFileUploadVo;
+import com.och.common.domain.file.FileUploadVo;
 import com.och.common.exception.FileException;
+import com.och.common.utils.MimeTypeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,14 +34,15 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
 
 
     @Override
-    public LfsFileUploadVo upload(MultipartFile file, Integer businessType) throws IOException {
-        String newPath = getFileTempPath(businessType);
+    public FileUploadVo upload(MultipartFile file) throws IOException {
+
         String oldName = file.getOriginalFilename();
-        //获取扩展名，默认是wav
         String suffix = FileUtil.getSuffix(oldName);
         if (!checkFileFormat(suffix)) {
             throw new FileException(String.format("%s文件格式不被允许上传", suffix));
         }
+        Integer fileType = MimeTypeUtils.getFileType(suffix).getCode();
+        String newPath = getFileTempPath(fileType);
         String uuid = IdUtil.fastSimpleUUID();
         String fileName = uuid + "." + suffix;
         String saveUrl = newPath + fileName;
@@ -50,10 +52,13 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
         } catch (ClientException e) {
             throw new RuntimeException(e);
         }
-        LfsFileUploadVo lfsFileUploadVo = new LfsFileUploadVo();
-        lfsFileUploadVo.setId(uuid);
-        lfsFileUploadVo.setFilePath(aliCosConfig.getHost() + saveUrl);
-        return lfsFileUploadVo;
+        FileUploadVo fileUploadVo = new FileUploadVo();
+        fileUploadVo.setCosId(uuid);
+        fileUploadVo.setFileName(oldName);
+        fileUploadVo.setFilePath(aliCosConfig.getHost() + saveUrl);
+        fileUploadVo.setFileSuffix(suffix);
+        fileUploadVo.setFileType(fileType);
+        return fileUploadVo;
     }
 
 

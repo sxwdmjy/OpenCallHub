@@ -1,5 +1,7 @@
 package com.och.common.utils;
 
+import com.och.common.enums.FileTypeEnum;
+
 /**
  * 媒体类型工具类
  *
@@ -18,9 +20,10 @@ public class MimeTypeUtils {
 
     public static final String[] IMAGE_EXTENSION = {"bmp", "gif", "jpg", "jpeg", "png"};
 
-    public static final String[] FLASH_EXTENSION = {"swf", "flv"};
+    public static final String [] FILE_EXTENSION = {"doc", "docx", "xls", "xlsx", "ppt", "pptx", "html", "htm", "txt", "pdf", "xmind"};
 
-    public static final String[] MEDIA_EXTENSION = {"swf", "flv", "mp3", "wav", "wma", "wmv", "mid", "avi", "mpg",
+
+    public static final String[] MEDIA_EXTENSION = {"mp3", "wav", "wma", "wmv", "mid", "avi", "mpg",
             "asf", "rm", "rmvb"};
 
     public static final String[] VIDEO_EXTENSION = {"mp4", "avi", "rmvb"};
@@ -35,24 +38,36 @@ public class MimeTypeUtils {
             // 视频格式
             "mp4", "avi", "rmvb",
             //音频
-            "wav","mp3",
+            "wav", "mp3",
             // pdf
             "pdf"};
 
-    public static String getExtension(String prefix) {
-        switch (prefix) {
-            case IMAGE_PNG:
-                return "png";
-            case IMAGE_JPG:
-                return "jpg";
-            case IMAGE_JPEG:
-                return "jpeg";
-            case IMAGE_BMP:
-                return "bmp";
-            case IMAGE_GIF:
-                return "gif";
-            default:
-                return "";
+    public static FileTypeEnum getFileType(String extension)
+    {
+        for (String imageType : IMAGE_EXTENSION) {
+            if (imageType.equalsIgnoreCase(extension)){
+                return FileTypeEnum.IMAGE;
+            }
         }
+
+        for (String fileType : FILE_EXTENSION) {
+            if (fileType.equalsIgnoreCase(extension)){
+                return FileTypeEnum.FILE;
+            }
+        }
+
+        for (String mediaType : MEDIA_EXTENSION) {
+            if (mediaType.equalsIgnoreCase(extension)){
+                return FileTypeEnum.VOICE;
+            }
+        }
+
+        for (String videoType : VIDEO_EXTENSION) {
+            if (videoType.equalsIgnoreCase(extension)){
+                return FileTypeEnum.VIDEO;
+            }
+        }
+        return FileTypeEnum.OTHER;
     }
+
 }

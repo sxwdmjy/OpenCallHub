@@ -71,12 +71,7 @@ public class VoiceFile extends BaseEntity implements Serializable {
     @Schema(description = "文件ID")
     @TableField("file_id")
     private String fileId;
-    /**
-     * 文件地址
-     */
-    @Schema(description = "文件地址")
-    @TableField("file")
-    private String file;
+
 
 
     public void setQuery2Entity(VoiceFileAddQuery query) {
@@ -86,7 +81,6 @@ public class VoiceFile extends BaseEntity implements Serializable {
         this.tts = query.getTts();
         this.speechText = query.getSpeechText();
         this.fileId = query.getFileId();
-        this.file = query.getFile();
     }
 }
 

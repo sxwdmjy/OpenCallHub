@@ -3,9 +3,10 @@ package com.och.file.handler;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import com.och.common.annotation.FileUploadType;
-import com.och.common.domain.file.LfsFileUploadVo;
+import com.och.common.domain.file.FileUploadVo;
 import com.och.common.exception.FileException;
 import com.och.common.utils.IpUtils;
+import com.och.common.utils.MimeTypeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,14 +28,14 @@ public class LocalFileUploadHandler extends AbstractFileUploadHandler {
 
 
     @Override
-    public LfsFileUploadVo upload(MultipartFile multipartFile, Integer businessType) throws IOException {
-        String newPath = getFileTempPath(businessType);
+    public FileUploadVo upload(MultipartFile multipartFile) throws IOException {
         String oldName = multipartFile.getOriginalFilename();
-        //获取扩展名，默认是wav
         String suffix = FileUtil.getSuffix(oldName);
         if(!checkFileFormat(suffix)){
             throw new FileException(String.format("%s文件格式不被允许上传",suffix));
         }
+        Integer fileType = MimeTypeUtils.getFileType(suffix).getCode();
+        String newPath = getFileTempPath(fileType);
         String uuid = IdUtil.fastSimpleUUID();
         String fileName = uuid +  "." + suffix;
         String saveUrl = newPath + fileName;
@@ -48,10 +49,13 @@ public class LocalFileUploadHandler extends AbstractFileUploadHandler {
         saveFile.createNewFile();
         multipartFile.transferTo(saveFile);
 
-        String hostIp = IpUtils.getHostIp();
-        LfsFileUploadVo lfsFileUploadVo = new LfsFileUploadVo();
-        lfsFileUploadVo.setId(uuid);
-        lfsFileUploadVo.setFilePath(hostIp+saveUrl);
-        return lfsFileUploadVo;
+        FileUploadVo fileUploadVo = new FileUploadVo();
+        fileUploadVo.setCosId(uuid);
+        fileUploadVo.setFileName(oldName);
+        fileUploadVo.setFilePath(lfsSettingConfig.getLocalHost()+saveUrl);
+        fileUploadVo.setFileSize(String.valueOf(multipartFile.getSize()));
+        fileUploadVo.setFileSuffix(suffix);
+        fileUploadVo.setFileType(MimeTypeUtils.getFileType(suffix).getCode());
+        return fileUploadVo;
     }
 }

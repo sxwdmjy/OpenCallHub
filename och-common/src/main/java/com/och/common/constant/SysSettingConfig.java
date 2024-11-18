@@ -31,6 +31,11 @@ public class SysSettingConfig {
     private String baseProfile;
 
     /**
+     * 文件上传域名
+     */
+    private String localHost;
+
+    /**
      * 文件上传方式
      */
     private String uploadType;

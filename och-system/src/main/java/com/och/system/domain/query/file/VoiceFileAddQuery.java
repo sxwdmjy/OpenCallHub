@@ -53,10 +53,5 @@ public class VoiceFileAddQuery {
      */
     @Schema(description = "文件ID")
     private String fileId;
-    /**
-     * 文件地址
-     */
-    @Schema(description = "文件地址")
-    private String file;
 
 }

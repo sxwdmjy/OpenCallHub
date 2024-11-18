@@ -21,6 +21,7 @@ public class VoiceFileQuery extends BaseQuery {
     @Schema(description = "主键ID")
     private Long id;
 
+    @Schema(description = "主键ID列表", hidden = true)
     private List<Long> ids;
 
     /**
@@ -37,18 +38,10 @@ public class VoiceFileQuery extends BaseQuery {
     private Integer type;
 
 
-
     /**
      *  tts方式 1-腾讯 2-阿里 3-讯飞(type=9生效)
      */
     @Schema(description = "tts方式 1-腾讯 2-阿里 3-讯飞(type=9生效)")
     private Integer tts;
-
-
-    /**
-     *  合成文本
-     */
-    @Schema(description = "合成文本")
-    private String speechText;
 
 }

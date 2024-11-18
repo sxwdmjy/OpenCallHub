@@ -4,8 +4,9 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import com.och.common.annotation.FileUploadType;
 import com.och.common.config.oss.TxCosConfig;
-import com.och.common.domain.file.LfsFileUploadVo;
+import com.och.common.domain.file.FileUploadVo;
 import com.och.common.exception.FileException;
+import com.och.common.utils.MimeTypeUtils;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
@@ -39,24 +40,28 @@ public class TxFileUploadHandler extends AbstractFileUploadHandler {
 
 
     @Override
-    public LfsFileUploadVo upload(MultipartFile file, Integer businessType) throws IOException {
-        String newPath = getFileTempPath(businessType);
+    public FileUploadVo upload(MultipartFile file) throws IOException {
         String oldName = file.getOriginalFilename();
         //获取扩展名，默认是wav
         String suffix = FileUtil.getSuffix(oldName);
         if (!checkFileFormat(suffix)) {
             throw new FileException(String.format("%s文件格式不被允许上传", suffix));
         }
+        Integer fileType = MimeTypeUtils.getFileType(suffix).getCode();
+        String newPath = getFileTempPath(fileType);
         String uuid = IdUtil.fastSimpleUUID();
         String fileName = uuid + "." + suffix;
         String saveUrl = newPath + fileName;
         TxCosConfig txCosConfig = lfsSettingConfig.getTxCosConfig();
         uploadFile(saveUrl, file.getInputStream(), txCosConfig.getAccessKey(), txCosConfig.getSecretKey(), txCosConfig.getRegionName(), txCosConfig.getBucketName());
 
-        LfsFileUploadVo lfsFileUploadVo = new LfsFileUploadVo();
-        lfsFileUploadVo.setId(uuid);
-        lfsFileUploadVo.setFilePath(txCosConfig.getHost() + saveUrl);
-        return lfsFileUploadVo;
+        FileUploadVo fileUploadVo = new FileUploadVo();
+        fileUploadVo.setCosId(uuid);
+        fileUploadVo.setFileName(oldName);
+        fileUploadVo.setFilePath(txCosConfig.getHost() + saveUrl);
+        fileUploadVo.setFileSuffix(suffix);
+        fileUploadVo.setFileType(MimeTypeUtils.getFileType(suffix).getCode());
+        return fileUploadVo;
     }
 
     public static Boolean uploadFile(String url, InputStream inputStream, String accessKey, String secretKey, String regionName, String bucketName) {

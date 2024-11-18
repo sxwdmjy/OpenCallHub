@@ -1,10 +1,8 @@
 package com.och.system.domain.vo.file;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.och.system.domain.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * @author danmo
@@ -12,7 +10,7 @@ import java.util.Date;
  **/
 @Schema
 @Data
-public class VoiceFileVo {
+public class VoiceFileVo extends BaseVo {
 
     /**
      * 主键ID
@@ -59,29 +57,4 @@ public class VoiceFileVo {
     @Schema(description = "文件地址")
     private String file;
 
-    /**
-     * 创建者
-     */
-    @Schema(description = "创建者")
-    private Long createBy;
-
-    /**
-     * 创建时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Schema(description = "创建时间")
-    private Date createTime;
-
-    /**
-     * 更新者
-     */
-    @Schema(description = "更新者")
-    private Long updateBy;
-
-    /**
-     * 更新时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Schema(description = "更新时间")
-    private Date updateTime;
 }
