@@ -43,9 +43,9 @@ public class VoiceFile extends BaseEntity implements Serializable {
 
 
     /**
-     * 类型 1-本地存储 2-腾讯云 3-阿里云 9-语音合成
+     * 类型 1-手动上传 2-语音合成
      */
-    @Schema(description = "类型 1-本地存储 2-腾讯云 3-阿里云 9-语音合成")
+    @Schema(description = "类型 1-手动上传 2-语音合成")
     @TableField("type")
     private Integer type;
 
@@ -53,7 +53,7 @@ public class VoiceFile extends BaseEntity implements Serializable {
     /**
      * tts方式 1-腾讯 2-阿里 3-讯飞(type=9生效)
      */
-    @Schema(description = "tts方式 1-腾讯 2-阿里 3-讯飞(type=9生效)")
+    @Schema(description = "tts方式 1-腾讯 2-阿里 3-讯飞(type=2生效)")
     @TableField("tts")
     private Integer tts;
 
