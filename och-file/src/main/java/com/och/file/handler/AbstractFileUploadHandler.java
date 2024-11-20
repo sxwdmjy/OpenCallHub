@@ -40,15 +40,14 @@ public abstract class AbstractFileUploadHandler {
      */
     public String getFileTempPath(Integer businessType){
         Date date = new Date();
-        StringBuilder strbd =new StringBuilder();
+        StringBuilder strbd =new StringBuilder(lfsSettingConfig.getBaseProfile());
         switch (businessType){
             case 0 -> {
-                String sortUrl = lfsSettingConfig.getBaseProfile();
                 //判断url是否为空，如果为空，使用默认
-                if (StringUtils.isEmpty(sortUrl)) {
-                    sortUrl = "/data/lfs/file";
+                if (StringUtils.isEmpty(strbd)) {
+                    strbd.append("/data/lfs/file");
                 }
-                strbd.append(sortUrl).append("/").append("temp").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+                strbd.append("/").append("temp").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
             }
             case 3 -> strbd.append("/").append("voice").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
             case 2 -> strbd.append("/").append("file").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");

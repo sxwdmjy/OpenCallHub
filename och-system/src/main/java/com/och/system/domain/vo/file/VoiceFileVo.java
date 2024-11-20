@@ -1,5 +1,6 @@
 package com.och.system.domain.vo.file;
 
+import com.och.common.domain.file.FileUploadVo;
 import com.och.system.domain.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -39,22 +40,23 @@ public class VoiceFileVo extends BaseVo {
     @Schema(description = "tts方式 1-腾讯 2-阿里 3-讯飞(type=9生效)")
     private Integer tts;
 
-
     /**
      * 合成文本
      */
     @Schema(description = "合成文本")
     private String speechText;
 
-    /**
-     * 文件ID
-     */
+
     @Schema(description = "文件ID")
     private String fileId;
-    /**
-     * 文件地址
-     */
+
+    @Schema(description = "文件名称")
+    private String fileName;
+
     @Schema(description = "文件地址")
-    private String file;
+    private String filePath;
+
+    @Schema(description = "文件大小")
+    private String fileSize;
 
 }

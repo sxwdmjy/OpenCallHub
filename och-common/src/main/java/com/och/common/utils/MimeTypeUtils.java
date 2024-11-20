@@ -8,19 +8,10 @@ import com.och.common.enums.FileTypeEnum;
  * @author danmo
  */
 public class MimeTypeUtils {
-    public static final String IMAGE_PNG = "image/png";
-
-    public static final String IMAGE_JPG = "image/jpg";
-
-    public static final String IMAGE_JPEG = "image/jpeg";
-
-    public static final String IMAGE_BMP = "image/bmp";
-
-    public static final String IMAGE_GIF = "image/gif";
 
     public static final String[] IMAGE_EXTENSION = {"bmp", "gif", "jpg", "jpeg", "png"};
 
-    public static final String [] FILE_EXTENSION = {"doc", "docx", "xls", "xlsx", "ppt", "pptx", "html", "htm", "txt", "pdf", "xmind"};
+    public static final String [] FILE_EXTENSION = {"doc","pdf", "docx", "xls", "xlsx", "ppt", "pptx", "html", "htm", "txt", "pdf", "xmind","rar", "zip", "gz", "bz2"};
 
 
     public static final String[] MEDIA_EXTENSION = {"mp3", "wav", "wma", "wmv", "mid", "avi", "mpg",

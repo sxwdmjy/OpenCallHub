@@ -61,7 +61,7 @@ public class VoiceFileController extends BaseController {
     @Log(title = "语音文件详情", businessType = BusinessTypeEnum.SELECT)
     @PreAuthorize("@authz.hasPerm('call:voice:file:get')")
     @Operation(summary = "语音文件详情", method = "POST")
-    @GetMapping("/get/{id}")
+    @PostMapping("/get/{id}")
     public ResResult<VoiceFileVo> getDetail(@PathVariable("id") Long id) {
         VoiceFileVo detail = iVoiceFileService.getDetail(id);
         return ResResult.success(detail);

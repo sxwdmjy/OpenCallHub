@@ -4,6 +4,7 @@ import com.och.common.base.BaseController;
 import com.och.common.base.ResResult;
 import com.och.common.domain.file.FileUploadVo;
 import com.och.system.service.ISysFileService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,13 @@ public class SysFileController extends BaseController {
     @Autowired
     private ISysFileService sysFileService;
 
+    /**
+     * 文件上传
+     *
+     * @param file 文件
+     * @return 文件上传结果
+     */
+    @Operation(description = "文件上传", method = "POST")
     @PostMapping("/upload")
     public ResResult<FileUploadVo> uploadFile(@RequestParam("file") MultipartFile file) {
         FileUploadVo uploadedFile = sysFileService.uploadFile(file);

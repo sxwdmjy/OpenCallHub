@@ -64,7 +64,6 @@ public class FsChannelHangUpCompleteEslEventHandler extends AbstractFsEslEventHa
         callInfo.setChannelInfoMap(uniqueId, channelInfo);
         ifsCallCacheService.saveCallInfo(callInfo);
 
-
     }
 
 

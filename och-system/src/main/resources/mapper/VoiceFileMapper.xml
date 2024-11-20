@@ -9,7 +9,9 @@
         <result property="tts" column="tts" jdbcType="INTEGER"/>
         <result property="speechText" column="speech_text" jdbcType="VARCHAR"/>
         <result property="fileId" column="file_id" jdbcType="VARCHAR"/>
-        <result property="file" column="file" jdbcType="VARCHAR"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="fileSize" column="file_size" jdbcType="VARCHAR"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
@@ -17,25 +19,28 @@
     </resultMap>
 
   <sql id="selectVoiceFileInfoVo">
-      select id,
-             name,
-             type,
-             tts,
-             speech_text,
-             file_id,
-             file,
-             create_by,
-             create_time,
-             update_by,
-             update_time,
-             del_flag
-      from lfs_voice_file
+      select vf.id,
+             vf.name,
+             vf.type,
+             vf.tts,
+             vf.speech_text,
+             vf.file_id,
+             sf.file_name,
+             sf.file_path,
+             sf.file_size,
+             vf.create_by,
+             vf.create_time,
+             vf.update_by,
+             vf.update_time,
+             vf.del_flag
+      from voice_file vf
+      left join sys_file sf on sf.id = vf.file_id
   </sql>
 
     <select id="getDetail" resultMap="VoiceFileMap">
         <include refid="selectVoiceFileInfoVo"/>
         <where>
-            and id = #{id}
+            and vf.id = #{id}
         </where>
     </select>
 
@@ -43,28 +48,26 @@
         <include refid="selectVoiceFileInfoVo"/>
         <where>
             <if test="id != null">
-                and id = #{id}
+                and vf.id = #{id}
             </if>
             <if test="ids != null and ids.size() > 0">
-                and id in
+                and vf.id in
                 <foreach collection="ids" item="id" open="(" separator="," close=")">
                     #{id}
                 </foreach>
             </if>
             <if test="name != null and name != ''">
-                and  `name` like concat('%',#{name},'%')
+                and  vf.`name` like concat('%',#{name},'%')
             </if>
             <if test="type != null">
-                and `type` = #{type}
+                and vf.`type` = #{type}
             </if>
             <if test="tts != null">
-                and tts = #{tts}
+                and vf.tts = #{tts}
             </if>
-            <if test="speechText != null and speechText != ''">
-                and  speech_text like concat('%',#{speechText},'%')
-            </if>
-            and del_flag = 0
+            and vf.del_flag = 0
         </where>
+        order by vf.id desc
     </select>
 
 </mapper>

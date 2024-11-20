@@ -3,7 +3,6 @@ package com.och.system.service;
 import com.och.common.base.IBaseService;
 import com.och.common.domain.file.FileUploadVo;
 import com.och.system.domain.entity.SysFile;
-import com.och.system.domain.vo.file.SysFileVo;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -16,6 +15,7 @@ public interface ISysFileService extends IBaseService<SysFile> {
 
     /**
      * 文件上传
+     *
      * @param file 文件
      * @return 文件信息
      */

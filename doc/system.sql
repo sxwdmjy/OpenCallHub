@@ -691,5 +691,21 @@ create table call_skill_agent_rel
 )
     ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment '技能坐席关联表';
 
-
+create table voice_file
+(
+    id          bigint auto_increment comment '主键ID'
+        primary key,
+    name        varchar(50)                        not null comment '文件名称',
+    `type`        tinyint  default 1                 not null comment '类型 1-本地存储 2-腾讯云 3-阿里云 9-语音合成',
+    tts         tinyint                            null comment 'tts方式 1-腾讯 2-阿里 3-讯飞(type=9生效)',
+    speech_text varchar(500)                            null comment '合成文本',
+    file_id     varchar(32)                        null comment '文件ID',
+    file        varchar(128)                        null comment '文件地址',
+    create_by   bigint                             null comment '创建人',
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_by   bigint                             null comment '更新人',
+    update_time datetime                           null comment '修改时间',
+    del_flag    tinyint  default 0                 not null comment '删除标识 0 有效 1删除'
+)ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4
+    comment '语音文件表';
 
