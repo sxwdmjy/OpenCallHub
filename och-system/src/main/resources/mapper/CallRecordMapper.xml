@@ -4,35 +4,26 @@
 
     <resultMap type="com.och.system.domain.entity.CallRecord" id="CallRecordMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
-        <result property="callId" column="call_id" jdbcType="INTEGER"/>
+        <result property="callId" column="call_id" jdbcType="VARCHAR"/>
+        <result property="callerNumber" column="caller_number" jdbcType="VARCHAR"/>
+        <result property="callerDisplayNumber" column="caller_display_number" jdbcType="VARCHAR"/>
+        <result property="calleeNumber" column="callee_number" jdbcType="VARCHAR"/>
+        <result property="calleeDisplayNumber" column="callee_display_number" jdbcType="VARCHAR"/>
+        <result property="numberLocation" column="number_location" jdbcType="VARCHAR"/>
         <result property="agentId" column="agent_id" jdbcType="INTEGER"/>
-        <result property="groupId" column="group_id" jdbcType="INTEGER"/>
-        <result property="caller" column="caller" jdbcType="VARCHAR"/>
-        <result property="callerProvince" column="caller_province" jdbcType="VARCHAR"/>
-        <result property="callerCity" column="caller_city" jdbcType="VARCHAR"/>
-        <result property="callee" column="callee" jdbcType="VARCHAR"/>
-        <result property="calleeCity" column="callee_city" jdbcType="VARCHAR"/>
-        <result property="calledProvince" column="called_province" jdbcType="VARCHAR"/>
-        <result property="origCaller" column="orig_caller" jdbcType="VARCHAR"/>
-        <result property="origCallee" column="orig_callee" jdbcType="VARCHAR"/>
-        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
-        <result property="ringingTime" column="ringing_time" jdbcType="TIMESTAMP"/>
-        <result property="answerTime" column="answer_time" jdbcType="TIMESTAMP"/>
-        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
-        <result property="agentRingingTime" column="agent_ringing_time" jdbcType="TIMESTAMP"/>
-        <result property="agentAnswerTime" column="agent_answer_time" jdbcType="TIMESTAMP"/>
-        <result property="agentEndTime" column="agent_end_time" jdbcType="TIMESTAMP"/>
-        <result property="duration" column="duration" jdbcType="INTEGER"/>
-        <result property="hangupCause" column="hangup_cause" jdbcType="VARCHAR"/>
+        <result property="agentNumber" column="agent_number" jdbcType="VARCHAR"/>
+        <result property="agentName" column="agent_name" jdbcType="VARCHAR"/>
+        <result property="callState" column="call_state" jdbcType="INTEGER"/>
         <result property="direction" column="direction" jdbcType="INTEGER"/>
-        <result property="filepath" column="filepath" jdbcType="VARCHAR"/>
-        <result property="queueStime" column="queue_stime" jdbcType="TIMESTAMP"/>
-        <result property="queueEtime" column="queue_etime" jdbcType="TIMESTAMP"/>
-        <result property="recordStartTime" column="record_start_time" jdbcType="TIMESTAMP"/>
+        <result property="callStartTime" column="call_start_time" jdbcType="TIMESTAMP"/>
+        <result property="callEndTime" column="call_end_time" jdbcType="TIMESTAMP"/>
+        <result property="answerFlag" column="answer_flag" jdbcType="INTEGER"/>
+        <result property="answerTime" column="answer_time" jdbcType="TIMESTAMP"/>
+        <result property="ringingTime" column="ringing_time" jdbcType="TIMESTAMP"/>
         <result property="hangupDir" column="hangup_dir" jdbcType="INTEGER"/>
-        <result property="type" column="type" jdbcType="INTEGER"/>
-        <result property="transferAgent" column="transfer_agent" jdbcType="INTEGER"/>
-        <result property="transferAgentTime" column="transfer_agent_time" jdbcType="TIMESTAMP"/>
+        <result property="hangupCauseCode" column="hangup_cause_code" jdbcType="INTEGER"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="ringingPath" column="ringing_path" jdbcType="VARCHAR"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
@@ -40,6 +31,45 @@
         <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
     </resultMap>
 
+  <sql id="selectCallRecordInfoVo">
+     
+   </sql>
+    <select id="getCallPageList" resultType="com.och.system.domain.vo.call.CallRecordVo">
+        SELECT
+        cr.id,
+        cr.call_id,
+        cr.caller_number,
+        cr.caller_display_number,
+        cr.callee_number,
+        cr.callee_display_number,
+        cr.number_location,
+        cr.agent_id,
+        cr.agent_number,
+        cr.agent_name,
+        cr.call_state,
+        cr.direction,
+        cr.call_start_time,
+        cr.call_end_time,
+        cr.answer_flag,
+        cr.answer_time,
+        cr.ringing_time,
+        cr.hangup_dir,
+        cr.hangup_cause_code,
+        cr.file_path,
+        cr.ringing_path,
+        cr.create_by,
+        cr.create_time,
+        cr.update_by,
+        cr.update_time
+        FROM call_record cr
+        <where>
+            cr.del_flag = 0
+            <if test="callId != null and callId != ''">
+                AND cr.call_id = #{callId}
+            </if>
+        </where>
+        order by cr.id desc
+    </select>
 
 </mapper>
 

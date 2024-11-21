@@ -11,9 +11,12 @@ import com.och.common.enums.AgentStateEnum;
 import com.och.common.enums.SipAgentStatusEnum;
 import com.och.esl.factory.AbstractFsEslEventHandler;
 import com.och.esl.utils.EslEventUtil;
+import com.och.system.domain.entity.CallRecord;
 import com.och.system.domain.vo.agent.SipAgentStatusVo;
+import com.och.system.service.ICallRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.freeswitch.esl.client.transport.event.EslEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -63,6 +66,13 @@ public class FsChannelHangUpCompleteEslEventHandler extends AbstractFsEslEventHa
 
         callInfo.setChannelInfoMap(uniqueId, channelInfo);
         ifsCallCacheService.saveCallInfo(callInfo);
+
+
+        CallRecord callRecord = new CallRecord();
+        callRecord.transfer(callInfo);
+        iCallRecordService.save(callRecord);
+
+        ifsCallCacheService.removeCallInfo(callInfo.getCallId());
 
     }
 

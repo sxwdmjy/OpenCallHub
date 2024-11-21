@@ -14,18 +14,23 @@ import com.och.esl.client.FsClient;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.security.utils.SecurityUtils;
 import com.och.system.domain.entity.CallDisplay;
+import com.och.system.domain.entity.CallRecord;
 import com.och.system.domain.entity.CorpInfo;
 import com.och.system.domain.query.agent.SipAgentQuery;
 import com.och.system.domain.query.call.CallQuery;
+import com.och.system.domain.query.call.CallRecordQuery;
 import com.och.system.domain.query.display.CallDisplayQuery;
 import com.och.system.domain.vo.agent.SipAgentVo;
+import com.och.system.domain.vo.call.CallRecordVo;
 import com.och.system.domain.vo.display.CallDisplayVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.service.ICallDisplayService;
+import com.och.system.service.ICallRecordService;
 import com.och.system.service.ICorpInfoService;
 import com.och.system.service.ISipAgentService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +54,9 @@ public class ICallServiceImpl implements ICallService {
 
     @Autowired
     private IFsCallCacheService iFsCallCacheService;
+
+    @Autowired
+    private ICallRecordService iCallRecordService;
 
     @Override
     public Long makeCall(CallQuery query) {
@@ -111,4 +119,23 @@ public class ICallServiceImpl implements ICallService {
         fsClient.makeCall(callId, callInfo.getCaller(), callInfo.getCallerDisplay(), uniqueId, query.getCallerTimeOut(), callRoute);
         return callId;
     }
+
+    @Override
+    public CallRecordVo getCallInfo(Long callId) {
+        CallRecordVo callRecordVo = new CallRecordVo();
+        CallRecord callRecord = iCallRecordService.getById(callId);
+        if(Objects.isNull(callRecord)){
+            throw new CommonException("呼叫记录不存在");
+        }
+        BeanUtils.copyProperties(callRecord, callRecordVo);
+        return callRecordVo;
+    }
+
+    @Override
+    public List<CallRecordVo> getCallPageList(CallRecordQuery query) {
+        return iCallRecordService.getCallPageList(query);
+    }
+
+
+
 }

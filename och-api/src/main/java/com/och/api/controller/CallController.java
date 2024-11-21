@@ -1,13 +1,18 @@
 package com.och.api.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.och.api.service.ICallService;
 import com.och.common.base.BaseController;
 import com.och.common.base.ResResult;
 import com.och.system.domain.query.call.CallQuery;
+import com.och.system.domain.query.call.CallRecordQuery;
+import com.och.system.domain.vo.call.CallRecordVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 拨打接口
@@ -36,14 +41,16 @@ public class CallController extends BaseController {
 
     @Operation(description = "呼叫详情", method = "POST")
     @PostMapping("/get/{callId}")
-    public ResResult getCallInfo(@PathVariable("callId") Long callId){
-
-        return success();
+    public ResResult<CallRecordVo> getCallInfo(@PathVariable("callId") Long callId){
+        CallRecordVo callRecord = iCallService.getCallInfo(callId);
+        return success(callRecord);
     }
 
     @Operation(description = "呼叫列表(分页)", method = "POST")
     @PostMapping("/page/list")
-    public ResResult getCallPageList(){
-        return success();
+    public ResResult<PageInfo<CallRecordVo>> getCallPageList(@RequestBody CallRecordQuery query){
+        List<CallRecordVo> recordList = iCallService.getCallPageList(query);
+        PageInfo<CallRecordVo> pageInfo = new PageInfo<>(recordList);
+        return success(pageInfo);
     }
 }

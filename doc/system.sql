@@ -325,7 +325,7 @@ VALUES ('lan', 'allow', 0, NULL, NULL, NULL, 1, NULL, NULL, NULL, 0),
        ('loopback.auto', 'allow', 0, NULL, NULL, NULL, 1, NULL, NULL, NULL, 0),
        ('lan', 'allow', 1, 'allow', '127.0.0.1/32', NULL, 1, NULL, NULL, NULL, 0),
        ('domains', 'deny', 2, 'allow', '', '$${domain}', 1, NULL, NULL, NULL, 0),
-       ('loopback.auto', 'allow', 3, 'allow', '59.110.143.217/32', '', 1, NULL, NULL, NULL, 0);
+       ('loopback.auto', 'allow', 3, 'allow', '127.0.0.1/32', '', 1, NULL, NULL, NULL, 0);
 
 create table fs_dialplan
 (
@@ -705,5 +705,36 @@ CREATE TABLE `voice_file` (
                               `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='语音文件表'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='语音文件表';
+
+
+CREATE TABLE `call_record` (
+                               `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                               `call_id` varchar(64) NOT NULL  COMMENT '呼叫唯一ID',
+                               `caller_number` varchar(32) NOT NULL COMMENT '主叫号码',
+                               `caller_display_number` varchar(32) NOT NULL COMMENT '主叫显号',
+                               `callee_number` varchar(32) NOT NULL COMMENT '被叫号码',
+                               `callee_display_number` varchar(32) NOT NULL COMMENT '被叫显号',
+                               `number_location` varchar(128) DEFAULT NULL COMMENT '号码归属地',
+                               `agent_id` bigint(20) NOT NULL COMMENT '坐席ID',
+                               `agent_number` varchar(32) NOT NULL COMMENT '坐席号码',
+                               `agent_name` varchar(128) NOT NULL COMMENT '坐席名称',
+                               `call_state` tinyint(4) NOT NULL  COMMENT '呼叫状态 1-成功 2-失败',
+                               `direction` tinyint(4) DEFAULT NULL COMMENT '呼叫方式 1-呼出 2-呼入',
+                               `call_start_time` datetime DEFAULT NULL COMMENT '呼叫开始时间',
+                               `call_end_time` datetime DEFAULT NULL COMMENT '呼叫结束时间',
+                               `answer_flag` tinyint(4) NOT NULL COMMENT '应答标识 0-接通 1-坐席未接用户未接 2-坐席接通用户未接通 3-用户接通坐席未接通',
+                               `answer_time` datetime NOT NULL COMMENT '呼叫接通时间',
+                               `ringing_time` datetime DEFAULT NULL COMMENT '振铃时间',
+                               `hangup_dir` tinyint(4) NOT NULL COMMENT '挂机方向 1-主叫挂机 2-被叫挂机 3-系统挂机',
+                               `hangup_cause_code` tinyint(4) NOT NULL COMMENT '挂机原因 ',
+                               `file_path` varchar(500) DEFAULT NULL COMMENT '录音文件地址',
+                               `ringing_path` varchar(500) DEFAULT NULL COMMENT '振铃文件地址',
+                               `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                               `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                               `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                               PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='呼叫记录表';
 

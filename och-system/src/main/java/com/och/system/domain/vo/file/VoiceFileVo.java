@@ -1,6 +1,5 @@
 package com.och.system.domain.vo.file;
 
-import com.och.common.domain.file.FileUploadVo;
 import com.och.system.domain.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

@@ -1,277 +1,245 @@
 package com.och.system.domain.entity;
 
+import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.och.common.base.BaseEntity;
+import com.och.common.domain.CallInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
 import java.io.Serializable;
-import java.util.Date;
 
 
 /**
  * 呼叫记录表(CallRecord)表实体类
  *
  * @author danmo
- * @since 2024-08-12 15:30:51
+ * @since 2024-11-21 11:23:02
  */
 @Schema
 @Data
 @SuppressWarnings("serial")
 @TableName("call_record")
 public class CallRecord extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = -89660039865218226L;
+  private static final long serialVersionUID = 373517321891756184L;
+   
+    /**
+     *  主键ID
+     */
 
     @Schema(description = "主键ID")
     @TableId(type = IdType.AUTO)
     private Long id;
 
 
+     
     /**
-     * 呼叫ID
+     *  呼叫唯一ID 
      */
-    @Schema(description = "呼叫ID")
+    @Schema(description = "呼叫唯一ID")
     @TableField("call_id")
-    private Long callId;
-
-
+    private String callId;
+    
+    
+     
     /**
-     * 坐席id
-     */
-    @Schema(description = "坐席id")
-    @TableField("agent_id")
-    private Integer agentId;
-
-
-    /**
-     * 技能组编号
-     */
-    @Schema(description = "技能组编号")
-    @TableField("group_id")
-    private Integer groupId;
-
-
-    /**
-     * 主叫号码
+     *  主叫号码 
      */
     @Schema(description = "主叫号码")
-    @TableField("caller")
-    private String caller;
-
-
+    @TableField("caller_number")
+    private String callerNumber;
+    
+    
+     
     /**
-     * 主叫归属省
+     *  主叫显号 
      */
-    @Schema(description = "主叫归属省")
-    @TableField("caller_province")
-    private String callerProvince;
-
-
+    @Schema(description = "主叫显号")
+    @TableField("caller_display_number")
+    private String callerDisplayNumber;
+    
+    
+     
     /**
-     * 主叫归属市
-     */
-    @Schema(description = "主叫归属市")
-    @TableField("caller_city")
-    private String callerCity;
-
-
-    /**
-     * 被叫号码
+     *  被叫号码 
      */
     @Schema(description = "被叫号码")
-    @TableField("callee")
-    private String callee;
-
-
+    @TableField("callee_number")
+    private String calleeNumber;
+    
+    
+     
     /**
-     * 被叫归属市
+     *  被叫显号 
      */
-    @Schema(description = "被叫归属市")
-    @TableField("callee_city")
-    private String calleeCity;
-
-
+    @Schema(description = "被叫显号")
+    @TableField("callee_display_number")
+    private String calleeDisplayNumber;
+    
+    
+     
     /**
-     * 被叫归属省
+     *  号码归属地 
      */
-    @Schema(description = "被叫归属省")
-    @TableField("called_province")
-    private String calledProvince;
-
-
+    @Schema(description = "号码归属地")
+    @TableField("number_location")
+    private String numberLocation;
+    
+    
+     
     /**
-     * 原主叫
+     *  坐席ID 
      */
-    @Schema(description = "原主叫")
-    @TableField("orig_caller")
-    private String origCaller;
-
-
+    @Schema(description = "坐席ID")
+    @TableField("agent_id")
+    private Long agentId;
+    
+    
+     
     /**
-     * 原被叫
+     *  坐席号码 
      */
-    @Schema(description = "原被叫")
-    @TableField("orig_callee")
-    private String origCallee;
-
-
+    @Schema(description = "坐席号码")
+    @TableField("agent_number")
+    private String agentNumber;
+    
+    
+     
     /**
-     * 开始时间
+     *  坐席名称 
      */
-    @Schema(description = "开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("start_time")
-    private Date startTime;
-
-
+    @Schema(description = "坐席名称")
+    @TableField("agent_name")
+    private String agentName;
+    
+    
+     
     /**
-     * 振铃时间
+     *  呼叫状态 1-成功 2-失败 
      */
-    @Schema(description = "振铃时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("ringing_time")
-    private Date ringingTime;
-
-
+    @Schema(description = "呼叫状态 1-成功 2-失败")
+    @TableField("call_state")
+    private Integer callState;
+    
+    
+     
     /**
-     * 接听时间
+     *  呼叫方式 1-呼出 2-呼入 
      */
-    @Schema(description = "接听时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("answer_time")
-    private Date answerTime;
-
-
-    /**
-     * 结束时间
-     */
-    @Schema(description = "结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("end_time")
-    private Date endTime;
-
-
-    /**
-     * 坐席振铃时间
-     */
-    @Schema(description = "坐席振铃时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("agent_ringing_time")
-    private Date agentRingingTime;
-
-
-    /**
-     * 坐席接听时间
-     */
-    @Schema(description = "坐席接听时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("agent_answer_time")
-    private Date agentAnswerTime;
-
-
-    /**
-     * 坐席挂机时间
-     */
-    @Schema(description = "坐席挂机时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("agent_end_time")
-    private Date agentEndTime;
-
-
-    /**
-     * 持续时长
-     */
-    @Schema(description = "持续时长")
-    @TableField("duration")
-    private Integer duration;
-
-
-    /**
-     * 挂机原因
-     */
-    @Schema(description = "挂机原因")
-    @TableField("hangup_cause")
-    private String hangupCause;
-
-
-    /**
-     * 呼叫方向：0：呼入；1：呼出
-     */
-    @Schema(description = "呼叫方向：0：呼入；1：呼出")
+    @Schema(description = "呼叫方式 1-呼出 2-呼入")
     @TableField("direction")
     private Integer direction;
-
-
+    
+    
+     
     /**
-     * 录音地址
+     *  呼叫开始时间 
      */
-    @Schema(description = "录音地址")
-    @TableField("filepath")
-    private String filepath;
-
-
+    @Schema(description = "呼叫开始时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @TableField("call_start_time")
+    private Date callStartTime;
+    
+    
+     
     /**
-     * 进入队列时间
+     *  呼叫结束时间 
      */
-    @Schema(description = "进入队列时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("queue_stime")
-    private Date queueStime;
-
-
+    @Schema(description = "呼叫结束时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @TableField("call_end_time")
+    private Date callEndTime;
+    
+    
+     
     /**
-     * 退出队列时间
+     *  应答标识 0-接通 1-坐席未接用户未接 2-坐席接通用户未接通 3-用户接通坐席未接通 
      */
-    @Schema(description = "退出队列时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("queue_etime")
-    private Date queueEtime;
-
-
+    @Schema(description = "应答标识 0-接通 1-坐席未接用户未接 2-坐席接通用户未接通 3-用户接通坐席未接通")
+    @TableField("answer_flag")
+    private Integer answerFlag;
+    
+    
+     
     /**
-     * 录音开始时间
+     *  呼叫接通时间 
      */
-    @Schema(description = "录音开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("record_start_time")
-    private Date recordStartTime;
-
-
+    @Schema(description = "呼叫接通时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @TableField("answer_time")
+    private Date answerTime;
+    
+    
+     
     /**
-     * 挂机方向，1主叫，2被叫，3系统
+     *  振铃时间 
      */
-    @Schema(description = "挂机方向，1主叫，2被叫，3系统")
+    @Schema(description = "振铃时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @TableField("ringing_time")
+    private Date ringingTime;
+    
+    
+     
+    /**
+     *  挂机方向 1-主叫挂机 2-被叫挂机 3-系统挂机 
+     */
+    @Schema(description = "挂机方向 1-主叫挂机 2-被叫挂机 3-系统挂机")
     @TableField("hangup_dir")
     private Integer hangupDir;
-
-
+    
+    
+     
     /**
-     * 呼叫类型 0 呼入，1 呼出
+     *  挂机原因  
      */
-    @Schema(description = "呼叫类型 0 呼入，1 呼出")
-    @TableField("type")
-    private Integer type;
-
+    @Schema(description = "挂机原因 ")
+    @TableField("hangup_cause_code")
+    private Integer hangupCauseCode;
+    
+    
+     
     /**
-     * 转接前坐席
+     *  录音文件地址 
      */
-    @Schema(description = "转接前坐席")
-    @TableField("transfer_agent")
-    private Integer transferAgent;
-
-
+    @Schema(description = "录音文件地址")
+    @TableField("file_path")
+    private String filePath;
+    
+    
+     
     /**
-     * 用户发起转坐席操作的时间
+     *  振铃文件地址 
      */
-    @Schema(description = "用户发起转坐席操作的时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @TableField("transfer_agent_time")
-    private Date transferAgentTime;
+    @Schema(description = "振铃文件地址")
+    @TableField("ringing_path")
+    private String ringingPath;
 
 
+  public void transfer(CallInfo callInfo) {
+    this.setCallId(String.valueOf(callInfo.getCallId()));
+    this.setAgentId(callInfo.getAgentId());
+    this.setAgentNumber(callInfo.getAgentNumber());
+    this.setAgentName(callInfo.getAgentName());
+    this.setCallerNumber(callInfo.getCaller());
+    this.setCallerDisplayNumber(callInfo.getCallerDisplay());
+    this.setCalleeNumber(callInfo.getCallee());
+    this.setCalleeDisplayNumber(callInfo.getCalleeDisplay());
+    this.setNumberLocation(callInfo.getNumberLocation());
+    this.setCallStartTime(new Date(callInfo.getCallTime()));
+    this.setCallEndTime(new Date(callInfo.getEndTime()));
+    this.setDirection(callInfo.getDirection());
+    this.setAnswerFlag(callInfo.getAnswerCount());
+    this.setAnswerTime(new Date(callInfo.getAnswerTime()));
+    this.setRingingTime(new Date(callInfo.getRecordStartTime()));
+    this.setHangupDir(callInfo.getHangupDir());
+    this.setHangupCauseCode(callInfo.getHangupCause());
+    this.setFilePath(callInfo.getRecord());
+    this.setRingingPath(callInfo.getRecord());
+    //this.setCallState(callInfo.getProcess().getCode());
+  }
 }
 

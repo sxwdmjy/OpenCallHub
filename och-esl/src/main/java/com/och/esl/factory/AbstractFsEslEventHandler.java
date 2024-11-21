@@ -5,6 +5,7 @@ import com.och.common.enums.AgentStateEnum;
 import com.och.esl.client.FsClient;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.system.service.ICallDisplayService;
+import com.och.system.service.ICallRecordService;
 import com.och.system.service.ISipAgentService;
 import lombok.extern.slf4j.Slf4j;
 import org.freeswitch.esl.client.transport.event.EslEvent;
@@ -40,6 +41,9 @@ public abstract class AbstractFsEslEventHandler implements FsEslEventHandler {
     @Lazy
     @Autowired
     protected FsClient fsClient;
+
+    @Autowired
+    protected ICallRecordService iCallRecordService;
 
 
     @Override
