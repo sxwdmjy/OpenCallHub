@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Schema
 @Data
-public class SubscriberQuery extends BaseQuery {
+public class KoSubscriberQuery extends BaseQuery {
 
     @Schema(description = "主键ID")
     private Integer id;

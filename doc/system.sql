@@ -481,7 +481,7 @@ create table sys_category
   DEFAULT CHARSET = utf8mb4 comment '分类配置表';
 
 
-CREATE TABLE `dispatcher`
+CREATE TABLE `ko_dispatcher`
 (
     `id`          int(10) NOT NULL AUTO_INCREMENT,
     `setid`       int(11) NOT NULL DEFAULT '0' COMMENT '分组ID',
@@ -501,7 +501,7 @@ CREATE TABLE `dispatcher`
   DEFAULT CHARSET = utf8mb4 comment 'KO负载管理表';
 
 
-CREATE TABLE `subscriber`
+CREATE TABLE `ko_subscriber`
 (
     `id`       int(10) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `username` varchar(64)  NOT NULL DEFAULT '' COMMENT '用户名称',

@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Schema
 @Data
-public class DispatcherQuery extends BaseQuery {
+public class KoDispatcherQuery extends BaseQuery {
 
     @Schema(description = "ID", hidden = true)
     private Integer id;

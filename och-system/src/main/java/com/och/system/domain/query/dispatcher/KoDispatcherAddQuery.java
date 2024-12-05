@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Schema
 @Data
-public class DispatcherAddQuery {
+public class KoDispatcherAddQuery {
 
     @Schema(description = "ID",hidden = true)
     private Integer id;

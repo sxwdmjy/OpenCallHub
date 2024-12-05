@@ -20,8 +20,8 @@ import java.io.Serializable;
 @Schema
 @Data
 @SuppressWarnings("serial")
-@TableName("dispatcher")
-public class Dispatcher extends BaseEntity implements Serializable {
+@TableName("ko_dispatcher")
+public class KoDispatcher extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L; //1
 

@@ -2,7 +2,7 @@ package com.och.system.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.och.system.domain.entity.Dispatcher;
+import com.och.system.domain.entity.KoDispatcher;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 
 @Mapper
-public interface DispatcherMapper extends BaseMapper<Dispatcher> {
+public interface KoDispatcherMapper extends BaseMapper<KoDispatcher> {
 
 
 }

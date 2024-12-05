@@ -4,7 +4,6 @@ package com.och.system.domain.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.och.common.base.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -20,8 +19,8 @@ import java.util.Date;
 @Schema
 @Data
 @SuppressWarnings("serial")
-@TableName("subscriber")
-public class Subscriber implements Serializable {
+@TableName("ko_subscriber")
+public class KoSubscriber implements Serializable {
 
     private static final long serialVersionUID = 1L; //1
 

@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SubscriberVo extends BaseVo {
+public class KoSubscriberVo extends BaseVo {
 
     @Schema(description = "id")
     private String id;

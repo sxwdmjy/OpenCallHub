@@ -1,7 +1,6 @@
 package com.och.system.domain.query.subsriber;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -11,7 +10,7 @@ import lombok.Data;
  */
 @Schema
 @Data
-public class SubscriberBatchAddQuery {
+public class KoSubscriberBatchAddQuery {
 
     @Schema(description = "初始值",example = "0000")
     private Integer initNum;
