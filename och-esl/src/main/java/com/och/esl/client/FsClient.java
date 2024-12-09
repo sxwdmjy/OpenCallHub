@@ -72,7 +72,7 @@ public class FsClient {
 
 
     public void init() {
-        /*FsConfigQuery query = new FsConfigQuery();
+        FsConfigQuery query = new FsConfigQuery();
         query.setGroup(groupName);
         List<FsConfig> fsConfigs = iFsConfigService.getList(query);
         for (FsConfig fsConfig : fsConfigs) {
@@ -84,7 +84,7 @@ public class FsClient {
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
-        }, 2, 1, TimeUnit.MINUTES);*/
+        }, 2, 1, TimeUnit.MINUTES);
 
     }
 

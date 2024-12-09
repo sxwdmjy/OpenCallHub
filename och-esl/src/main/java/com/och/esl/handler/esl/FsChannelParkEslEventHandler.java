@@ -87,11 +87,9 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         switch (DirectionEnum.getByType(direction)){
             case INBOUND -> {
                 sendAgentStatus(callInfo.getCallId(),callInfo.getCaller(),callInfo.getCallee(),direction, AgentStateEnum.CALL_OUT_RING);
-                return;
             }
             case OUTBOUND -> {
                 sendAgentStatus(callInfo.getCallId(),callInfo.getCaller(),callInfo.getCallee(),direction, AgentStateEnum.CALL_INT_RING);
-                return;
             }
             default -> {
             }
