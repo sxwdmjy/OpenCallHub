@@ -4,6 +4,7 @@ import com.och.common.config.redis.RedisService;
 import com.och.common.domain.CallInfo;
 import com.och.esl.client.FsClient;
 import com.och.esl.service.IFsCallCacheService;
+import com.och.system.service.ICallSkillService;
 import com.och.system.service.ISipAgentService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,9 @@ public abstract class FsAbstractRouteHandler {
 
     @Resource
     protected ISipAgentService iSipAgentService;
+
+    @Autowired
+    protected ICallSkillService iCallSkillService;
 
     public abstract void handler(String address, CallInfo callInfo, String uniqueId, String routeValue);
 

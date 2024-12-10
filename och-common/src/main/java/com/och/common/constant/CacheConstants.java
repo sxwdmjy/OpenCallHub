@@ -42,4 +42,9 @@ public class CacheConstants {
      */
     public static final String CLIENT_USER_POOL_KEY = "client_user_pool";
 
+    /**
+     * 技能组轮训key
+     */
+    public static final String CALL_SKILL_POLLING_KEY = "fs:skill:polling:{}";
+
 }
