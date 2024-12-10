@@ -738,3 +738,32 @@ CREATE TABLE `call_record` (
                                PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='呼叫记录表';
 
+create table call_in_phone
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    name        varchar(128)                       not null comment '名称',
+    phone       varchar(32)                        not null comment '呼入号码',
+    create_by   bigint                             null comment '创建人',
+    create_time datetime default CURRENT_TIMESTAMP null comment '创建时间',
+    update_by   bigint                             null comment '更新人',
+    update_time datetime                           null comment '更新时间',
+    del_flag    tinyint  default 0                 not null comment '删除标识 0 正常 1 删除'
+)
+    comment '呼入号码表';
+
+create table call_in_phone_rel
+(
+    id          bigint auto_increment comment '主键'
+        primary key,
+    call_in_id  bigint                             not null comment '呼入号码ID',
+    schedule_id bigint                             not null comment '日程ID',
+    route_type  tinyint                            null comment '路由类型 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr',
+    route_value varchar(50)                        null comment '路由类型值',
+    create_by   bigint                             null comment '创建人',
+    create_time datetime default CURRENT_TIMESTAMP null comment '创建时间',
+    update_by   bigint                             null comment '更新人',
+    update_time datetime                           null comment '更新时间',
+    del_flag    tinyint  default 0                 not null comment '删除标识 0 正常 1 删除'
+)
+    comment '呼入号码路由子码表';

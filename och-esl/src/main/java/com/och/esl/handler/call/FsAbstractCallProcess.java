@@ -6,6 +6,7 @@ import com.och.common.domain.ChannelInfo;
 import com.och.esl.client.FsClient;
 import com.och.esl.factory.FsEslRouteFactory;
 import com.och.esl.service.IFsCallCacheService;
+import com.och.system.service.ICallInPhoneService;
 import lombok.extern.slf4j.Slf4j;
 import org.freeswitch.esl.client.transport.event.EslEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public abstract class FsAbstractCallProcess {
 
     @Autowired
     protected FsEslRouteFactory routeFactory;
+
+    @Autowired
+    protected ICallInPhoneService callInPhoneService;
 
     public abstract void handler(String address, EslEvent event, CallInfo callInfo, ChannelInfo lfsChannelInfo);
 

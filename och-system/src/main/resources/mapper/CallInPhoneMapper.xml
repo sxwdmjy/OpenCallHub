@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.system.mapper.CallInPhoneMapper">
+
+    <resultMap type="com.och.system.domain.entity.CallInPhone" id="CallInPhoneMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.och.system.domain.vo.callin.CallInPhoneVo" id="CallInPhoneDetailMap">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="routeList" ofType="com.och.system.domain.vo.callin.CallInPhoneRelVo">
+            <id property="id" column="rel_id" jdbcType="INTEGER"/>
+            <result property="callInId" column="call_in_id" jdbcType="INTEGER"/>
+            <result property="scheduleId" column="schedule_id" jdbcType="INTEGER"/>
+            <result property="scheduleName" column="schedule_name" jdbcType="VARCHAR"/>
+            <result property="routeType" column="route_type" jdbcType="INTEGER"/>
+            <result property="routeValue" column="route_value" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <sql id="selectCallInPhoneVo">
+        select id, name, phone, create_by, create_time, update_by, update_time, del_flag from call_in_phone
+    </sql>
+
+
+    <sql id="selectCallInPhoneInfoVo">
+        select cip.id,
+               cip.phone,
+               cip.name,
+               cip.create_by,
+               cip.create_time,
+               cip.update_by,
+               cip.update_time,
+               cipr.id as rel_id,
+               cipr.call_in_id,
+               cipr.schedule_id,
+               cs.name as schedule_name,
+               cipr.route_type,
+               cipr.route_value
+        from call_in_phone cip
+                 left join call_in_phone_rel cipr on cip.id = cipr.call_in_id and cipr.del_flag = 0
+                 inner join call_schedule cs on cipr.schedule_id = cs.id and cs.del_flag = 0
+    </sql>
+
+    <select id="getDetail" resultMap="CallInPhoneDetailMap">
+        <include refid="selectCallInPhoneInfoVo"/>
+        <where>
+            and cip.id = #{id}
+        </where>
+    </select>
+
+    <select id="getList" resultMap="CallInPhoneDetailMap">
+        <include refid="selectCallInPhoneInfoVo"/>
+        <where>
+            <if test="phone != null and phone != ''">
+                and  cip.phone = #{phone}
+            </if>
+            and cip.del_flag = 0
+        </where>
+    </select>
+
+    <select id="getDetailByPhone" resultType="com.och.system.domain.vo.callin.CallInPhoneVo">
+        <include refid="selectCallInPhoneVo"/>
+        <where>
+            and phone = #{phone}
+            and del_flag = 0
+        </where>
+    </select>
+
+</mapper>
+
