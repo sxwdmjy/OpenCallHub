@@ -284,7 +284,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
                 //callQueueMap.remove(skill.getId());
             }
         } catch (Exception e) {
-            log.error("排队异常",e);
+            log.error("排队异常 error:{}",e.getMessage(),e);
         }
     }
 
