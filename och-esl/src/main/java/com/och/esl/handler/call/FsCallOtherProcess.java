@@ -56,7 +56,12 @@ public class FsCallOtherProcess extends FsAbstractCallProcess {
         callInfo.setProcess(ProcessEnum.CALL_BRIDGE);
         lfsCallCacheService.saveCallInfo(callInfo);
         lfsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
-        fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCallee(),callInfo.getCalleeDisplay(),otherUniqueId,callInfo.getCalleeTimeOut(), callRoute);
+        try {
+            fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCallee(),callInfo.getCalleeDisplay(),otherUniqueId,callInfo.getCalleeTimeOut(), callRoute);
+        } catch (Exception e) {
+            log.info("CallOtherProcess 呼叫另一条腿异常 error:{}",e.getMessage(),e);
+            fsClient.hangupCall(address, callInfo.getCallId(), lfsChannelInfo.getUniqueId());
+        }
     }
 
 

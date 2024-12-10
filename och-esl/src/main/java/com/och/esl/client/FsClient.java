@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 public class FsClient {
 
     //呼叫编码
-    @Value("${freeswitch.codec:^^:G729:PCMU:PCMA}")
+    @Value("${freeswitch.codec:^^:G722:PCMU:PCMA}")
     private String codec;
 
     @Value("${freeswitch.sample.rate:8000}")
@@ -327,7 +327,7 @@ public class FsClient {
                 .append("sip_contact_user=").append(calledDisplay).append(",")
                 .append("ring_asr=true").append(",")
                 .append("fire_asr_events=true").append(",")
-                .append("absolute_codec_string=").append(lfsCallRouteRelVo.getGatewayCoding()).append(",")
+                .append("absolute_codec_string=").append(codec).append(",")
                 .append("origination_caller_id_number=").append(calledDisplay).append(",")
                 .append("origination_caller_id_name=").append(calledDisplay).append(",")
                 .append("origination_uuid=").append(uniqueId);
@@ -352,7 +352,7 @@ public class FsClient {
                 .append("sip_contact_user=").append(calledDisplay).append(",")
                 .append("ring_asr=true").append(",")
                 .append("fire_asr_events=true").append(",")
-                .append("absolute_codec_string=").append(gatewayAddress).append(",")
+                .append("absolute_codec_string=").append(codec).append(",")
                 .append("origination_caller_id_number=").append(calledDisplay).append(",")
                 .append("origination_caller_id_name=").append(calledDisplay).append(",")
                 .append("origination_uuid=").append(uniqueId);

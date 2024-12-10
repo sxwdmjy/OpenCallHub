@@ -49,11 +49,12 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         CallInfo callInfo = ifsCallCacheService.getCallInfoByUniqueId(uniqueId);
 
         if (callInfo == null && DirectionEnum.INBOUND.name().equals(EslEventUtil.getCallDirection(event).toUpperCase())) {
-            if(StringUtils.containsAny(EslEventUtil.getVariableSipUserAgent(event), "FreeSWITCH")){
+            if(StringUtils.containsAnyIgnoreCase(EslEventUtil.getVariableSipUserAgent(event), "FreeSWITCH")){
                 inboundCall(address,event);
                 return;
             }else {
                 outboundCall(address,event);
+                return;
             }
 //            if (EslEventUtil.getSipReqPort(event) == null) {
 //                //呼入
