@@ -11,7 +11,8 @@ cd ./kamailio-5.7.0
 
 make FLAVOUR=kamailio cfg
 
-make  FLAVOUR=kamailio include_modules="db_mysql " cfg
+#需要添加模块
+make  FLAVOUR=kamailio include_modules="db_mysql app_lua" cfg
 
 cd ./src
 
@@ -21,6 +22,7 @@ make install
 ```
 
 3. 配置Kamailio
+
 4. 启动Kamailio
 5. 开启Kamailio日志
 ````
