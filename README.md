@@ -22,6 +22,8 @@ OpenCallHub 是一个强大且灵活的开源呼叫中心解决方案，旨在�
 - ESL 
 - SpringSecurity + JWT
 - WebSocket
+- kamailio
+- freeswitch
 
 
 ## 3、快速开始
