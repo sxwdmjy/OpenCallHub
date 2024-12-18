@@ -33,7 +33,6 @@
                create_time,
                update_by,
                update_time,
-               tenant_id,
                del_flag
         from call_schedule
     </sql>
