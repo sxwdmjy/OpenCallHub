@@ -6,7 +6,7 @@ OpenCallHub 是一个强大且灵活的开源呼叫中心解决方案，旨在�
 
 #### 在线收集需求中。。。。。。。
 
-## 1、项目结构
+#### 1、项目结构
 
     |--- och-api      接口服务
     |--- och-common   基础功能模块
@@ -15,7 +15,7 @@ OpenCallHub 是一个强大且灵活的开源呼叫中心解决方案，旨在�
     |--- och-security 安全模块
     |--- och-system   系统模块
 
-## 2、后端技术栈
+#### 2、后端技术栈
 - java17
 - SpringBoot v3.3.1
 - MySQL + MyBatis-Plus
@@ -28,7 +28,7 @@ OpenCallHub 是一个强大且灵活的开源呼叫中心解决方案，旨在�
 - freeswitch
 
 
-## 3、快速开始
+#### 3、快速开始
 1. 克隆项目到本地
 ```bash
 git clone https://github.com/iFindCallCenter/openCallHub.git
@@ -45,11 +45,20 @@ openCallHub/doc/system.sql 创建数据库表
 mvn clean install
 java -jar och-api.0.0.1.jar
 ```
-5. [前端地址](https://gitee.com/zhongjiawei999/waihu-app) `https://gitee.com/zhongjiawei999/waihu-app`
 
-6. 联系方式： 有能力可加微信交流
+#### 4、开发计划
+1. 后台管理-----------------开发中
+2. 技能组-----------------开发中
+3. ivr流程-----------------开发中
+4. 外呼任务
+5. 电话条集成
+6. 报表
+
+##### 5、 [前端地址](https://gitee.com/zhongjiawei999/waihu-app) `https://gitee.com/zhongjiawei999/waihu-app`
+
+#### 6、 联系方式： 有能力可加微信交流
 
 ![微信](image.png)
 
-7. **说明：** 本项目仅供学习交流使用，请勿用于非法用途，否则后果自负。
+##### 7. **说明：** 本项目仅供学习交流使用，请勿用于非法用途，否则后果自负。
   
