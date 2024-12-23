@@ -18,6 +18,7 @@
     <resultMap id="FlowInfoVoMap" type="com.och.ivr.domain.vo.FlowInfoVo">
         <result property="id" column="id" jdbcType="BIGINT"/>
         <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="desc" column="desc" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
@@ -43,12 +44,27 @@
     </resultMap>
 
   <sql id="selectFlowInfoInfoVo">
-     
-   </sql>
-    <select id="getInfo" resultType="com.och.ivr.domain.vo.FlowInfoVo">
+      select
+          fi.id,
+          fi.group_id,
+          if(fi.group_id = 1, '默认分组', lc.name) as group_name,
+          fi.name,
+          fi.desc,
+          fi.status,
+          fi.create_by,
+          fi.create_time,
+          fi.update_by,
+          fi.update_time,
+          fi.del_flag
+      from
+          flow_info fi
+              left join lfs_category lc on lc.id = fi.group_id
+  </sql>
+    <select id="getInfo" resultMap="FlowInfoVoMap">
         select
             fi.id,
             fi.group_id,
+            if(fi.group_id = 1, '默认分组', lc.name) as group_name,
             fi.name,
             fi.desc,
             fi.status,
@@ -70,7 +86,37 @@
             flow_info fi
                 left join flow_nodes fn on fi.id = fn.flow_id and fn.del_flag = 0
                 left join flow_edges fe on fi.id = fe.flow_id and fe.del_flag = 0
+                left join lfs_category lc on lc.id = fi.group_id
         where fi.id = #{id}
+    </select>
+
+    <select id="getList" resultType="com.och.ivr.domain.vo.FlowInfoListVo">
+        <include refid="selectFlowInfoInfoVo"/>
+        <where>
+           <if test="id =! null">
+               and fi.id = #{id}
+           </if>
+           <if test="groupId =! null">
+               and fi.group_id = #{groupId}
+           </if>
+           <if test="name != null and name != ''">
+               and fi.name like concat('%',#{name},'%')
+           </if>
+           <if test="desc != null and desc != ''">
+               and fi.`desc` like concat('%',#{desc},'%')
+           </if>
+           <if test="status != null">
+               and fi.status = #{status}
+           </if>
+           <if test="beginTime != null">
+               and fi.create_time &gt;= #{beginTime}
+           </if>
+           <if test="endTime != null">
+               and fi.create_time &lt;= #{endTime}
+           </if>
+        </where>
+        and fi.del_flag = 0
+        order by fi.id desc
     </select>
 
 </mapper>

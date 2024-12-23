@@ -1,5 +1,6 @@
 package com.och.ivr.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
@@ -7,15 +8,20 @@ import com.och.common.exception.CommonException;
 import com.och.common.utils.StringUtils;
 import com.och.ivr.domain.entity.FlowInfo;
 import com.och.ivr.domain.query.FlowInfoAddQuery;
+import com.och.ivr.domain.query.FlowInfoQuery;
+import com.och.ivr.domain.vo.FlowInfoListVo;
 import com.och.ivr.domain.vo.FlowInfoVo;
 import com.och.ivr.mapper.FlowInfoMapper;
 import com.och.ivr.service.IFlowEdgesService;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowNodesService;
+import com.och.system.service.ISysUserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,6 +36,7 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
 
     private final IFlowNodesService flowNodesService;
     private final IFlowEdgesService flowEdgesService;
+    private final ISysUserService sysUserService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -87,6 +94,16 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
     @Override
     public FlowInfoVo getInfo(Long id) {
         return baseMapper.getInfo(id);
+    }
+
+    @Override
+    public List<FlowInfoListVo> pageList(FlowInfoQuery query) {
+        startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
+        List<FlowInfoListVo> flowInfoList = this.baseMapper.getList(query);
+        if(CollectionUtils.isNotEmpty(flowInfoList)){
+            sysUserService.decorate(flowInfoList);
+        }
+        return flowInfoList;
     }
 
     private boolean checkName(String name) {

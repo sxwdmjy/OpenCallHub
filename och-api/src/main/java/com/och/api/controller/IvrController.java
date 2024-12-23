@@ -1,10 +1,13 @@
 package com.och.api.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.och.common.annotation.Log;
 import com.och.common.base.BaseController;
 import com.och.common.base.ResResult;
 import com.och.common.enums.BusinessTypeEnum;
 import com.och.ivr.domain.query.FlowInfoAddQuery;
+import com.och.ivr.domain.query.FlowInfoQuery;
+import com.och.ivr.domain.vo.FlowInfoListVo;
 import com.och.ivr.domain.vo.FlowInfoVo;
 import com.och.ivr.service.IFlowInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author danmo
@@ -61,6 +66,17 @@ public class IvrController extends BaseController {
     public ResResult<FlowInfoVo> get(@PathVariable("id") Long id) {
         FlowInfoVo info = iFlowInfoService.getInfo(id);
         return success(info);
+    }
+
+
+    @Log(title = "查询IVR流程列表", businessType = BusinessTypeEnum.SELECT)
+    @PreAuthorize("@authz.hasPerm('call:ivr:page:list')")
+    @Operation(summary = "查询IVR流程列表(分页)", method = "POST")
+    @PostMapping("/page/list")
+    public ResResult<PageInfo<FlowInfoListVo>> pageList(@RequestBody FlowInfoQuery query) {
+        List<FlowInfoListVo> list = iFlowInfoService.pageList(query);
+        PageInfo<FlowInfoListVo> pageInfo = new PageInfo<>(list);
+        return success(pageInfo);
     }
 
 
