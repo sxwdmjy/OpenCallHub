@@ -1,24 +1,23 @@
 package com.och.ivr.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.och.common.base.BaseServiceImpl;
-import com.och.ivr.domain.FlowEdges;
-import com.och.ivr.domain.FlowNodes;
+import com.och.common.enums.DeleteStatusEnum;
+import com.och.ivr.domain.entity.FlowEdges;
+import com.och.ivr.domain.entity.FlowNodes;
 import com.och.ivr.mapper.FlowEdgesMapper;
 import com.och.ivr.service.IFlowEdgesService;
 import com.och.ivr.service.IFlowNodesService;
+import com.och.security.utils.SecurityUtils;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.config.StateMachineBuilder;
-import org.springframework.statemachine.config.StateMachineFactory;
-import org.springframework.statemachine.config.configurers.ExternalTransitionConfigurer;
-import org.springframework.statemachine.config.configurers.StateConfigurer;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 存储流程中节点之间的连接信息（流转规则）(FlowEdges)表服务实现类
@@ -26,14 +25,13 @@ import java.util.stream.Collectors;
  * @author danmo
  * @since 2024-12-17 10:55:17
  */
+@RequiredArgsConstructor
 @Service
 public class FlowEdgesServiceImpl extends BaseServiceImpl<FlowEdgesMapper, FlowEdges> implements IFlowEdgesService {
 
 
-    @Autowired
-    private IFlowEdgesService flowEdgesService;
-    @Autowired
-    private IFlowNodesService flowNodesService;
+    private final IFlowEdgesService flowEdgesService;
+    private final IFlowNodesService flowNodesService;
 
     // 获取当前节点的后继节点
     public List<FlowNodes> getNextNodes(String currentNodeId) {
@@ -46,6 +44,28 @@ public class FlowEdgesServiceImpl extends BaseServiceImpl<FlowEdgesMapper, FlowE
             }
         }
         return nextNodes;
+    }
+
+    @Override
+    public void addByFlowId(List<FlowEdges> edges, Long flowId) {
+        if(CollectionUtils.isNotEmpty(edges)){
+            edges.forEach(item->item.setFlowId(flowId));
+            saveBatch(edges);
+        }
+    }
+
+    @Override
+    public void editByFlowId(List<FlowEdges> edges, Long flowId) {
+        if(CollectionUtils.isEmpty(edges)){
+            return;
+        }
+        deleteByFlowId(flowId);
+        addByFlowId(edges, flowId);
+    }
+
+    @Override
+    public void deleteByFlowId(Long flowId) {
+        update(new LambdaUpdateWrapper<FlowEdges>().set(FlowEdges::getUpdateBy, SecurityUtils.getUserId()).set(FlowEdges::getUpdateTime, new Date()).set(FlowEdges::getDelFlag, DeleteStatusEnum.DELETE_YES.getIndex()).eq(FlowEdges::getFlowId, flowId));
     }
 
     @Override

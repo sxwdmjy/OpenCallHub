@@ -1,8 +1,8 @@
 package com.och.ivr.service;
 
 import com.och.common.base.IBaseService;
-import com.och.ivr.domain.FlowInstances;
-import com.och.ivr.domain.FlowNodes;
+import com.och.ivr.domain.entity.FlowInstances;
+import com.och.ivr.domain.entity.FlowNodes;
 
 /**
  * 存储流程实例的基本信息(FlowInstances)表服务接口

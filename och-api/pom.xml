@@ -66,6 +66,11 @@
         </dependency>
         <dependency>
             <groupId>com.och</groupId>
+            <artifactId>och-ivr</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
             <artifactId>och-websocket</artifactId>
             <version>0.0.1</version>
         </dependency>

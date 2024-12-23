@@ -1,7 +1,7 @@
 package com.och.ivr.service;
 
 import com.och.common.base.IBaseService;
-import com.och.ivr.domain.FlowNodeExecutionHistory;
+import com.och.ivr.domain.entity.FlowNodeExecutionHistory;
 
 /**
  * 记录每次节点执行的历史记录(FlowNodeExecutionHistory)表服务接口

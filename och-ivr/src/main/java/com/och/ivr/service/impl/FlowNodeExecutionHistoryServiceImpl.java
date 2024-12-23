@@ -2,7 +2,7 @@ package com.och.ivr.service.impl;
 
 import com.och.common.base.BaseServiceImpl;
 import com.och.ivr.mapper.FlowNodeExecutionHistoryMapper;
-import com.och.ivr.domain.FlowNodeExecutionHistory;
+import com.och.ivr.domain.entity.FlowNodeExecutionHistory;
 import com.och.ivr.service.IFlowNodeExecutionHistoryService;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.och.ivr.domain;
+package com.och.ivr.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -62,7 +62,7 @@ public class FlowEdges extends BaseEntity implements Serializable {
      */
     @Schema(description = "流程ID，标识这条边属于哪个流程")
     @TableField("flow_id")
-    private String flowId;
+    private Long flowId;
 
 
 }

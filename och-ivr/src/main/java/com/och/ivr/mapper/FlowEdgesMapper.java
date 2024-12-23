@@ -3,7 +3,7 @@ package com.och.ivr.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
-import com.och.ivr.domain.FlowEdges;
+import com.och.ivr.domain.entity.FlowEdges;
 
 /**
  * 存储流程中节点之间的连接信息（流转规则）(FlowEdges)表数据库访问层

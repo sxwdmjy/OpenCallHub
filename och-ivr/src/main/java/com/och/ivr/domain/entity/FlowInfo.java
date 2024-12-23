@@ -1,4 +1,4 @@
-package com.och.ivr.domain;
+package com.och.ivr.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

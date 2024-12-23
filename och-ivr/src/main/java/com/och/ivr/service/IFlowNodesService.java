@@ -1,7 +1,7 @@
 package com.och.ivr.service;
 
 import com.och.common.base.IBaseService;
-import com.och.ivr.domain.FlowNodes;
+import com.och.ivr.domain.entity.FlowNodes;
 
 import java.util.List;
 
@@ -14,5 +14,11 @@ import java.util.List;
 public interface IFlowNodesService extends IBaseService<FlowNodes> {
 
     List<FlowNodes> findByFlowId(String flowId);
+
+    void addByFlowId(List<FlowNodes> nodes, Long flowId);
+
+    void editByFlowId(List<FlowNodes> nodes, Long flowId);
+
+    void deleteByFlowId(Long flowId);
 }
 

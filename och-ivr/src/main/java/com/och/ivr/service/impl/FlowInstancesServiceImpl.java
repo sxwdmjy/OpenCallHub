@@ -3,11 +3,10 @@ package com.och.ivr.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
-import com.och.ivr.domain.FlowNodes;
+import com.och.ivr.domain.entity.FlowNodes;
 import com.och.ivr.mapper.FlowInstancesMapper;
-import com.och.ivr.domain.FlowInstances;
+import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.service.IFlowInstancesService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**

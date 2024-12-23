@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.och.ivr.mapper.FlowNodeExecutionHistoryMapper">
 
-    <resultMap type="com.och.ivr.domain.FlowNodeExecutionHistory" id="FlowNodeExecutionHistoryMap">
+    <resultMap type="com.och.ivr.domain.entity.FlowNodeExecutionHistory" id="FlowNodeExecutionHistoryMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="instanceId" column="instance_id" jdbcType="BIGINT"/>
         <result property="nodeId" column="node_id" jdbcType="BIGINT"/>

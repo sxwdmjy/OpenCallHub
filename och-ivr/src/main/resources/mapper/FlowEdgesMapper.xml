@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.och.ivr.mapper.FlowEdgesMapper">
 
-    <resultMap type="com.och.ivr.domain.FlowEdges" id="FlowEdgesMap">
+    <resultMap type="com.och.ivr.domain.entity.FlowEdges" id="FlowEdgesMap">
         <result property="id" column="id" jdbcType="BIGINT"/>
         <result property="sourceNodeId" column="source_node_id" jdbcType="BIGINT"/>
         <result property="targetNodeId" column="target_node_id" jdbcType="BIGINT"/>

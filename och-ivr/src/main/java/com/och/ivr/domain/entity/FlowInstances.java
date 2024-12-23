@@ -1,4 +1,4 @@
-package com.och.ivr.domain;
+package com.och.ivr.domain.entity;
 
 import java.util.Date;
 

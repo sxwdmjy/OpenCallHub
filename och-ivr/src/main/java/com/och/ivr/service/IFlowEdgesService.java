@@ -1,8 +1,8 @@
 package com.och.ivr.service;
 
 import com.och.common.base.IBaseService;
-import com.och.ivr.domain.FlowEdges;
-import com.och.ivr.domain.FlowNodes;
+import com.och.ivr.domain.entity.FlowEdges;
+import com.och.ivr.domain.entity.FlowNodes;
 
 import java.util.List;
 
@@ -17,5 +17,10 @@ public interface IFlowEdgesService extends IBaseService<FlowEdges> {
     List<FlowEdges> findBySourceNodeId(String currentNodeId);
 
     List<FlowNodes> getNextNodes(String id);
+
+    void addByFlowId(List<FlowEdges> edges, Long flowId);
+
+    void editByFlowId(List<FlowEdges> edges, Long flowId);
+    void deleteByFlowId(Long flowId);
 }
 
