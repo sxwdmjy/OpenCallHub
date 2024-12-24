@@ -30,12 +30,11 @@ import java.util.List;
 public class FlowEdgesServiceImpl extends BaseServiceImpl<FlowEdgesMapper, FlowEdges> implements IFlowEdgesService {
 
 
-    private final IFlowEdgesService flowEdgesService;
     private final IFlowNodesService flowNodesService;
 
     // 获取当前节点的后继节点
     public List<FlowNodes> getNextNodes(String currentNodeId) {
-        List<FlowEdges> edges = flowEdgesService.findBySourceNodeId(currentNodeId);
+        List<FlowEdges> edges = findBySourceNodeId(currentNodeId);
         List<FlowNodes> nextNodes = new ArrayList<>();
         for (FlowEdges edge : edges) {
             FlowNodes nextNode = flowNodesService.getById(edge.getTargetNodeId());

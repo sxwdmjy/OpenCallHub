@@ -3,7 +3,6 @@ package com.och.ivr.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.statemachine.StateMachinePersist;
 import org.springframework.statemachine.config.EnableStateMachine;
@@ -14,23 +13,18 @@ import org.springframework.statemachine.persist.RepositoryStateMachinePersist;
 @Configuration
 @EnableStateMachine
 @EnableRedisHttpSession
-public class RedisStateMachineConfig{
+public class RedisStateMachineConfig {
 
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new JedisConnectionFactory();
+    public RepositoryStateMachinePersist<Object, Object> stateMachinePersist(RedisConnectionFactory connectionFactory) {
+        RedisStateMachineContextRepository<Object, Object> repository =
+                new RedisStateMachineContextRepository<>(connectionFactory);
+        return new RepositoryStateMachinePersist<>(repository);
     }
 
     @Bean
-    public StateMachinePersist<String, String, String> stateMachinePersist(RedisConnectionFactory connectionFactory) {
-        RedisStateMachineContextRepository<String, String> repository =
-                new RedisStateMachineContextRepository<String, String>(connectionFactory);
-        return new RepositoryStateMachinePersist<String, String>(repository);
-    }
-
-    @Bean
-    public RedisStateMachinePersister<String, String> redisStateMachinePersister(StateMachinePersist<String, String, String> stateMachinePersist) {
+    public RedisStateMachinePersister<Object, Object> redisStateMachinePersister(StateMachinePersist<Object, Object, String> stateMachinePersist) {
         return new RedisStateMachinePersister<>(stateMachinePersist);
     }
 }

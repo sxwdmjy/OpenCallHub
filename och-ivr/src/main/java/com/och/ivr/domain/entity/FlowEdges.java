@@ -56,6 +56,13 @@ public class FlowEdges extends BaseEntity implements Serializable {
     @TableField("condition")
     private String condition;
 
+    /**
+     * 事件
+     */
+    @Schema(description = "事件")
+    @TableField("event")
+    private String event;
+
 
     /**
      * 流程ID，标识这条边属于哪个流程

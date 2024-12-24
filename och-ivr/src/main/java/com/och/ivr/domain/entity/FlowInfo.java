@@ -60,7 +60,7 @@ public class FlowInfo extends BaseEntity implements Serializable {
     /**
      * 流程状态 0-草稿 1-待发布 2-已发布
      */
-    @Schema(description = "流程状态 0-草稿 1-待发布 2-已发布")
+    @Schema(description = "流程状态 0-草稿 1-待发布 2-已发布 3-已下线")
     @TableField("status")
     private Integer status;
 

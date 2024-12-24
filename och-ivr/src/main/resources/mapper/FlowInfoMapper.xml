@@ -39,6 +39,7 @@
             <result property="sourceNodeId" column="source_node_id" jdbcType="BIGINT"/>
             <result property="targetNodeId" column="target_node_id" jdbcType="BIGINT"/>
             <result property="condition" column="condition" jdbcType="VARCHAR"/>
+            <result property="event" column="edges_event" jdbcType="VARCHAR"/>
             <result property="flowId" column="id" jdbcType="BIGINT"/>
         </collection>
     </resultMap>
@@ -58,7 +59,7 @@
           fi.del_flag
       from
           flow_info fi
-              left join lfs_category lc on lc.id = fi.group_id
+              left join sys_category lc on lc.id = fi.group_id
   </sql>
     <select id="getInfo" resultMap="FlowInfoVoMap">
         select
@@ -81,12 +82,13 @@
             fe.id as edges_id,
             fe.source_node_id,
             fe.target_node_id,
-            fe.`condition` as edges_condition
+            fe.`condition` as edges_condition,
+            fe.`event` as edges_event
         from
             flow_info fi
                 left join flow_nodes fn on fi.id = fn.flow_id and fn.del_flag = 0
                 left join flow_edges fe on fi.id = fe.flow_id and fe.del_flag = 0
-                left join lfs_category lc on lc.id = fi.group_id
+                left join sys_category lc on lc.id = fi.group_id
         where fi.id = #{id}
     </select>
 

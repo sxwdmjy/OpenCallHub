@@ -110,7 +110,7 @@
         from lfs_skill lsk
                  left join lfs_skill_agent_rel lsar on lsar.skill_id = lsk.id and lsar.del_flag = 0
                  left join lfs_agent la on la.id = lsar.agent_id
-                 left join lfs_category lc on lc.id = lsk.group_id
+                 left join sys_category lc on lc.id = lsk.group_id
     </sql>
 
     <select id="getDetail" resultMap="CallSkillDetailMap">
@@ -125,7 +125,7 @@
         from lfs_skill lsk
         left join lfs_skill_agent_rel lsar on lsar.skill_id = lsk.id and lsar.del_flag = 0
         left join lfs_agent la on la.id = lsar.agent_id
-        left join lfs_category lc on lc.id = lsk.group_id
+        left join sys_category lc on lc.id = lsk.group_id
         <where>
             <if test="groupId != null">
                 and lsk.group_id = #{groupId}

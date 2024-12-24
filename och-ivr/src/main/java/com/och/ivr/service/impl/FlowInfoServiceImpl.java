@@ -1,6 +1,5 @@
 package com.och.ivr.service.impl;
 
-import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
@@ -18,6 +17,7 @@ import com.och.ivr.service.IFlowNodesService;
 import com.och.system.service.ISysUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +37,7 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
     private final IFlowNodesService flowNodesService;
     private final IFlowEdgesService flowEdgesService;
     private final ISysUserService sysUserService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -59,18 +60,18 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
         if (Objects.isNull(flowInfo)) {
             throw new CommonException("无效ID");
         }
-        if (!StringUtils.equals(flowInfo.getName(), query.getName()) && checkName(query.getName())){
+        if (!StringUtils.equals(flowInfo.getName(), query.getName()) && checkName(query.getName())) {
             throw new CommonException("名称已存在");
-        }else {
+        } else {
             flowInfo.setName(query.getName());
         }
-        if(StringUtils.isNotBlank(query.getDesc())){
+        if (StringUtils.isNotBlank(query.getDesc())) {
             flowInfo.setDesc(query.getDesc());
         }
-        if(Objects.nonNull(query.getStatus())){
+        if (Objects.nonNull(query.getStatus())) {
             flowInfo.setStatus(query.getStatus());
         }
-        if(updateById(flowInfo)){
+        if (updateById(flowInfo)) {
             flowNodesService.editByFlowId(query.getNodes(), flowInfo.getId());
             flowEdgesService.editByFlowId(query.getEdges(), flowInfo.getId());
         }
@@ -85,7 +86,7 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
             throw new CommonException("无效ID");
         }
         flowInfo.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
-        if (updateById(flowInfo)){
+        if (updateById(flowInfo)) {
             flowNodesService.deleteByFlowId(flowInfo.getId());
             flowEdgesService.deleteByFlowId(flowInfo.getId());
         }
@@ -100,10 +101,31 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
     public List<FlowInfoListVo> pageList(FlowInfoQuery query) {
         startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
         List<FlowInfoListVo> flowInfoList = this.baseMapper.getList(query);
-        if(CollectionUtils.isNotEmpty(flowInfoList)){
+        if (CollectionUtils.isNotEmpty(flowInfoList)) {
             sysUserService.decorate(flowInfoList);
         }
         return flowInfoList;
+    }
+
+    @Override
+    public void publish(Long id) {
+        FlowInfo flowInfo = getById(id);
+        if (Objects.isNull(flowInfo)) {
+            throw new CommonException("无效ID");
+        }
+        flowInfo.setStatus(2);
+        updateById(flowInfo);
+
+    }
+
+    @Override
+    public void offline(Long id) {
+        FlowInfo flowInfo = getById(id);
+        if (Objects.isNull(flowInfo)) {
+            throw new CommonException("无效ID");
+        }
+        flowInfo.setStatus(1);
+        updateById(flowInfo);
     }
 
     private boolean checkName(String name) {

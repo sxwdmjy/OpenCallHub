@@ -26,5 +26,9 @@ public interface IFlowInfoService extends IBaseService<FlowInfo> {
     FlowInfoVo getInfo(Long id);
 
     List<FlowInfoListVo> pageList(FlowInfoQuery query);
+
+    void publish(Long id);
+
+    void offline(Long id);
 }
 

@@ -79,5 +79,22 @@ public class IvrController extends BaseController {
         return success(pageInfo);
     }
 
+    @Log(title = "发布流程", businessType = BusinessTypeEnum.OTHER)
+    @PreAuthorize("@authz.hasPerm('call:ivr:publish')")
+    @Operation(summary = "发布流程", method = "POST")
+    @PostMapping("/publish/{id}")
+    public ResResult publish(@PathVariable("id") Long id) {
+        iFlowInfoService.publish(id);
+        return success();
+    }
+
+    @Log(title = "下线流程" , businessType = BusinessTypeEnum.OTHER)
+    @PreAuthorize("@authz.hasPerm('call:ivr:offline')")
+    @Operation(summary = "下线流程", method = "POST")
+    @PostMapping("/offline/{id}")
+    public ResResult offline(@PathVariable("id") Long id) {
+        iFlowInfoService.offline(id);
+        return success();
+    }
 
 }

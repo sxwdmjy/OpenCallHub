@@ -1,8 +1,5 @@
 package com.och.ivr.domain.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -37,6 +34,12 @@ public class FlowEdgeVo {
      */
     @Schema(description = "流转条件，决定从源节点到目标节点的流转条件（可为空表示无条件）")
     private String condition;
+
+    /**
+     * 事件
+     */
+    @Schema(description = "事件")
+    private String event;
 
 
     /**
