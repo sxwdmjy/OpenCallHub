@@ -44,11 +44,11 @@ public class FlowNodes extends BaseEntity implements Serializable {
     
      
     /**
-     *  节点类型 0-开始 1-结束 2-放音 3-菜单 4-收号 5-人工 6-留言 7-转接 8-转IVR 9-应答 10-挂机 11-路由 12-子IVR 13-满意度
+     *  节点类型 0-开始 1-结束 2-放音 3-菜单 4-收号 5-人工  6-转接  7-应答 8-挂机 9-路由 10-子IVR 11-满意度
      */
-    @Schema(description = "节点类型 0-开始 1-结束 2-放音 3-菜单 4-收号 5-人工 6-留言 7-转接 8-转IVR 9-应答 10-挂机 11-路由 12-子IVR 13-满意度")
+    @Schema(description = "节点类型 0-开始 1-结束 2-放音 3-菜单 4-收号 5-人工  6-转接  7-应答 8-挂机 9-路由 10-子IVR 11-满意度")
     @TableField("type")
-    private String type;
+    private Integer type;
     
     
      

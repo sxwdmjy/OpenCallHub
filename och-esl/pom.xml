@@ -42,12 +42,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.och</groupId>
-            <artifactId>och-ivr</artifactId>
-            <version>0.0.1</version>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
 
 

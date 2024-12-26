@@ -1,15 +1,14 @@
-package com.och.ivr.handler;
+package com.och.ivr.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.och.common.constant.CacheConstants;
 import com.och.common.utils.StringUtils;
-import com.och.ivr.contants.FlowData;
+import com.och.common.constant.FlowDataContext;
 import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.domain.vo.FlowEdgeVo;
 import com.och.ivr.domain.vo.FlowInfoVo;
 import com.och.ivr.domain.vo.FlowNodeVo;
 import com.och.ivr.event.FlowEvent;
-import com.och.ivr.listener.FlowStateMachineListener;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Component
-public class FlowEventHandler implements ApplicationListener<FlowEvent> {
+public class FlowEventListener implements ApplicationListener<FlowEvent> {
 
     private final RedisStateMachinePersister<Object, Object> persister;
     private final IFlowInfoService iFlowInfoService;
@@ -62,21 +61,22 @@ public class FlowEventHandler implements ApplicationListener<FlowEvent> {
      * @param event
      */
     private void transferStateMachine(FlowEvent event) {
-        /*FlowInfoVo info = iFlowInfoService.getInfo(event.getFlowId());
+        FlowInfoVo info = iFlowInfoService.getInfo(event.getFlowId());
         if (Objects.isNull(info)) {
             log.info("未找到流程信息 event:{}", event);
             return;
         }
         StateMachine<Object, Object> stateMachine = buildStateMachine(info);
+        if(Objects.isNull(stateMachine)){
+            log.info("创建状态机失败 event:{}", event);
+            return;
+        }
         try {
             StateMachine<Object, Object> restore = persister.restore(stateMachine, StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, event.getInstanceId()));
-            if (restore.isComplete()) {
-            }
-            restore.sendEvent("end");
-            persister.persist(restore, StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, event.getInstanceId()));
+            restore.sendEvent(event.getEvent());
         } catch (Exception e) {
             log.error("恢复状态机异常:event:{},error:{}", event, e.getMessage(), e);
-        }*/
+        }
     }
 
     /**
@@ -85,13 +85,13 @@ public class FlowEventHandler implements ApplicationListener<FlowEvent> {
      * @param event
      */
     private void startStateMachine(FlowEvent event) {
-        FlowData flowData = event.getData();
+        FlowDataContext flowData = event.getData();
         FlowInfoVo info = iFlowInfoService.getInfo(event.getFlowId());
         if (Objects.isNull(info)) {
             log.info("未找到流程信息 event:{}", event);
             return;
         }
-        flowData.setFlowInfoVo(info);
+        flowData.setFlowId(event.getFlowId());
         StateMachine<Object, Object> stateMachine = buildStateMachine(info);
         if (Objects.isNull(stateMachine)) {
             log.info("创建状态机失败 event:{}", event);

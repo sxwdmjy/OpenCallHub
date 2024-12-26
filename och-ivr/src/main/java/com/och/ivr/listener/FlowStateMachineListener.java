@@ -1,16 +1,16 @@
 package com.och.ivr.listener;
 
 import com.alibaba.fastjson.JSON;
-import com.och.common.constant.CacheConstants;
+import com.och.common.enums.FlowNodeTypeEnum;
 import com.och.common.utils.SpringUtils;
-import com.och.ivr.contants.FlowData;
+import com.och.common.utils.StringUtils;
+import com.och.common.constant.FlowDataContext;
 import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.domain.entity.FlowNodeExecutionHistory;
+import com.och.ivr.domain.vo.FlowInfoVo;
 import com.och.ivr.domain.vo.FlowNodeVo;
-import com.och.ivr.service.IFlowEdgesService;
-import com.och.ivr.service.IFlowInstancesService;
-import com.och.ivr.service.IFlowNodeExecutionHistoryService;
-import com.och.ivr.service.IFlowNodesService;
+import com.och.ivr.handler.AbstractIFlowNodeHandler;
+import com.och.ivr.service.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.StateContext;
@@ -30,6 +30,7 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
 
     private final IFlowNodesService iFlowNodesService;
     private final IFlowEdgesService iFlowEdgesService;
+    private final IFlowInfoService iFlowInfoService;
     private final IFlowInstancesService iFlowInstancesService;
     private final IFlowNodeExecutionHistoryService iFlowNodeExecutionHistoryService;
     private final RedisStateMachinePersister<Object, Object> persister;
@@ -38,6 +39,7 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
     public FlowStateMachineListener() {
         this.iFlowNodesService = SpringUtils.getBean(IFlowNodesService.class);
         this.iFlowEdgesService = SpringUtils.getBean(IFlowEdgesService.class);
+        this.iFlowInfoService = SpringUtils.getBean(IFlowInfoService.class);
         this.iFlowInstancesService = SpringUtils.getBean(IFlowInstancesService.class);
         this.iFlowNodeExecutionHistoryService = SpringUtils.getBean(IFlowNodeExecutionHistoryService.class);
         this.persister = SpringUtils.getBean("redisStateMachinePersister");
@@ -47,12 +49,13 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
 
     @Override
     public void stateEntered(State<Object, Object> state) {
-        FlowData flowData = stateContext.getExtendedState().get("flowData", FlowData.class);
+        FlowDataContext flowData = stateContext.getExtendedState().get("flowData", FlowDataContext.class);
         log.info("状态机状态进入:{},{}", state.getId(), flowData);
         if (flowData == null) {
             return;
         }
-        List<FlowNodeVo> nodes = flowData.getFlowInfoVo().getNodes();
+        FlowInfoVo info = iFlowInfoService.getInfo(flowData.getFlowId());
+        List<FlowNodeVo> nodes = info.getNodes();
         FlowNodeVo currentFlowNode = nodes.stream().filter(n -> Objects.equals(state.getId(), n.getId())).findFirst().orElseGet(null);
         if (Objects.isNull(currentFlowNode)) {
             log.info("未找到当前节点flowData:{}, id:{}", JSON.toJSONString(flowData), state.getId());
@@ -69,17 +72,16 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
         iFlowNodeExecutionHistoryService.save(history);
         flowData.setCurrentHistoryId(history.getId());
         stateContext.getExtendedState().getVariables().put("flowData", flowData);
-        //todo 执行节点逻辑
-        try {
-            persister.persist(stateContext.getStateMachine(), String.format(CacheConstants.CALL_IVR_INSTANCES_KEY, flowData.getInstanceId()));
-        } catch (Exception e) {
-            log.error("持久化状态机异常:event:{},error:{}", stateContext.getEvent(), e.getMessage(), e);
+        String handler = FlowNodeTypeEnum.getHandler(currentFlowNode.getType());
+        if(StringUtils.isNotBlank(handler)){
+            AbstractIFlowNodeHandler nodeHandler = SpringUtils.getBean(handler, AbstractIFlowNodeHandler.class);
+            nodeHandler.handle(stateContext);
         }
     }
 
     @Override
     public void stateExited(State<Object, Object> state) {
-        FlowData flowData = stateContext.getExtendedState().get("flowData", FlowData.class);
+        FlowDataContext flowData = stateContext.getExtendedState().get("flowData", FlowDataContext.class);
         log.info("状态机状态退出:{},{}", state.getId(), flowData);
         if (flowData == null) {
             return;

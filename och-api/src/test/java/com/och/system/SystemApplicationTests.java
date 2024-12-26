@@ -1,9 +1,6 @@
 package com.och.system;
 
-import cn.hutool.core.thread.ThreadUtil;
 import com.och.api.OchApiApplication;
-import com.och.ivr.contants.FlowData;
-import com.och.ivr.event.FlowEvent;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

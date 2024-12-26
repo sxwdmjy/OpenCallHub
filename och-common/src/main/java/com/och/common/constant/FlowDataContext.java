@@ -1,10 +1,9 @@
-package com.och.ivr.contants;
+package com.och.common.constant;
 
-import com.och.ivr.domain.vo.FlowInfoVo;
 import lombok.Data;
 
 @Data
-public class FlowData {
+public class FlowDataContext {
 
     /**
      * 呼叫地址
@@ -25,7 +24,7 @@ public class FlowData {
     /**
      * 流程信息
      */
-    private FlowInfoVo flowInfoVo;
+    private Long flowId;
 
     /**
      * 当前节点执行记录ID
