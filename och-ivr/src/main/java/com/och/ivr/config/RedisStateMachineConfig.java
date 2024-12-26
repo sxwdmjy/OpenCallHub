@@ -23,7 +23,7 @@ public class RedisStateMachineConfig {
         return new RepositoryStateMachinePersist<>(repository);
     }
 
-    @Bean
+    @Bean(name = "redisStateMachinePersister")
     public RedisStateMachinePersister<Object, Object> redisStateMachinePersister(StateMachinePersist<Object, Object, String> stateMachinePersist) {
         return new RedisStateMachinePersister<>(stateMachinePersist);
     }

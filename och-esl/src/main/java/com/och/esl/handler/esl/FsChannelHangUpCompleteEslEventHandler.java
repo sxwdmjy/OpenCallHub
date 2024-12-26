@@ -57,22 +57,20 @@ public class FsChannelHangUpCompleteEslEventHandler extends AbstractFsEslEventHa
 
         //最后一个挂机
         if (count == 1) {
-            callInfo.setEndTime(event.getEventDateTimestamp() / 1000);
             //坐席状态变更
             changeAgentStatus(callInfo);
-
             sendAgentStatus(callInfo.getCallId(), callInfo.getCaller(), callInfo.getCallee(), callInfo.getDirection(), AgentStateEnum.CALL_END);
+
+
+            CallRecord callRecord = new CallRecord();
+            callRecord.transfer(callInfo);
+            iCallRecordService.save(callRecord);
+
+            ifsCallCacheService.removeCallInfo(callInfo.getCallId());
         }
 
         callInfo.setChannelInfoMap(uniqueId, channelInfo);
         ifsCallCacheService.saveCallInfo(callInfo);
-
-
-        CallRecord callRecord = new CallRecord();
-        callRecord.transfer(callInfo);
-        iCallRecordService.save(callRecord);
-
-        ifsCallCacheService.removeCallInfo(callInfo.getCallId());
 
     }
 

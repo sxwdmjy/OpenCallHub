@@ -1,6 +1,8 @@
 package com.och.system;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.och.api.OchApiApplication;
+import com.och.ivr.contants.FlowData;
 import com.och.ivr.event.FlowEvent;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,42 @@ class SystemApplicationTests {
     private  ApplicationEventPublisher publisher;
 
     @Test
-    void contextLoads() {
-        //publisher.publishEvent(new FlowEvent(1L,1,1L,"test"));
-        publisher.publishEvent(new FlowEvent(1L,2,1L));
+    void contextLoads() throws InterruptedException {
+
+
+        /*ThreadUtil.execAsync(() ->{
+            FlowData flowData = new FlowData();
+            flowData.setAddress("111");
+            flowData.setCallId(1L);
+            flowData.setUniqueId("1111");
+            publisher.publishEvent(new FlowEvent(1L,1,flowData));
+        });
+
+
+        ThreadUtil.execAsync(() ->{
+            FlowData flowData = new FlowData();
+            flowData.setAddress("2222");
+            flowData.setCallId(2L);
+            flowData.setUniqueId("222");
+            publisher.publishEvent(new FlowEvent(1L,1,flowData));
+        });
+
+        ThreadUtil.execAsync(() ->{
+            FlowData flowData = new FlowData();
+            flowData.setAddress("3333");
+            flowData.setCallId(3L);
+            flowData.setUniqueId("3333");
+            publisher.publishEvent(new FlowEvent(1L,1,flowData));
+        });
+        ThreadUtil.execAsync(() ->{
+            FlowData flowData = new FlowData();
+            flowData.setAddress("44444");
+            flowData.setCallId(4L);
+            flowData.setUniqueId("44444");
+            publisher.publishEvent(new FlowEvent(1L,1,flowData));
+        });
+        Thread.sleep(10000000000000000L);*/
+        //publisher.publishEvent(new FlowEvent(1L,2,46L,new FlowData()));
     }
 
 }

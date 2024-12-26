@@ -47,6 +47,9 @@ public class CacheConstants {
      */
     public static final String CALL_SKILL_POLLING_KEY = "fs:skill:polling:{}";
 
+    /**
+     * ivr流程实例key
+     */
     public static final String CALL_IVR_INSTANCES_KEY = "fs:ivr:instances:{}";
 
 }

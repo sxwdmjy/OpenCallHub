@@ -44,8 +44,8 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
 
     private Map<Long, PriorityQueue<CallQueue>> callQueueMap = new ConcurrentHashMap<>();
 
-    private ThreadPoolExecutor callAgentExecutor = new ThreadPoolExecutor(5, 10, 0L,
-            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactoryImpl("fs-agent-distribution-pool-%d"));
+    private ThreadPoolExecutor callAgentExecutor = new ThreadPoolExecutor(5, 10, 60L,
+            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new ThreadFactoryImpl("fs-agent-distribution-pool-%d"));
     /**
      * 定时线程组
      */

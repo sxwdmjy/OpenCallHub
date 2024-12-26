@@ -56,16 +56,6 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
                 outboundCall(address,event);
                 return;
             }
-//            if (EslEventUtil.getSipReqPort(event) == null) {
-//                //呼入
-//                inboundCall(address,event);
-//                return;
-//            }
-//            if (!EslEventUtil.getSipContactPort(event).equals(EslEventUtil.getSipViaPort(event))) {
-//                //硬话机外呼
-//                sipOutboundCall(address,event);
-//                return;
-//            }
         }
 
         if (Objects.isNull(callInfo) || callInfo.getHangupDir() != null) {

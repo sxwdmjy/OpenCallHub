@@ -39,6 +39,11 @@ public class OperationLogListener implements ApplicationListener<OchLogEvent> {
         });
     }
 
+    @Override
+    public boolean supportsAsyncExecution() {
+        return false;
+    }
+
     @PreDestroy
     public void shutdown() {
         log.info("操作日志线程池开始注销");
