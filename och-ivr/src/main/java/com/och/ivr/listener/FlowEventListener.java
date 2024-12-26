@@ -8,7 +8,7 @@ import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.domain.vo.FlowEdgeVo;
 import com.och.ivr.domain.vo.FlowInfoVo;
 import com.och.ivr.domain.vo.FlowNodeVo;
-import com.och.ivr.event.FlowEvent;
+import com.och.esl.event.FlowEvent;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
 import lombok.RequiredArgsConstructor;

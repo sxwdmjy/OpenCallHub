@@ -1,11 +1,10 @@
 package com.och.esl.handler.route;
 
 import com.och.common.annotation.EslRouteName;
+import com.och.common.constant.FlowDataContext;
 import com.och.common.domain.CallInfo;
 import com.och.common.enums.RouteTypeEnum;
-import com.och.ivr.contants.FlowDataContext;
-import com.och.ivr.event.FlowEvent;
-import com.och.ivr.service.IFlowInfoService;
+import com.och.esl.event.FlowEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 public class FsIvrRouteHandler extends FsAbstractRouteHandler {
 
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final IFlowInfoService flowInfoService;
 
     @Override
     public void handler(String address, CallInfo callInfo, String uniqueId, String routeValue) {
@@ -31,6 +29,6 @@ public class FsIvrRouteHandler extends FsAbstractRouteHandler {
         data.setAddress(address);
         data.setCallId(callInfo.getCallId());
         data.setUniqueId(uniqueId);
-        applicationEventPublisher.publishEvent(new FlowEvent(Long.parseLong(routeValue), 1, null,data));
+        applicationEventPublisher.publishEvent(new FlowEvent(Long.parseLong(routeValue), 1, null, data));
     }
 }
