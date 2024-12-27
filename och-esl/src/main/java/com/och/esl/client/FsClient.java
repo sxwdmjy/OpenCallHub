@@ -335,7 +335,15 @@ public class FsClient {
             builder.append(",").append("originate_timeout=").append(timeOut);
         }
         GatewayTypeEnum gatewayTypeEnum = GatewayTypeEnum.getByType(lfsCallRouteRelVo.getGatewayType());
-        builder.append("}").append(EslConstant.SOFIA + "/").append(GatewayTypeEnum.getByType(lfsCallRouteRelVo.getGatewayType()).getDesc()).append("/").append(destination).append(EslConstant.PARK);
+        builder.append("}")
+                .append(EslConstant.SOFIA + "/")
+                .append("gateway")
+                //.append(GatewayTypeEnum.getByType(lfsCallRouteRelVo.getGatewayType()).getDesc())
+                .append("/")
+                .append(lfsCallRouteRelVo.getGatewayName())
+                .append("/")
+                .append(called)
+                .append(EslConstant.PARK);
         sendAsyncMsg(address, EslConstant.ORIGINATE, builder.toString());
     }
 

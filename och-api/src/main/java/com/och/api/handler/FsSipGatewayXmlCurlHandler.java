@@ -179,7 +179,6 @@ public class FsSipGatewayXmlCurlHandler implements FsXmlCurlEventStrategy {
         paramList.add(new Param(SipGatewaySettingParamEnum.INBOUND_CODEC_PREFS.key, "$${global_codec_prefs}"));
         paramList.add(new Param(SipGatewaySettingParamEnum.OUTBOUND_CODEC_PREFS.key, "$${outbound_codec_prefs}"));
         paramList.add(new Param(SipGatewaySettingParamEnum.HOLD_MUSIC.key, "$${hold_music}"));
-        paramList.add(new Param(SipGatewaySettingParamEnum.APPLY_NAT_ACL.key, "nat.auto"));
         paramList.add(new Param(SipGatewaySettingParamEnum.RTP_TIMER_NAME.key, "soft"));
         paramList.add(new Param(SipGatewaySettingParamEnum.LOCAL_NETWORK_ACL.key, "localnet.auto"));
         paramList.add(new Param(SipGatewaySettingParamEnum.MANAGE_PRESENCE.key, "false"));
