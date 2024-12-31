@@ -27,6 +27,16 @@ public class FlowDataContext {
     private Long flowId;
 
     /**
+     * 当前节点ID
+     */
+    private Long currentNodeId;
+
+    /**
+     * 下一个节点ID
+     */
+    private Long nextNodeId;
+
+    /**
      * 当前节点执行记录ID
      */
     private Long currentHistoryId;

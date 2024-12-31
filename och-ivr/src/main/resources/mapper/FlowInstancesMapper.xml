@@ -4,6 +4,8 @@
 
     <resultMap type="com.och.ivr.domain.entity.FlowInstances" id="FlowInstancesMap">
         <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="callId" column="call_id" jdbcType="BIGINT"/>
+        <result property="flowId" column="flow_id" jdbcType="BIGINT"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
         <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>

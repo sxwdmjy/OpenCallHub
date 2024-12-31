@@ -60,8 +60,8 @@ public class CallScheduleServiceImpl extends BaseServiceImpl<CallScheduleMapper,
     }
 
     @Override
-    public CallSchedule getDetail(CallScheduleQuery query) {
-        return getById(query.getId());
+    public CallSchedule getDetail(Long id) {
+        return getById(id);
     }
 
     @Override

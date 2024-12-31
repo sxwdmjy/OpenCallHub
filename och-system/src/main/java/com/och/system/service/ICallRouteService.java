@@ -1,11 +1,9 @@
 package com.och.system.service;
 
-
 import com.och.common.base.IBaseService;
 import com.och.system.domain.entity.CallRoute;
 import com.och.system.domain.query.route.CallRouteAddQuery;
 import com.och.system.domain.query.route.CallRouteQuery;
-import com.och.system.domain.vo.route.CallRouteListVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 
 import java.util.List;
@@ -14,7 +12,7 @@ import java.util.List;
  * 号码路由表(CallRoute)表服务接口
  *
  * @author danmo
- * @since 2023-10-18 14:21:22
+ * @since 2024-12-30 14:03:41
  */
 public interface ICallRouteService extends IBaseService<CallRoute> {
 
@@ -26,12 +24,11 @@ public interface ICallRouteService extends IBaseService<CallRoute> {
 
     CallRouteVo getDetail(Long id);
 
-    List<CallRouteListVo> getList(CallRouteQuery query);
+    List<CallRouteVo> getPageList(CallRouteQuery query);
+    List<CallRouteVo> getList(CallRouteQuery query);
 
-    List<CallRouteListVo> getPageList(CallRouteQuery query);
+    void enable(Long id);
 
-    List<CallRouteVo> listByQuery(CallRouteQuery query);
-
-
+    void disable(Long id);
 }
 

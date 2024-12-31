@@ -5,10 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.och.common.base.BaseEntity;
-import com.och.system.domain.query.route.CallRouteAddQuery;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -17,27 +15,30 @@ import java.io.Serializable;
  * 号码路由表(CallRoute)表实体类
  *
  * @author danmo
- * @since 2023-10-18 14:21:22
+ * @since 2024-12-30 14:03:42
  */
-@ToString
 @Schema
 @Data
 @SuppressWarnings("serial")
 @TableName("call_route")
 public class CallRoute extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = -29457543589162951L;
+    private static final long serialVersionUID = -77948255330539169L;
 
-    @Schema(description = "主键ID")
+    /**
+     *
+     */
+
+    @Schema(description = "")
     @TableId(type = IdType.AUTO)
     private Long id;
 
 
     /**
-     * 主叫号码
+     * 路由名称
      */
-    @Schema(description = "主叫号码")
-    @TableField("caller_num")
-    private String callerNum;
+    @Schema(description = "路由名称")
+    @TableField("name")
+    private String name;
 
 
     /**
@@ -49,51 +50,19 @@ public class CallRoute extends BaseEntity implements Serializable {
 
 
     /**
-     * 号码匹配最小长度
+     * 路由类型 1-呼入 2-呼出
      */
-    @Schema(description = "号码匹配最小长度")
-    @TableField("len_min")
-    private Integer lenMin;
+    @Schema(description = "路由类型 1-呼入 2-呼出")
+    @TableField("type")
+    private Integer type;
 
 
     /**
-     * 号码匹配最大长度
+     * 路由优先级
      */
-    @Schema(description = "号码匹配最大长度")
-    @TableField("len_max")
-    private Integer lenMax;
-
-
-    /**
-     * 主叫替换规则
-     */
-    @Schema(description = "主叫替换规则")
-    @TableField("caller_pattern")
-    private String callerPattern;
-
-
-    /**
-     * 主叫替换号码
-     */
-    @Schema(description = "主叫替换号码")
-    @TableField("caller_replace_num")
-    private String callerReplaceNum;
-
-
-    /**
-     * 被叫替换规则
-     */
-    @Schema(description = "被叫替换规则")
-    @TableField("callee_pattern")
-    private String calleePattern;
-
-
-    /**
-     * 被叫替换号码
-     */
-    @Schema(description = "被叫替换号码")
-    @TableField("callee_replace_num")
-    private String calleeReplaceNum;
+    @Schema(description = "路由优先级")
+    @TableField("level")
+    private Integer level;
 
 
     /**
@@ -103,20 +72,31 @@ public class CallRoute extends BaseEntity implements Serializable {
     @TableField("status")
     private Integer status;
 
+    /**
+     * 日程ID
+     */
+    @Schema(description = "日程ID")
+    @TableField("schedule_id")
+    private Long scheduleId;
 
 
-    @Schema(hidden = true)
-    public void addQuery2Entity(CallRouteAddQuery query) {
-        this.id = query.getId();
-        this.callerNum = query.getCallerNum();
-        this.routeNum = query.getRouteNum();
-        this.lenMin = query.getLenMin();
-        this.lenMax = query.getLenMax();
-        this.callerPattern = query.getCallerPattern();
-        this.callerReplaceNum = query.getCallerReplaceNum();
-        this.calleePattern = query.getCalleePattern();
-        this.calleeReplaceNum = query.getCalleeReplaceNum();
-        this.status = query.getStatus();
-    }
+    /**
+     * 路由类型 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr
+     */
+    @Schema(description = "路由类型 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr")
+    @TableField("route_type")
+    private Integer routeType;
+
+
+    @Schema(description = "路由类型值ID")
+    @TableField("route_value_id")
+    private Long routeValueId;
+    /**
+     * 路由类型值
+     */
+    @Schema(description = "路由类型值")
+    @TableField("route_value")
+    private String routeValue;
+
 }
 

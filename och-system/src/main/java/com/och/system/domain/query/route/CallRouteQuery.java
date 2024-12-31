@@ -19,12 +19,23 @@ public class CallRouteQuery extends BaseQuery {
 
     private List<Long> ids;
 
+    @Schema(description = "路由名称")
+    private String name;
+
     @Schema(description = "路由号码")
     private String routeNumber;
 
-    private String callerNum;
-
-    @Schema(description = "网关类型 1-分机注册 2-外部对接 3-注册网关")
+    @Schema(description = "路由类型  1-呼入 2-呼出")
     private Integer type;
+
+    @Schema(description = "路由优先级")
+    private Integer level;
+
+    @Schema(description = "状态  0-未启用 1-启用")
+    private Integer status;
+
+    @Schema(description = "呼出路由类型")
+    private Integer routeType;
+
 
 }

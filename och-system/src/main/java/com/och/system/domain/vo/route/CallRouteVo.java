@@ -1,28 +1,31 @@
 package com.och.system.domain.vo.route;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.och.system.domain.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author danmo
- * @date 2023-10-18 14:35
+ * @date 2024-12-29 14:35
  **/
 @Schema
 @Data
 public class CallRouteVo extends BaseVo {
 
-    @Schema(description = "主键ID")
+    /**
+     *
+     */
+
+    @Schema(description = "")
     private Long id;
 
 
     /**
-     * 主叫号码
+     * 路由名称
      */
-    @Schema(description = "主叫号码")
-    private String callerNum;
+    @Schema(description = "路由名称")
+    private String name;
 
 
     /**
@@ -33,45 +36,17 @@ public class CallRouteVo extends BaseVo {
 
 
     /**
-     * 号码匹配最小长度
+     * 路由类型 1-呼入 2-呼出
      */
-    @Schema(description = "号码匹配最小长度")
-    private Integer lenMin;
+    @Schema(description = "路由类型 1-呼入 2-呼出")
+    private Integer type;
 
 
     /**
-     * 号码匹配最大长度
+     * 路由优先级
      */
-    @Schema(description = "号码匹配最大长度")
-    private Integer lenMax;
-
-
-    /**
-     * 主叫替换规则
-     */
-    @Schema(description = "主叫替换规则")
-    private String callerPattern;
-
-
-    /**
-     * 主叫替换号码
-     */
-    @Schema(description = "主叫替换号码")
-    private String callerReplaceNum;
-
-
-    /**
-     * 被叫替换规则
-     */
-    @Schema(description = "被叫替换规则")
-    private String calleePattern;
-
-
-    /**
-     * 被叫替换号码
-     */
-    @Schema(description = "被叫替换号码")
-    private String calleeReplaceNum;
+    @Schema(description = "路由优先级")
+    private Integer level;
 
 
     /**
@@ -80,7 +55,32 @@ public class CallRouteVo extends BaseVo {
     @Schema(description = "状态  0-未启用 1-启用")
     private Integer status;
 
+    /**
+     * 日程ID
+     */
+    @Schema(description = "日程ID(仅呼出生效)")
+    private Long scheduleId;
+    /**
+     * 日程名称
+     */
+    @Schema(description = "日程名称")
+    private String scheduleName;
 
-    @Schema(description = "网关配置")
-    private List<CallRouteRelVo> gatewayList;
+    /**
+     * 路由类型 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr
+     */
+    @Schema(description = "路由类型（呼出只选2） 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr")
+    private Integer routeType;
+
+    /**
+     * 路由类型值ID
+     */
+    @Schema(description = "路由类型值ID")
+    private Long routeValueId;
+
+    /**
+     * 路由类型值
+     */
+    @Schema(description = "路由类型值")
+    private String routeValue;
 }

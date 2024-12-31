@@ -1,13 +1,9 @@
 package com.och.system.domain.query.route;
 
-import com.och.system.domain.entity.CallRouteRel;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author danmo
@@ -20,76 +16,58 @@ public class CallRouteAddQuery {
     @Schema(description = "主键ID", hidden = true)
     private Long id;
 
+
     /**
-     * 主叫号码
+     * 路由名称
      */
-    @NotEmpty(message = "主叫号码不能为空")
-    @Schema(description = "主叫号码", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String callerNum;
+    @NotBlank(message = "路由名称不能为空")
+    @Schema(description = "路由名称")
+    private String name;
 
 
     /**
      * 路由号码
      */
-    @NotEmpty(message = "路由号码不能为空")
-    @Schema(description = "路由号码", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "路由号码")
+    @NotBlank(message = "路由号码不能为空")
     private String routeNum;
 
 
     /**
-     * 号码匹配最小长度
+     * 路由类型 1-呼入 2-呼出
      */
-    @NotNull(message = "号码匹配最小长度不能为空")
-    @Size(min = 4, message = "最小长度为4")
-    @Schema(description = "号码匹配最小长度", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Integer lenMin;
-
+    @NotNull(message = "路由类型不能为空")
+    @Schema(description = "路由类型 1-呼入 2-呼出 ")
+    private Integer type;
 
     /**
-     * 号码匹配最大长度
+     * 路由等级
      */
-    @NotNull(message = " 号码匹配最大长度不能为空")
-    @Size(max = 32, message = "最大长度为32")
-    @Schema(description = "号码匹配最大长度", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Integer lenMax;
-
+    @Schema(description = "路由等级")
+    private Integer level;
 
     /**
-     * 主叫替换规则
+     * 日程ID
      */
-    @Schema(description = "主叫替换规则")
-    private String callerPattern;
-
+    @Schema(description = "日程ID(仅呼入生效)")
+    private Long scheduleId;
 
     /**
-     * 主叫替换号码
+     * 路由类型
      */
-    @Schema(description = "主叫替换号码")
-    private String callerReplaceNum;
-
+    @Schema(description = "路由类型(仅呼入生效) 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr")
+    private Integer routeType;
 
     /**
-     * 被叫替换规则
+     * 路由类型值ID
      */
-    @Schema(description = "被叫替换规则")
-    private String calleePattern;
-
+    @Schema(description = "路由类型值ID")
+    private Long routeValueId;
 
     /**
-     * 被叫替换号码
+     * 路由类型值
      */
-    @Schema(description = "被叫替换号码")
-    private String calleeReplaceNum;
-
-
-    /**
-     * 状态  0-未启用 1-启用
-     */
-    @Schema(description = "状态  0-未启用 1-启用")
-    private Integer status;
-
-
-    @Schema(description = "网关路由", requiredMode = Schema.RequiredMode.REQUIRED)
-    private List<CallRouteRel> routeRelList;
+    @Schema(description = "路由类型值")
+    private String routeValue;
 
 }

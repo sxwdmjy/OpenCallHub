@@ -6,11 +6,9 @@ import com.och.common.constant.CacheConstants;
 import com.och.common.domain.CallInfo;
 import com.och.common.utils.StringUtils;
 import com.och.esl.service.IFsCallCacheService;
-import com.och.system.domain.entity.CallRoute;
 import com.och.system.domain.query.route.CallRouteQuery;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.service.ICallRouteService;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,14 +61,21 @@ public class FsCallCacheServiceImpl implements IFsCallCacheService {
         return (Long) redisService.getCacheMapValue(CacheConstants.CALL_REL_MAP_CACHE_KEY, uniqueId);
     }
 
+    /**
+     * 获取路由
+     * @param routeNum 路由号码
+     * @param type 路由类型 1-呼出 2-呼入
+     * @return
+     */
     @Override
     public CallRouteVo getCallRoute(String routeNum, Integer type) {
         CallRouteQuery routeQuery = new CallRouteQuery();
         routeQuery.setRouteNumber(routeNum);
         routeQuery.setType(type);
-        List<CallRouteVo> callRoutes = iCallRouteService.listByQuery(routeQuery);
+        List<CallRouteVo> callRoutes = iCallRouteService.getList(routeQuery);
         if (CollectionUtil.isNotEmpty(callRoutes)) {
-            return callRoutes.get(0);
+            List<CallRouteVo> routeVos = callRoutes.stream().sorted((o1, o2) -> o2.getLevel() - o1.getLevel()).toList();
+            return routeVos.get(0);
         }
         return null;
     }

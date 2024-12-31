@@ -46,7 +46,7 @@ public class ChannelInfo {
     private String agentName;
 
     /**
-     * 1-坐席 2-客户 3-外线
+     * 1-坐席 2-客户
      */
     private Integer type;
 

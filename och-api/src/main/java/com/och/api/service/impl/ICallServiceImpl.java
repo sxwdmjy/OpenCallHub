@@ -16,6 +16,7 @@ import com.och.security.utils.SecurityUtils;
 import com.och.system.domain.entity.CallDisplay;
 import com.och.system.domain.entity.CallRecord;
 import com.och.system.domain.entity.CorpInfo;
+import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.query.agent.SipAgentQuery;
 import com.och.system.domain.query.call.CallQuery;
 import com.och.system.domain.query.call.CallRecordQuery;
@@ -24,10 +25,7 @@ import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.domain.vo.call.CallRecordVo;
 import com.och.system.domain.vo.display.CallDisplayVo;
 import com.och.system.domain.vo.route.CallRouteVo;
-import com.och.system.service.ICallDisplayService;
-import com.och.system.service.ICallRecordService;
-import com.och.system.service.ICorpInfoService;
-import com.och.system.service.ISipAgentService;
+import com.och.system.service.*;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -58,6 +56,9 @@ public class ICallServiceImpl implements ICallService {
     @Autowired
     private ICallRecordService iCallRecordService;
 
+    @Autowired
+    private IFsSipGatewayService iFsSipGatewayService;
+
     @Override
     public Long makeCall(CallQuery query) {
         if (Objects.isNull(query.getAgentId())) {
@@ -78,7 +79,7 @@ public class ICallServiceImpl implements ICallService {
                 .agentId(sipAgent.getId()).agentNumber(sipAgent.getAgentNumber()).agentName(sipAgent.getName())
                 .caller(sipAgent.getAgentNumber()).callee(query.getCallee()).direction(DirectionEnum.OUTBOUND.getType())
                 .callTime(DateUtil.current()).hiddenCustomer(query.getHiddenCustomer())
-                .calleeTimeOut(query.getCalleeTimeOut()).routeType(3).build();
+                .calleeTimeOut(query.getCalleeTimeOut()).build();
 
         callInfo.addUniqueIdList(uniqueId);
         callInfo.setProcess(ProcessEnum.CALL_OTHER);
@@ -93,12 +94,8 @@ public class ICallServiceImpl implements ICallService {
         callInfo.setCallerDisplay(query.getCallee());
         callInfo.setCalleeDisplay(callDisplay.getPhone());
 
-        CorpInfo corpInfo = corpInfoService.getByCode(SecurityUtils.getCorpCode());
-        if(Objects.nonNull(corpInfo)){
-            callInfo.setCdrNotifyUrl(corpInfo.getCallBackPath());
-        }
         //构建主叫通道
-        ChannelInfo channelInfo = ChannelInfo.builder().callId(callId).uniqueId(uniqueId).cdrType(2).type(1)
+        ChannelInfo channelInfo = ChannelInfo.builder().callId(callId).uniqueId(uniqueId).cdrType(2).type(2)
                 .agentId(sipAgent.getId()).agentNumber(sipAgent.getAgentNumber()).agentName(sipAgent.getName())
                 .callTime(DateUtil.current())
                 .caller(callInfo.getCallee()).called(callInfo.getCaller()).display(callInfo.getCalleeDisplay()).build();
@@ -107,16 +104,16 @@ public class ICallServiceImpl implements ICallService {
         iFsCallCacheService.saveCallInfo(callInfo);
         iFsCallCacheService.saveCallRel(uniqueId, callId);
 
-        //查询主叫路由
-        CallRouteVo callRoute = iFsCallCacheService.getCallRoute(callInfo.getCaller(), 2);
+        //查询被叫路由
+        CallRouteVo callRoute = iFsCallCacheService.getCallRoute(callInfo.getCallee(), 2);
         if (Objects.isNull(callRoute)) {
             throw new CommonException("未配置号码路由");
         }
-        if (CollectionUtil.isEmpty(callRoute.getGatewayList())) {
-            throw new CommonException("号码路由未关联网关信息");
-        }
 
-        fsClient.makeCall(callId, callInfo.getCaller(), callInfo.getCallerDisplay(), uniqueId, query.getCallerTimeOut(), callRoute);
+        FsSipGateway sipGateway = iFsSipGatewayService.getDetail(callRoute.getRouteValueId());
+
+
+        fsClient.makeCall(callId, callInfo.getCallee(), callInfo.getCalleeDisplay(), uniqueId, query.getCallerTimeOut(), sipGateway);
         return callId;
     }
 

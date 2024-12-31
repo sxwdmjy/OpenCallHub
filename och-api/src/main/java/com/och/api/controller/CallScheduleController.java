@@ -64,9 +64,8 @@ public class CallScheduleController extends BaseController {
     @PreAuthorize("@authz.hasPerm('call:schedule:get')")
     @Operation(summary = "日程详情", method = "POST")
     @PostMapping("/get/{id}")
-    public ResResult<CallSchedule> getDetail(@PathVariable("id") Long id, @RequestBody CallScheduleQuery query) {
-        query.setId(id);
-        CallSchedule detail = iCallScheduleService.getDetail(query);
+    public ResResult<CallSchedule> getDetail(@PathVariable("id") Long id) {
+        CallSchedule detail = iCallScheduleService.getDetail(id);
         return success(detail);
     }
 

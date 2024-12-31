@@ -29,6 +29,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Objects;
 
+import static com.och.common.enums.DirectionEnum.INBOUND;
+import static com.och.common.enums.DirectionEnum.OUTBOUND;
+
 /**
  * 话机振铃
  * @author danmo
@@ -48,7 +51,7 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         String uniqueId = EslEventUtil.getUniqueId(event);
         CallInfo callInfo = ifsCallCacheService.getCallInfoByUniqueId(uniqueId);
 
-        if (callInfo == null && DirectionEnum.INBOUND.name().equals(EslEventUtil.getCallDirection(event).toUpperCase())) {
+        if (callInfo == null && INBOUND.name().equals(EslEventUtil.getCallDirection(event).toUpperCase())) {
             if(StringUtils.containsAnyIgnoreCase(EslEventUtil.getVariableSipUserAgent(event), "FreeSWITCH")){
                 inboundCall(address,event);
                 return;
@@ -74,22 +77,22 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         }
         channelInfo.setRingStartTime(event.getEventDateTimestamp() / 1000);
 
-        Integer direction = callInfo.getDirection();
-        switch (DirectionEnum.getByType(direction)){
-            case INBOUND -> {
-                sendAgentStatus(callInfo.getCallId(),callInfo.getCaller(),callInfo.getCallee(),direction, AgentStateEnum.CALL_OUT_RING);
-            }
-            case OUTBOUND -> {
-                sendAgentStatus(callInfo.getCallId(),callInfo.getCaller(),callInfo.getCallee(),direction, AgentStateEnum.CALL_INT_RING);
-            }
-            default -> {
+        DirectionEnum directionEnum = DirectionEnum.getByType(callInfo.getDirection());
+        if (directionEnum != null){
+            switch (directionEnum){
+                case INBOUND -> {
+                    sendAgentStatus(callInfo.getCallId(),callInfo.getCaller(),callInfo.getCallee(),INBOUND.getType(), AgentStateEnum.CALL_OUT_RING);
+                }
+                case OUTBOUND -> {
+                    sendAgentStatus(callInfo.getCallId(),callInfo.getCaller(),callInfo.getCallee(), OUTBOUND.getType(), AgentStateEnum.CALL_INT_RING);
+                }
+                default -> {
+                }
             }
         }
 
         callInfo.setChannelInfoMap(uniqueId,channelInfo);
         ifsCallCacheService.saveCallInfo(callInfo);
-
-        //todo 通知坐席呼叫状态
 
     }
 
@@ -104,16 +107,10 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         String calleeNumber = EslEventUtil.getCallerDestinationNumber(event);
         String sipContactUri = EslEventUtil.getSipContactUri(event);
         log.info("park >>>>>>>inbound callId:{}, caller:{}, called:{}, uniqueId:{}, sipContactUri:{}", callId,callerNumber, calleeNumber, uniqueId, sipContactUri);
-  /*      AjaxResult<CallInPhoneVo> ajaxResult = lfsCallInPhoneClient.getDetailByPhone(calleeNumber);
-        if(ajaxResult == null || ajaxResult.getData() == null){
-            log.info("呼入号码查询为空 callId：{}，caller：{}，callee：{}",callId,callerNumber,calleeNumber);
-            fsClient.hangupCall(address, callId, uniqueId);
-            return;
-        }
-        CallInPhoneVo callInPhone = ajaxResult.getData();*/
+
         //构建呼叫总线
         CallInfo callInfo = CallInfo.builder().callId(callId)
-                .caller(callerNumber).calleeDisplay(calleeNumber).direction(DirectionEnum.INBOUND.getType())
+                .caller(callerNumber).calleeDisplay(calleeNumber).direction(INBOUND.getType())
                 .callTime(DateUtil.current()).callerDisplay(callerNumber).routeType(2).build();
         callInfo.addUniqueIdList(uniqueId);
         //构建主叫通道
@@ -121,8 +118,6 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
                 .caller(callerNumber).called(calleeNumber).display(calleeNumber).build();
         callInfo.setChannelInfoMap(uniqueId,channelInfo);
 
-        //CorpInfo corpInfo = CorpClient.getDetail(callInfo.getTenantId()).getData();
-        //callInfo.setCdrNotifyUrl(corpInfo.getCallBackPath());
 
         callInfo.setProcess(ProcessEnum.CALLIN);
 
@@ -151,9 +146,8 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         //构建呼叫总线
         CallInfo callInfo = CallInfo.builder().callId(callId)
                 .agentId(sipAgent.getId()).agentNumber(sipAgent.getAgentNumber()).agentName(sipAgent.getName())
-                .caller(callerNumber).callee(calleeNumber).direction(DirectionEnum.OUTBOUND.getType())
-                .callTime(DateUtil.current())
-                .routeType(2).build();
+                .caller(callerNumber).callee(calleeNumber).direction(OUTBOUND.getType())
+                .callTime(DateUtil.current()).build();
         callInfo.addUniqueIdList(uniqueId);
         callInfo.setProcess(ProcessEnum.CALL_OTHER);
 
@@ -171,8 +165,6 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         callInfo.setCallerDisplay(sipAgent.getAgentNumber());
         callInfo.setCalleeDisplay(displaySimple.getPhone());
 
-        //CorpInfo corpInfo = lfsCorpClient.getDetail(callInfo.getTenantId()).getData();
-        //callInfo.setCdrNotifyUrl(corpInfo.getCallBackPath());
 
         //构建主叫通道
         ChannelInfo channelInfo = ChannelInfo.builder().callId(callId).uniqueId(uniqueId).cdrType(2).type(1)

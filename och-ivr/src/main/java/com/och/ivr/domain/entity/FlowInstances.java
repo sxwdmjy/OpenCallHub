@@ -37,7 +37,9 @@ public class FlowInstances extends BaseEntity implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-
+    @Schema(description = "通话ID")
+    @TableField("call_id")
+    private Long callId;
 
     /**
      *  流程ID，用于区分不同流程

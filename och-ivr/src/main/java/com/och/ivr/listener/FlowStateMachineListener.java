@@ -7,8 +7,7 @@ import com.och.common.utils.StringUtils;
 import com.och.common.constant.FlowDataContext;
 import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.domain.entity.FlowNodeExecutionHistory;
-import com.och.ivr.domain.vo.FlowInfoVo;
-import com.och.ivr.domain.vo.FlowNodeVo;
+import com.och.ivr.domain.entity.FlowNodes;
 import com.och.ivr.handler.AbstractIFlowNodeHandler;
 import com.och.ivr.service.*;
 import lombok.Getter;
@@ -20,7 +19,6 @@ import org.springframework.statemachine.listener.StateMachineListenerAdapter;
 import org.springframework.statemachine.state.State;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -52,15 +50,15 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
         FlowDataContext flowData = stateContext.getExtendedState().get("flowData", FlowDataContext.class);
         log.info("状态机状态进入:{},{}", state.getId(), flowData);
         if (flowData == null) {
+            log.info("状态机状态进入:{},flowData为空", state.getId());
             return;
         }
-        FlowInfoVo info = iFlowInfoService.getInfo(flowData.getFlowId());
-        List<FlowNodeVo> nodes = info.getNodes();
-        FlowNodeVo currentFlowNode = nodes.stream().filter(n -> Objects.equals(state.getId(), n.getId())).findFirst().orElseGet(null);
+        FlowNodes currentFlowNode = iFlowNodesService.getById((Long) state.getId());
         if (Objects.isNull(currentFlowNode)) {
             log.info("未找到当前节点flowData:{}, id:{}", JSON.toJSONString(flowData), state.getId());
             return;
         }
+        flowData.setCurrentNodeId(currentFlowNode.getId());
         FlowInstances instances = FlowInstances.builder().currentNodeId((Long) state.getId()).variables(currentFlowNode.getProperties()).id(flowData.getInstanceId()).build();
         iFlowInstancesService.updateById(instances);
         //记录节点执行历史

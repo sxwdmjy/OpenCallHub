@@ -1,9 +1,9 @@
 package com.och.ivr.handler;
 
-import com.och.common.config.redis.RedisService;
 import com.och.common.constant.CacheConstants;
-import com.och.common.utils.StringUtils;
 import com.och.common.constant.FlowDataContext;
+import com.och.common.utils.StringUtils;
+import com.och.esl.service.IFlowNoticeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.StateContext;
@@ -21,16 +21,16 @@ import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 public abstract class AbstractIFlowNodeHandler implements IFlowNodeHandler {
 
     protected final RedisStateMachinePersister<Object, Object> persister;
-    protected final RedisService redisService;
+    protected final IFlowNoticeService iFlowNoticeService;
 
     @Override
     public void handle(StateContext<Object, Object> stateContext) {
         FlowDataContext flowData = stateContext.getExtendedState().get("flowData", FlowDataContext.class);
         execute(flowData);
         StateMachine<Object, Object> stateMachine = stateContext.getStateMachine();
-        if(stateMachine.isComplete()){
-            redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, flowData.getInstanceId()));
-        }else {
+        if (stateMachine.isComplete()) {
+            iFlowNoticeService.notice(3, "", flowData);
+        } else {
             try {
                 persister.persist(stateMachine, StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, flowData.getInstanceId()));
             } catch (Exception e) {

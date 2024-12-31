@@ -1,6 +1,5 @@
 package com.och.esl.client;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.och.common.constant.EslConstant;
@@ -11,9 +10,8 @@ import com.och.esl.FsEslMsg;
 import com.och.esl.propeties.FsClientProperties;
 import com.och.esl.service.IFsEslEventService;
 import com.och.system.domain.entity.FsConfig;
+import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.query.fsconfig.FsConfigQuery;
-import com.och.system.domain.vo.route.CallRouteRelVo;
-import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.service.IFsConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -304,7 +301,7 @@ public class FsClient {
      * @param timeOut       超时时间
      * @param callRoute     路由信息
      */
-    public void makeCall(Long callId, String called, String calledDisplay, String uniqueId, Integer timeOut, CallRouteVo callRoute) {
+    public void makeCall(Long callId, String called, String calledDisplay, String uniqueId, Integer timeOut, FsSipGateway callRoute) {
         if (StringUtils.isBlank(called)) {
             log.warn("called:{} is null ", called);
             return;
@@ -313,7 +310,7 @@ public class FsClient {
         makeCall(address, callId, called, calledDisplay, uniqueId, timeOut, callRoute);
     }
 
-    public void makeCall(String address, Long callId, String called, String calledDisplay, String uniqueId, Integer timeOut, CallRouteVo callRoute) {
+    public void makeCall(String address, Long callId, String called, String calledDisplay, String uniqueId, Integer timeOut, FsSipGateway callRoute) {
         if (StringUtils.isBlank(called)) {
             log.warn("called:{} is null ", called);
             return;
@@ -321,8 +318,7 @@ public class FsClient {
 
         StringBuilder builder = new StringBuilder();
         //获取路由网关地址
-        CallRouteRelVo lfsCallRouteRelVo = callRoute.getGatewayList().stream().min(Comparator.comparing(CallRouteRelVo::getOrderNum)).get();
-        String destination = called + Constants.AT + lfsCallRouteRelVo.getGatewayAddress();
+        String destination = called + Constants.AT + callRoute.getRealm();
         builder.append("{return_ring_ready=true").append(",")
                 .append("sip_contact_user=").append(calledDisplay).append(",")
                 .append("ring_asr=true").append(",")
@@ -334,13 +330,12 @@ public class FsClient {
         if (timeOut != null) {
             builder.append(",").append("originate_timeout=").append(timeOut);
         }
-        GatewayTypeEnum gatewayTypeEnum = GatewayTypeEnum.getByType(lfsCallRouteRelVo.getGatewayType());
         builder.append("}")
                 .append(EslConstant.SOFIA + "/")
                 .append("gateway")
                 //.append(GatewayTypeEnum.getByType(lfsCallRouteRelVo.getGatewayType()).getDesc())
                 .append("/")
-                .append(lfsCallRouteRelVo.getGatewayName())
+                .append(callRoute.getName())
                 .append("/")
                 .append(called)
                 .append(EslConstant.PARK);

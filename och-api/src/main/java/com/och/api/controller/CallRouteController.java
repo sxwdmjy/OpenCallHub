@@ -8,7 +8,6 @@ import com.och.common.enums.BusinessTypeEnum;
 import com.och.system.domain.entity.CallRoute;
 import com.och.system.domain.query.route.CallRouteAddQuery;
 import com.och.system.domain.query.route.CallRouteQuery;
-import com.och.system.domain.vo.route.CallRouteListVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.service.ICallRouteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +47,24 @@ public class CallRouteController extends BaseController {
         return success();
     }
 
+    @Log(title = "启用路由" , businessType = BusinessTypeEnum.UPDATE)
+    @PreAuthorize("@authz.hasPerm('call:rout:enable')")
+    @Operation(summary = "启用路由", method = "POST")
+    @PostMapping("/enable/{id}")
+    public ResResult enable(@PathVariable("id") Long id) {
+        iCallRouteService.enable(id);
+        return success();
+    }
+
+    @Log(title = "禁用路由" , businessType = BusinessTypeEnum.UPDATE)
+    @PreAuthorize("@authz.hasPerm('call:rout:disable')")
+    @Operation(summary = "禁用路由", method = "POST")
+    @PostMapping("/disable/{id}")
+    public ResResult disable(@PathVariable("id") Long id) {
+        iCallRouteService.disable(id);
+        return success();
+    }
+
     @Log(title = "删除号码路由", businessType = BusinessTypeEnum.DELETE)
     @PreAuthorize("@authz.hasPerm('call:rout:delete')")
     @Operation(summary = "删除号码路由", method = "POST")
@@ -69,16 +86,10 @@ public class CallRouteController extends BaseController {
     @PreAuthorize("@authz.hasPerm('call:rout:page:list')")
     @Operation(summary = "号码路由列表", method = "POST")
     @PostMapping("/page/list")
-    public ResResult<PageInfo<CallRouteListVo>> pageList(@RequestBody CallRouteQuery query) {
-        List<CallRouteListVo> list = iCallRouteService.getPageList(query);
-        PageInfo<CallRouteListVo> pageInfo = PageInfo.of(list);
+    public ResResult<PageInfo<CallRouteVo>> pageList(@RequestBody CallRouteQuery query) {
+        List<CallRouteVo> list = iCallRouteService.getPageList(query);
+        PageInfo<CallRouteVo> pageInfo = PageInfo.of(list);
         return success(pageInfo);
     }
 
-    @Operation(summary = "号码路由条件查询", method = "POST")
-    @PostMapping("/listByQuery")
-    public ResResult<List<CallRouteVo>> listByQuery(@RequestBody CallRouteQuery query) {
-        List<CallRouteVo> list = iCallRouteService.listByQuery(query);
-        return success(list);
-    }
 }

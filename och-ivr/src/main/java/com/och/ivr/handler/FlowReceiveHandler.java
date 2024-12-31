@@ -2,6 +2,7 @@ package com.och.ivr.handler;
 
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.FlowDataContext;
+import com.och.esl.service.IFlowNoticeService;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +15,8 @@ import org.springframework.stereotype.Component;
 public class FlowReceiveHandler extends AbstractIFlowNodeHandler{
 
 
-    public FlowReceiveHandler(RedisStateMachinePersister<Object, Object> persister, RedisService redisService) {
-        super(persister, redisService);
+    public FlowReceiveHandler(RedisStateMachinePersister<Object, Object> persister, IFlowNoticeService iFlowNoticeService) {
+        super(persister, iFlowNoticeService);
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.och.common.enums.SipAgentStatusEnum;
 import com.och.common.thread.ThreadFactoryImpl;
 import com.och.common.utils.StringUtils;
 import com.och.esl.queue.CallQueue;
+import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.query.agent.SipAgentQuery;
 import com.och.system.domain.query.skill.CallSkillQuery;
 import com.och.system.domain.vo.agent.SipAgentStatusVo;
@@ -298,14 +299,15 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
             return;
         }
-        CallRouteVo callRoute = fsCallCacheService.getCallRoute(callInfo.getCallee(), 2);
+        CallRouteVo callRoute = fsCallCacheService.getCallRoute(callInfo.getCallee(), 1);
         if(Objects.isNull(callRoute)){
             log.info("transferAgentHandler 未配置号码路由 callee:{}",agentNumber);
             callInfo.setSkillHangUpReason(HangupCauseEnum.NOT_ROUTE.getDesc());
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
             return;
         }
-        if(CollectionUtil.isEmpty(callRoute.getGatewayList())){
+        FsSipGateway sipGateway = iFsSipGatewayService.getDetail(callRoute.getRouteValueId());
+        if(Objects.isNull(sipGateway)){
             log.info("transferAgentHandler 号码路由未关联网关信息 callee:{}",agentNumber);
             callInfo.setSkillHangUpReason(HangupCauseEnum.ROUTE_NOT_GATEWAY.getDesc());
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
@@ -328,7 +330,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
         //设置坐席通话中
         iSipAgentService.updateStatus(agentInfo.getId(), SipAgentStatusEnum.TALKING.getCode());
 
-        fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCallee(),callInfo.getCallerDisplay(),otherUniqueId,callInfo.getCalleeTimeOut(), callRoute);
+        fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCallee(),callInfo.getCallerDisplay(),otherUniqueId,callInfo.getCalleeTimeOut(), sipGateway);
 
         Boolean isAgent = redisService.getCacheMapHasKey(CacheConstants.AGENT_CURRENT_STATUS_KEY, String.valueOf(callInfo.getAgentId()));
         if(isAgent){

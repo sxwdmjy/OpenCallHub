@@ -22,7 +22,7 @@ public interface ICallScheduleService extends IBaseService<CallSchedule> {
 
     void delete(CallScheduleQuery query);
 
-    CallSchedule getDetail(CallScheduleQuery query);
+    CallSchedule getDetail(Long id);
 
     List<CallSchedule> getList(CallScheduleQuery query);
 

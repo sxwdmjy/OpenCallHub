@@ -5,6 +5,7 @@ import com.och.common.domain.CallInfo;
 import com.och.esl.client.FsClient;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.system.service.ICallSkillService;
+import com.och.system.service.IFsSipGatewayService;
 import com.och.system.service.ISipAgentService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,9 @@ public abstract class FsAbstractRouteHandler {
 
     @Autowired
     protected ICallSkillService iCallSkillService;
+
+    @Autowired
+    protected IFsSipGatewayService iFsSipGatewayService;
 
     public abstract void handler(String address, CallInfo callInfo, String uniqueId, String routeValue);
 

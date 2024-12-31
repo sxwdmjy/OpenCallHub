@@ -8,6 +8,7 @@ import com.och.common.domain.ChannelInfo;
 import com.och.common.enums.ProcessEnum;
 import com.och.common.enums.RouteTypeEnum;
 import com.och.common.utils.StringUtils;
+import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import jakarta.annotation.Resource;
@@ -63,12 +64,13 @@ public class FsAgentRouteHandler extends FsAbstractRouteHandler {
         fsCallCacheService.saveCallInfo(callInfo);
         fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
 
-        CallRouteVo callRoute = fsCallCacheService.getCallRoute(callInfo.getCallee(), 2);
+        CallRouteVo callRoute = fsCallCacheService.getCallRoute(callInfo.getCallee(), 1);
         if(Objects.isNull(callRoute)){
             log.info("转坐席未配置号码路由 callee:{}",callInfo.getCallee());
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
             return;
         }
-        fsClient.makeCall(address,callInfo.getCallId(), calleeNumber,callInfo.getCaller(),otherUniqueId,callInfo.getCalleeTimeOut(), callRoute);
+        FsSipGateway sipGateway = iFsSipGatewayService.getDetail(callRoute.getRouteValueId());
+        fsClient.makeCall(address,callInfo.getCallId(), calleeNumber,callInfo.getCaller(),otherUniqueId,callInfo.getCalleeTimeOut(), sipGateway);
     }
 }

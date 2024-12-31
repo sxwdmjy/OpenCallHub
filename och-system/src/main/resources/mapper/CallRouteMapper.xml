@@ -2,122 +2,94 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.och.system.mapper.CallRouteMapper">
 
-    <resultMap type="com.och.system.domain.vo.route.CallRouteListVo" id="CallRouteMap">
-        <result property="id" column="id" jdbcType="INTEGER"/>
-        <result property="callerNum" column="caller_num" jdbcType="VARCHAR"/>
+    <resultMap type="com.och.system.domain.entity.CallRoute" id="CallRouteMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="routeNum" column="route_num" jdbcType="VARCHAR"/>
-        <result property="lenMin" column="len_min" jdbcType="INTEGER"/>
-        <result property="lenMax" column="len_max" jdbcType="INTEGER"/>
-        <result property="callerPattern" column="caller_pattern" jdbcType="VARCHAR"/>
-        <result property="callerReplaceNum" column="caller_replace_num" jdbcType="VARCHAR"/>
-        <result property="calleePattern" column="callee_pattern" jdbcType="VARCHAR"/>
-        <result property="calleeReplaceNum" column="callee_replace_num" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="level" column="level" jdbcType="INTEGER"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="scheduleId" column="schedule_id" jdbcType="BIGINT"/>
+        <result property="routeType" column="route_type" jdbcType="INTEGER"/>
+        <result property="routeValueId" column="route_value_id" jdbcType="BIGINT"/>
+        <result property="routeValue" column="route_value" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
     </resultMap>
-
-    <resultMap type="com.och.system.domain.vo.route.CallRouteVo" id="CallRouteDetailMap">
-        <result property="id" column="id" jdbcType="INTEGER"/>
-        <result property="callerNum" column="caller_num" jdbcType="VARCHAR"/>
-        <result property="routeNum" column="route_num" jdbcType="VARCHAR"/>
-        <result property="lenMin" column="len_min" jdbcType="INTEGER"/>
-        <result property="lenMax" column="len_max" jdbcType="INTEGER"/>
-        <result property="callerPattern" column="caller_pattern" jdbcType="VARCHAR"/>
-        <result property="callerReplaceNum" column="caller_replace_num" jdbcType="VARCHAR"/>
-        <result property="calleePattern" column="callee_pattern" jdbcType="VARCHAR"/>
-        <result property="calleeReplaceNum" column="callee_replace_num" jdbcType="VARCHAR"/>
-        <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <collection property="gatewayList" ofType="com.och.system.domain.vo.route.CallRouteRelVo">
-            <result property="gatewayConfigId" column="gateway_config_id" jdbcType="INTEGER"/>
-            <result property="gatewayName" column="gateway_name" jdbcType="VARCHAR"/>
-            <result property="gatewayAddress" column="gateway_address" jdbcType="VARCHAR"/>
-            <result property="gatewayCoding" column="gateway_coding" jdbcType="VARCHAR"/>
-            <result property="gatewayType" column="gateway_type" jdbcType="INTEGER"/>
-            <result property="orderNum" column="order_num" jdbcType="INTEGER"/>
-        </collection>
-    </resultMap>
-
 
   <sql id="selectCallRouteInfoVo">
-      select lcr.id,
-             lcr.caller_num,
-             lcr.route_num,
-             lcr.len_min,
-             lcr.len_max,
-             lcr.caller_pattern,
-             lcr.caller_replace_num,
-             lcr.callee_pattern,
-             lcr.callee_replace_num,
-             lcr.status,
-             lcr.create_by,
-             lcr.create_time,
-             lcr.update_by,
-             lcr.update_time,
-             lcrr.order_num,
-             lcrr.gateway_config_id,
-             lgc.name as gateway_name,
-             lgc.realm as gateway_address,
-             lgc.`type` as gateway_type
-      from call_route lcr
-      left join call_route_rel lcrr on lcr.id = lcrr.call_route_id and lcrr.del_flag = 0
-      left join fs_sip_gateway lgc on lcrr.gateway_config_id = lgc.id and lgc.del_flag = 0
-  </sql>
-
-    <select id="getDetail" resultMap="CallRouteDetailMap">
+      select id,
+             name,
+             route_num,
+             type,
+             level,
+             status,
+             schedule_id,
+             route_type,
+             route_value_id,
+             route_value,
+             create_by,
+             create_time,
+             update_by,
+             update_time,
+             del_flag
+      from call_route
+   </sql>
+    <select id="getDetail" resultType="com.och.system.domain.vo.route.CallRouteVo">
         <include refid="selectCallRouteInfoVo"/>
-        <where>
-            and lcr.id = #{id}
-        </where>
+        where id = #{id}
     </select>
 
-    <select id="getList" resultMap="CallRouteMap">
-        select id,
-               caller_num,
-               route_num,
-               len_min,
-               len_max,
-               caller_pattern,
-               caller_replace_num,
-               callee_pattern,
-               callee_replace_num,
-               status,
-               create_by,
-               create_time,
-               update_by,
-               update_time
-        from call_route
-        <where>
-            <if test="callerNum != null and callerNum != ''">
-                and caller_num = #{callerNum}
-            </if>
-            <if test="routeNumber != null and routeNumber != ''">
-                and route_num = #{routeNumber}
-            </if>
-            and del_flag = 0
-        </where>
-    </select>
 
-    <select id="listByQuery" resultMap="CallRouteDetailMap">
-        <include refid="selectCallRouteInfoVo"/>
+    <select id="getList" resultType="com.och.system.domain.vo.route.CallRouteVo">
+        select cr.id,
+               cr.name,
+               cr.route_num,
+               cr.type,
+               cr.level,
+               cr.status,
+               cr.schedule_id,
+               cs.name as schedule_name,
+               cr.route_type,
+               cr.route_value_id,
+               cr.route_value,
+               cr.create_by,
+               cr.create_time,
+               cr.update_by,
+               cr.update_time
+        from call_route cr
+        left join call_schedule cs on cr.schedule_id = cs.id and cs.del_flag = 0
         <where>
-            <if test="callerNum != null and callerNum != ''">
-                and lcr.caller_num = #{callerNum}
+            <if test="name != null and name != ''">
+                and cr.name like concat('%', #{name}, '%')
             </if>
             <if test="routeNumber != null and routeNumber != ''">
-                and (lcr.route_num like concat('%',#{routeNumber},'%') or lcr.route_num = '*')
+                and  #{routeNumber} regexp  cr.route_num
             </if>
             <if test="type != null">
-                and lgc.`type` = #{type}
+                and cr.type = #{type}
             </if>
-            and lcr.del_flag = 0
+            <if test="level != null">
+                and cr.level = #{level}
+            </if>
+            <if test="status != null">
+                and cr.status = #{status}
+            </if>
+            <if test="beginTime != null">
+                and cr.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and cr.create_time &lt;= #{endTime}
+            </if>
+           <if test="routeType !=null">
+               and cr.route_type = #{routeType}
+            </if>
+            and cr.del_flag = 0
         </where>
+        order by cr.id desc
     </select>
 
 </mapper>

@@ -1,80 +1,76 @@
 package com.och.system.service.impl;
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
+import com.och.common.exception.CommonException;
+import com.och.common.utils.StringUtils;
 import com.och.system.domain.entity.CallRoute;
 import com.och.system.domain.query.route.CallRouteAddQuery;
 import com.och.system.domain.query.route.CallRouteQuery;
-import com.och.system.domain.vo.route.CallRouteListVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.mapper.CallRouteMapper;
-import com.och.system.service.ICallRouteRelService;
 import com.och.system.service.ICallRouteService;
-import com.och.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * 号码路由表(CallRoute)表服务实现类
  *
  * @author danmo
- * @since 2023-10-18 14:21:22
+ * @since 2024-12-30 14:03:42
  */
 @Service
 public class CallRouteServiceImpl extends BaseServiceImpl<CallRouteMapper, CallRoute> implements ICallRouteService {
 
-    @Autowired
-    private ICallRouteRelService iCallRouteRelService;
-    @Autowired
-    private ISysUserService iSysUserService;
-
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void add(CallRouteAddQuery query) {
-        CallRoute lfsCallRoute = new CallRoute();
-        lfsCallRoute.addQuery2Entity(query);
-        if (save(lfsCallRoute)) {
-            iCallRouteRelService.add(lfsCallRoute.getId(), query.getRouteRelList());
+        if(checkName(query.getName())){
+            throw new CommonException("名称已存在");
         }
+        CallRoute route = new CallRoute();
+        BeanUtil.copyProperties(query, route);
+        route.setStatus(0);
+        save(route);
     }
 
     @Override
     public void edit(CallRouteAddQuery query) {
-        CallRoute lfsCallRoute = new CallRoute();
-        lfsCallRoute.addQuery2Entity(query);
-        if (updateById(lfsCallRoute)) {
-            iCallRouteRelService.update(lfsCallRoute.getId(), query.getRouteRelList());
+        CallRoute callRoute = getById(query.getId());
+        if (Objects.isNull(callRoute)){
+            throw new CommonException("无效ID");
         }
+        if (callRoute.getStatus() == 1){
+            throw new CommonException("已启用的号码路由无法修改");
+        }
+        if(!StringUtils.equals(callRoute.getName(), query.getName()) && checkName(query.getName())){
+            throw new CommonException("名称已存在");
+        }
+        CallRoute updateRoute = new CallRoute();
+        BeanUtil.copyProperties(query, updateRoute);
+        updateById(updateRoute);
+
     }
+
+
 
     @Override
     public void delete(CallRouteQuery query) {
-        List<Long> ids = new LinkedList<>();
-        if (Objects.nonNull(query.getId())) {
-            ids.add(query.getId());
+        CallRoute callRoute = getById(query.getId());
+        if (Objects.isNull(callRoute)){
+            throw new CommonException("无效ID");
         }
-        if (CollectionUtil.isNotEmpty(query.getIds())) {
-            ids.addAll(query.getIds());
+        if (callRoute.getStatus() == 1){
+            throw new CommonException("已启用的号码路由无法删除");
         }
-        if (CollectionUtil.isEmpty(ids)) {
-            return;
-        }
-        List<CallRoute> list = ids.stream().map(id -> {
-            CallRoute lfsCallRoute = new CallRoute();
-            lfsCallRoute.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
-            lfsCallRoute.setId(id);
-            return lfsCallRoute;
-        }).collect(Collectors.toList());
-        if (updateBatchById(list)) {
-            iCallRouteRelService.delete(ids);
-        }
+        CallRoute route = new CallRoute();
+        route.setId(query.getId());
+        route.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
+        updateById(route);
     }
 
     @Override
@@ -83,23 +79,58 @@ public class CallRouteServiceImpl extends BaseServiceImpl<CallRouteMapper, CallR
     }
 
     @Override
-    public List<CallRouteListVo> getList(CallRouteQuery query) {
+    public List<CallRouteVo> getPageList(CallRouteQuery query) {
+        startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
+        return getList(query);
+    }
+
+    @Override
+    public List<CallRouteVo> getList(CallRouteQuery query) {
         return this.baseMapper.getList(query);
     }
 
     @Override
-    public List<CallRouteListVo> getPageList(CallRouteQuery query) {
-        startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
-        List<CallRouteListVo> list = getList(query);
-        if(CollectionUtil.isNotEmpty(list)){
-            iSysUserService.decorate(list);
+    public void enable(Long id) {
+        CallRoute callRoute = getById(id);
+        if (Objects.isNull(callRoute)){
+            throw new CommonException("无效ID");
         }
-        return list;
+        if (callRoute.getStatus() == 1){
+            throw new CommonException("已启用的号码路由无法启用");
+        }
+        CallRoute route = new CallRoute();
+        route.setId(id);
+        route.setStatus(1);
+        updateById(route);
     }
 
     @Override
-    public List<CallRouteVo> listByQuery(CallRouteQuery query) {
-        return this.baseMapper.listByQuery(query);
+    public void disable(Long id) {
+        CallRoute callRoute = getById(id);
+        if (Objects.isNull(callRoute)){
+            throw new CommonException("无效ID");
+        }
+        if (callRoute.getStatus() == 0){
+            throw new CommonException("已禁用的号码路由无法禁用");
+        }
+        CallRoute route = new CallRoute();
+        route.setId(id);
+        route.setStatus(0);
+        updateById(route);
+    }
+
+    /**
+     * 检查名称是否重复
+     * @param name 名称
+     * @return 是否重复
+     */
+    private Boolean checkName(String name) {
+        long count = count(new LambdaQueryWrapper<CallRoute>().eq(CallRoute::getName, name).eq(BaseEntity::getDelFlag, DeleteStatusEnum.DELETE_NO.getIndex()));
+        if (count > 0){
+            return true;
+        }else {
+            return false;
+        }
     }
 }
 
