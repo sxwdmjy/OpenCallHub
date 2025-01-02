@@ -197,6 +197,20 @@ public class CallInfo {
      */
     private ProcessEnum process;
 
+    /**
+     * 语音识别引擎
+     */
+    private Long asrEngine;
+    /**
+     * 语音合成引擎
+     */
+    private Long ttsEngine;
+
+    /**
+     * 下一个节点ID
+     */
+    private Long nextNodeId;
+
     public void setChannelInfoMap(String uniqueId, ChannelInfo channelInfo) {
         if (CollectionUtil.isEmpty(channelMap)) {
             channelMap = new HashMap<>();

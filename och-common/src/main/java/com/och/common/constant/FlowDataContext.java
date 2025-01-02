@@ -1,7 +1,9 @@
 package com.och.common.constant;
 
 import lombok.Data;
+import lombok.ToString;
 
+@ToString
 @Data
 public class FlowDataContext {
 
@@ -40,4 +42,9 @@ public class FlowDataContext {
      * 当前节点执行记录ID
      */
     private Long currentHistoryId;
+
+    /**
+     * 挂机原因
+     */
+    private String hangUpCause;
 }

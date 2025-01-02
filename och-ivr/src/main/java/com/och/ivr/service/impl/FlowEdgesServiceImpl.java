@@ -2,6 +2,7 @@ package com.och.ivr.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.ivr.domain.entity.FlowEdges;
@@ -33,7 +34,7 @@ public class FlowEdgesServiceImpl extends BaseServiceImpl<FlowEdgesMapper, FlowE
     private final IFlowNodesService flowNodesService;
 
     // 获取当前节点的后继节点
-    public List<FlowNodes> getNextNodes(String currentNodeId) {
+    public List<FlowNodes> getNextNodes(Long currentNodeId) {
         List<FlowEdges> edges = findBySourceNodeId(currentNodeId);
         List<FlowNodes> nextNodes = new ArrayList<>();
         for (FlowEdges edge : edges) {
@@ -68,8 +69,8 @@ public class FlowEdgesServiceImpl extends BaseServiceImpl<FlowEdgesMapper, FlowE
     }
 
     @Override
-    public List<FlowEdges> findBySourceNodeId(String currentNodeId) {
-        return list(new LambdaQueryWrapper<FlowEdges>().eq(FlowEdges::getSourceNodeId, currentNodeId));
+    public List<FlowEdges> findBySourceNodeId(Long currentNodeId) {
+        return list(new LambdaQueryWrapper<FlowEdges>().eq(FlowEdges::getSourceNodeId, currentNodeId).eq(BaseEntity::getDelFlag, DeleteStatusEnum.DELETE_NO.getIndex()));
     }
 }
 

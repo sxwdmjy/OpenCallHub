@@ -14,9 +14,9 @@ import java.util.List;
  */
 public interface IFlowEdgesService extends IBaseService<FlowEdges> {
 
-    List<FlowEdges> findBySourceNodeId(String currentNodeId);
+    List<FlowEdges> findBySourceNodeId(Long currentNodeId);
 
-    List<FlowNodes> getNextNodes(String id);
+    List<FlowNodes> getNextNodes(Long id);
 
     void addByFlowId(List<FlowEdges> edges, Long flowId);
 

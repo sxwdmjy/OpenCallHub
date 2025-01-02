@@ -31,9 +31,9 @@ public class FlowNodeVo {
 
 
     /**
-     * 节点的属性（例如条件表达式、并行处理等）
+     * 节点的属性
      */
-    @Schema(description = "节点的属性（例如条件表达式、并行处理等）")
+    @Schema(description = "节点的属性")
     private String properties;
 
 

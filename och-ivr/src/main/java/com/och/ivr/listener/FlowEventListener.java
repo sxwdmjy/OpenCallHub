@@ -55,8 +55,24 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
      */
     private void endStateMachine(FlowEvent event) {
         log.info("endStateMachine event:{}", event);
-        FlowDataContext data = event.getData();
-        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, data.getInstanceId()));
+        FlowDataContext flowData = event.getData();
+        FlowInfoVo info = iFlowInfoService.getInfo(flowData.getFlowId());
+        if (Objects.isNull(info)) {
+            log.info("未找到流程信息 event:{}", event);
+            return;
+        }
+        StateMachine<Object, Object> stateMachine = buildStateMachine(info);
+        if (Objects.isNull(stateMachine)) {
+            log.info("创建状态机失败 event:{}", event);
+            return;
+        }
+        try {
+            StateMachine<Object, Object> restore = persister.restore(stateMachine, StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, flowData.getInstanceId()));
+            restore.stopReactively().subscribe();
+        } catch (Exception e) {
+            log.error("endStateMachine 恢复状态机异常:event:{},error:{}", event, e.getMessage(), e);
+        }
+        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, event.getData().getInstanceId()));
     }
 
     /**
@@ -134,12 +150,12 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
         log.info("创建状态机：info:{}", JSON.toJSONString(info));
         try {
             List<FlowNodeVo> nodes = info.getNodes();
-            FlowNodeVo startNode = nodes.stream().filter(n -> Objects.equals("0", n.getType())).findFirst().orElseGet(null);
+            FlowNodeVo startNode = nodes.stream().filter(n -> Objects.equals(0, n.getType())).findFirst().orElseGet(null);
             if (Objects.isNull(startNode)) {
                 log.info("未找到流程开始节点 id:{}", info.getId());
                 return null;
             }
-            FlowNodeVo endNode = nodes.stream().filter(n -> Objects.equals("1", n.getType())).findFirst().orElseGet(null);
+            FlowNodeVo endNode = nodes.stream().filter(n -> Objects.equals(1, n.getType())).findFirst().orElseGet(null);
             if (Objects.isNull(endNode)) {
                 log.info("未找到流程结束节点 id:{}", info.getId());
                 return null;
@@ -158,6 +174,7 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
             StateMachineTransitionConfigurer<Object, Object> transitionConfigurer = stateMachineBuilder.configureTransitions();
             int i = 0;
             for (FlowEdgeVo edge : edges) {
+                transitionConfigurer.withExternal().source(edge.getSourceNodeId()).target(endNode.getId()).event("end").and();
                 if (i < edges.size() - 1) {
                     transitionConfigurer.withExternal().source(edge.getSourceNodeId()).target(edge.getTargetNodeId()).event(edge.getEvent()).and();
                 } else if (i == edges.size() - 1) {
