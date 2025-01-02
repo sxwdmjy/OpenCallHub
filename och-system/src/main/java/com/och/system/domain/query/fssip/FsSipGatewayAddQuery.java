@@ -2,6 +2,7 @@ package com.och.system.domain.query.fssip;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -89,4 +90,11 @@ public class FsSipGatewayAddQuery {
      */
     @Schema(description = "心跳时间（秒）",requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer pingTime;
+
+    /**
+     * 网关类型 0-非外线 1-外线
+     */
+    @NotNull(message = "网关类型不能为空")
+    @Schema(description = "网关类型 0-非外线 1-外线",requiredMode = Schema.RequiredMode.REQUIRED)
+    private Integer gatewayType;
 }

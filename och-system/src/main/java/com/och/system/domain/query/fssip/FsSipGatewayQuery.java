@@ -61,4 +61,7 @@ public class FsSipGatewayQuery extends BaseQuery {
 
     @Schema(description = "网关类型 1-internal 2-external")
     private Integer type;
+
+    @Schema(description = "网关类型 0-非外线 1-外线")
+    private Integer gatewayType;
 }

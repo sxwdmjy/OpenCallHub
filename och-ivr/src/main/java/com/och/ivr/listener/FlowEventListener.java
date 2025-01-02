@@ -126,6 +126,7 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
         } catch (Exception e) {
             log.error("持久化状态机异常:event:{},error:{}", event, e.getMessage(), e);
         }
+
     }
 
 

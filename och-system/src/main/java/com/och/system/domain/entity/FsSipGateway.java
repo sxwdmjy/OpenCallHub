@@ -131,5 +131,9 @@ public class FsSipGateway extends BaseEntity implements Serializable {
     @Schema(description = "网关类型 1-internal 2-external")
     @TableField("type")
     private Integer type;
+
+    @Schema(description = "网关类型 0-非外线 1-外线")
+    @TableField("gateway_type")
+    private Integer gatewayType;
 }
 
