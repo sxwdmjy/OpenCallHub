@@ -21,6 +21,7 @@ import com.och.system.domain.query.agent.SipAgentQuery;
 import com.och.system.domain.query.call.CallQuery;
 import com.och.system.domain.query.call.CallRecordQuery;
 import com.och.system.domain.query.display.CallDisplayQuery;
+import com.och.system.domain.query.fssip.FsSipGatewayQuery;
 import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.domain.vo.call.CallRecordVo;
 import com.och.system.domain.vo.display.CallDisplayVo;
@@ -82,7 +83,7 @@ public class ICallServiceImpl implements ICallService {
                 .calleeTimeOut(query.getCalleeTimeOut()).build();
 
         callInfo.addUniqueIdList(uniqueId);
-        callInfo.setProcess(ProcessEnum.CALL_OTHER);
+        callInfo.setProcess(ProcessEnum.CALL_ROUTE);
 
         //获取被叫显号
         CallDisplayQuery poolQuery = new CallDisplayQuery();
@@ -110,7 +111,7 @@ public class ICallServiceImpl implements ICallService {
             throw new CommonException("未配置号码路由");
         }
 
-        FsSipGateway sipGateway = iFsSipGatewayService.getDetail(callRoute.getRouteValueId());
+        FsSipGateway sipGateway = iFsSipGatewayService.getDetail(Long.valueOf(callRoute.getRouteValue()));
 
 
         fsClient.makeCall(callId, callInfo.getCallee(), callInfo.getCalleeDisplay(), uniqueId, query.getCallerTimeOut(), sipGateway);
