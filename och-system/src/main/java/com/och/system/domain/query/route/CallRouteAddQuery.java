@@ -49,20 +49,14 @@ public class CallRouteAddQuery {
     /**
      * 日程ID
      */
-    @Schema(description = "日程ID(仅呼入生效)")
+    @Schema(description = "日程ID")
     private Long scheduleId;
 
     /**
      * 路由类型
      */
-    @Schema(description = "路由类型(仅呼入生效) 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr")
+    @Schema(description = "路由类型 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr")
     private Integer routeType;
-
-    /**
-     * 路由类型值ID
-     */
-    @Schema(description = "路由类型值ID")
-    private Long routeValueId;
 
     /**
      * 路由类型值

@@ -1,10 +1,12 @@
-package com.och.esl.handler.route;
+package com.och.ivr.handler.route;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.och.common.annotation.EslRouteName;
+import com.och.common.config.redis.RedisService;
 import com.och.common.constant.CacheConstants;
+import com.och.common.constant.FlowDataContext;
 import com.och.common.domain.CallInfo;
 import com.och.common.domain.CallInfoDetail;
 import com.och.common.domain.ChannelInfo;
@@ -14,7 +16,11 @@ import com.och.common.enums.RouteTypeEnum;
 import com.och.common.enums.SipAgentStatusEnum;
 import com.och.common.thread.ThreadFactoryImpl;
 import com.och.common.utils.StringUtils;
+import com.och.esl.client.FsClient;
+import com.och.esl.handler.route.FsAbstractRouteHandler;
 import com.och.esl.queue.CallQueue;
+import com.och.esl.service.IFsCallCacheService;
+import com.och.ivr.properties.FlowNodeProperties;
 import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.query.fssip.FsSipGatewayQuery;
 import com.och.system.domain.query.skill.CallSkillQuery;
@@ -23,6 +29,10 @@ import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.domain.vo.skill.CallSkillAgentRelVo;
 import com.och.system.domain.vo.skill.CallSkillVo;
+import com.och.system.service.ICallSkillService;
+import com.och.system.service.IFsSipGatewayService;
+import com.och.system.service.ISipAgentService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,31 +45,40 @@ import java.util.stream.Collectors;
 
 /**
  * @author danmo
- * @date 2023-11-10 17:20
+ * @date 2024-12-31 17:20
  **/
-@EslRouteName(RouteTypeEnum.SKILL_GROUP)
+@RequiredArgsConstructor
 @Component
 @Slf4j
-public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements InitializingBean, DisposableBean {
+public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableBean {
 
+    private final IFsCallCacheService fsCallCacheService;
+    private final ICallSkillService iCallSkillService;
+    private final FsClient fsClient;
+    private final RedisService redisService;
+    private final IFsSipGatewayService iFsSipGatewayService;
+    private final ISipAgentService iSipAgentService;
 
     private Map<Long, PriorityQueue<CallQueue>> callQueueMap = new ConcurrentHashMap<>();
 
     private ThreadPoolExecutor callAgentExecutor = new ThreadPoolExecutor(5, 10, 60L,
-            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new ThreadFactoryImpl("fs-agent-distribution-pool-%d"));
+            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new ThreadFactoryImpl("flow-agent-distribution-pool-%d"));
     /**
      * 定时线程组
      */
-    private static ScheduledExecutorService fsAcdThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("fs-acd-pool-%d"));
+    private static ScheduledExecutorService fsAcdThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("flow-acd-pool-%d"));
 
 
-    @Override
-    public void handler(String address, CallInfo callInfo, String uniqueId, String skillId) {
-        log.info("转技能组 callId:{} transfer to {}", callInfo.getCallId(), skillId);
+    public void handler(FlowDataContext flowData, FlowNodeProperties properties) {
+        String skillId = properties.getRouteValue();
+        log.info("转技能组 callId:{} transfer to {}", flowData.getCallId(), skillId);
+
+        CallInfo callInfo = fsCallCacheService.getCallInfo(flowData.getCallId());
+
         CallSkillVo callSkill = iCallSkillService.getDetail(Long.valueOf(skillId));
         if (Objects.isNull(callSkill)) {
             log.info("转技能组获取技能组失败 callee:{}, skillId:{}", callInfo.getCallee(), skillId);
-            fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
+            fsClient.hangupCall(flowData.getAddress(), callInfo.getCallId(), flowData.getUniqueId());
             return;
         }
         callInfo.setSkillId(callSkill.getId());
@@ -80,7 +99,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
         if (CollectionUtil.isEmpty(agentList)) {
             log.info("转技能组未配置坐席失败 callee:{}, skillId:{}", callInfo.getCallee(), skillId);
             callInfo.setSkillHangUpReason(HangupCauseEnum.FULLBUSY.getDesc());
-            fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
+            fsClient.hangupCall(flowData.getAddress(), callInfo.getCallId(), flowData.getUniqueId());
             return;
         }
         List<String> agentIds = agentList.stream().map(CallSkillAgentRelVo::getAgentId).map(String::valueOf).toList();
@@ -104,18 +123,18 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
             switch (fullBusyType) {
                 //排队
                 case 0:
-                    callQueueStrategy(address, callInfo, uniqueId, callSkill);
+                    callQueueStrategy(flowData.getAddress(), callInfo, flowData.getUniqueId(), callSkill);
                     break;
                 //溢出
                 case 1:
-                    overFlowStrategy(address, callInfo, uniqueId, callSkill);
+                    overFlowStrategy(flowData.getAddress(), callInfo, flowData.getUniqueId(), callSkill);
                     break;
                 //挂机
                 case 2:
                     callInfo.setHangupDir(3);
                     callInfo.setHangupCause(HangupCauseEnum.OVERFLOW.getCode());
-                    fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
-                    saveCallInfo(callInfo);
+                    fsClient.hangupCall(flowData.getAddress(), callInfo.getCallId(), flowData.getUniqueId());
+                    fsCallCacheService.saveCallInfo(callInfo);
                     break;
                 default:
                     break;
@@ -130,10 +149,10 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
         if (Objects.isNull(agentInfo)) {
             log.info("转技能组 获取空闲坐席失败 callee:{}, skillId:{}", callInfo.getCallee(), skillId);
             callInfo.setSkillHangUpReason(HangupCauseEnum.FULLBUSY.getDesc());
-            fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
+            fsClient.hangupCall(flowData.getAddress(), callInfo.getCallId(), flowData.getUniqueId());
             return;
         }
-        transferAgentHandler(address,agentInfo, callInfo, uniqueId);
+        transferAgentHandler(flowData.getAddress(),agentInfo, callInfo, flowData.getUniqueId());
 
     }
 
@@ -157,7 +176,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
                 .startTime(callInfo.getQueueStartTime())
                 .uniqueId(uniqueId).build());
         callQueueMap.put(callInfo.getSkillId(), callQueues);
-        saveCallInfo(callInfo);
+        fsCallCacheService.saveCallInfo(callInfo);
     }
 
     private void overFlowStrategy(String address, CallInfo callInfo, String uniqueId, CallSkillVo skill) {
@@ -171,7 +190,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
         } else if (skill.getOverflowType() == 1) {
             //todo 转IVR
         }
-        saveCallInfo(callInfo);
+        fsCallCacheService.saveCallInfo(callInfo);
     }
 
 
@@ -368,7 +387,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
         callInfo.setSkillHangUpReason(HangupCauseEnum.QUEUE_TIME_OUT.getDesc());
 
         fsClient.hangupCall(callQueue.getAddress(), callQueue.getCallId(), callQueue.getUniqueId());
-        saveCallInfo(callInfo);
+        fsCallCacheService.saveCallInfo(callInfo);
     }
 
     @Override

@@ -119,7 +119,7 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         callInfo.setChannelInfoMap(uniqueId,channelInfo);
 
 
-        callInfo.setProcess(ProcessEnum.CALLIN);
+        callInfo.setProcess(ProcessEnum.CALL_ROUTE);
 
         ifsCallCacheService.saveCallInfo(callInfo);
         ifsCallCacheService.saveCallRel(uniqueId,callId);
@@ -149,7 +149,7 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
                 .caller(callerNumber).callee(calleeNumber).direction(OUTBOUND.getType())
                 .callTime(DateUtil.current()).build();
         callInfo.addUniqueIdList(uniqueId);
-        callInfo.setProcess(ProcessEnum.CALL_OTHER);
+        callInfo.setProcess(ProcessEnum.CALL_ROUTE);
 
         //获取被叫显号
         CallDisplayQuery displayQuery = new CallDisplayQuery();

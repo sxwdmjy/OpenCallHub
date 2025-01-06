@@ -11,7 +11,6 @@
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="scheduleId" column="schedule_id" jdbcType="BIGINT"/>
         <result property="routeType" column="route_type" jdbcType="INTEGER"/>
-        <result property="routeValueId" column="route_value_id" jdbcType="BIGINT"/>
         <result property="routeValue" column="route_value" jdbcType="VARCHAR"/>
         <result property="createBy" column="create_by" jdbcType="BIGINT"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
@@ -29,7 +28,6 @@
              status,
              schedule_id,
              route_type,
-             route_value_id,
              route_value,
              create_by,
              create_time,
@@ -54,7 +52,6 @@
                cr.schedule_id,
                cs.name as schedule_name,
                cr.route_type,
-               cr.route_value_id,
                cr.route_value,
                cr.create_by,
                cr.create_time,

@@ -36,14 +36,6 @@ public class FsChannelBridgeEslEventHandler extends AbstractFsEslEventHandler {
         }
         if (callInfo.getAnswerTime() == null || callInfo.getAnswerTime() == 0L) {
             callInfo.setAnswerTime(event.getEventDateTimestamp() / 1000);
-           /* if (callInfo.getHiddenCustomer() == 1) {
-                //隐藏客户侧号码
-                if (Objects.equals(DirectionEnum.INBOUND.getType(), callInfo.getDirection())) {
-
-                } else if (Objects.equals(DirectionEnum.OUTBOUND.getType(), callInfo.getDirection())) {
-
-                }
-            }*/
         }
         log.info("桥接成功 callId:{}, uniqueId:{}, otherUniqueId:{}", callInfo.getCallId(), uniqueId, otherUniqueId);
         ChannelInfo channelInfo = callInfo.getChannelMap().get(uniqueId);
@@ -55,8 +47,8 @@ public class FsChannelBridgeEslEventHandler extends AbstractFsEslEventHandler {
             otherChannelInfo.setBridgeTime(event.getEventDateTimestamp() / 1000);
         }
 
-        fsClient.detectSpeech(address,callInfo.getCallId(),uniqueId);
-        fsClient.detectSpeech(address,callInfo.getCallId(),otherUniqueId);
+        //fsClient.detectSpeech(address,callInfo.getCallId(),uniqueId);
+        //fsClient.detectSpeech(address,callInfo.getCallId(),otherUniqueId);
 
         callInfo.setChannelInfoMap(uniqueId,channelInfo);
         callInfo.setChannelInfoMap(otherUniqueId,otherChannelInfo);

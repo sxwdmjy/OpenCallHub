@@ -43,7 +43,7 @@ public class FsCallOtherProcess extends FsAbstractCallProcess {
             fsClient.hangupCall(address, callInfo.getCallId(), lfsChannelInfo.getUniqueId());
             return;
         }
-        if(Objects.isNull(callRoute.getRouteValueId())){
+        if(Objects.isNull(callRoute.getRouteValue())){
             log.info("CallOtherProcess 号码路由未关联网关信息 callee:{}",callee);
             fsClient.hangupCall(address, callInfo.getCallId(), lfsChannelInfo.getUniqueId());
             return;
@@ -57,7 +57,7 @@ public class FsCallOtherProcess extends FsAbstractCallProcess {
         callInfo.setProcess(ProcessEnum.CALL_BRIDGE);
         lfsCallCacheService.saveCallInfo(callInfo);
         lfsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
-        FsSipGateway sipGateway = fsSipGatewayService.getDetail(callRoute.getRouteValueId());
+        FsSipGateway sipGateway = fsSipGatewayService.getDetail(Long.valueOf(callRoute.getRouteValue()));
         try {
             fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCallee(),callInfo.getCalleeDisplay(),otherUniqueId,callInfo.getCalleeTimeOut(), sipGateway);
         } catch (Exception e) {

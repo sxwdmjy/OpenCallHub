@@ -34,7 +34,7 @@ public class CallRouteQuery extends BaseQuery {
     @Schema(description = "状态  0-未启用 1-启用")
     private Integer status;
 
-    @Schema(description = "呼出路由类型")
+    @Schema(description = "呼出路由类型 路由类型 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr")
     private Integer routeType;
 
 

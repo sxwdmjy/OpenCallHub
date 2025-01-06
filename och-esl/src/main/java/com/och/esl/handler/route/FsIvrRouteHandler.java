@@ -1,7 +1,9 @@
 package com.och.esl.handler.route;
 
+import cn.hutool.core.date.DateUtil;
 import com.och.common.annotation.EslRouteName;
 import com.och.common.domain.CallInfo;
+import com.och.common.domain.CallInfoDetail;
 import com.och.common.enums.RouteTypeEnum;
 import com.och.esl.service.IFlowNoticeService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +23,19 @@ public class FsIvrRouteHandler extends FsAbstractRouteHandler {
     private final IFlowNoticeService iFlowNoticeService;
 
     @Override
-    public void handler(String address, CallInfo callInfo, String uniqueId, String routeValue) {
-        log.info("转ivr callId:{} transfer to {}", callInfo.getCallId(), routeValue);
-        iFlowNoticeService.notice(address, callInfo.getCallId(), Long.parseLong(routeValue));
+    public void handler(String address, CallInfo callInfo, String uniqueId, String flowId) {
+        log.info("转ivr callId:{} transfer to {}", callInfo.getCallId(), flowId);
+
+        CallInfoDetail detail = new CallInfoDetail();
+        detail.setCallId(callInfo.getCallId());
+        detail.setStartTime(DateUtil.current());
+        detail.setOrderNum(callInfo.getDetailList() == null ? 0 : callInfo.getDetailList().size() + 1);
+        detail.setTransferType(2);
+
+        iFlowNoticeService.notice(address, callInfo.getCallId(), Long.parseLong(flowId));
+
+        detail.setEndTime(DateUtil.current());
+        callInfo.addDetailList(detail);
+        fsCallCacheService.saveCallInfo(callInfo);
     }
 }

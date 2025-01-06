@@ -8,7 +8,7 @@ import com.och.common.constant.FlowDataContext;
 import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.domain.entity.FlowNodeExecutionHistory;
 import com.och.ivr.domain.entity.FlowNodes;
-import com.och.ivr.handler.AbstractIFlowNodeHandler;
+import com.och.ivr.handler.node.AbstractIFlowNodeHandler;
 import com.och.ivr.service.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

@@ -43,7 +43,7 @@ public class CallInfoDetail {
     private Integer orderNum;
 
     /**
-     * 类型(1:callIn,2:进ivr,3:技能组,4:按键收号,5:外线 6-SIP)
+     * 类型(1:坐席,2:进ivr,3:技能组,4:放音,5:外线 6-SIP)
      */
     private Integer transferType;
 

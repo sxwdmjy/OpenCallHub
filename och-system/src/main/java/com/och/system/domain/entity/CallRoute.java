@@ -88,9 +88,6 @@ public class CallRoute extends BaseEntity implements Serializable {
     private Integer routeType;
 
 
-    @Schema(description = "路由类型值ID")
-    @TableField("route_value_id")
-    private Long routeValueId;
     /**
      * 路由类型值
      */

@@ -1,4 +1,4 @@
-package com.och.ivr.handler;
+package com.och.ivr.handler.node;
 
 import com.och.common.constant.FlowDataContext;
 import com.och.esl.client.FsClient;
@@ -8,24 +8,27 @@ import com.och.ivr.service.IFlowEdgesService;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
 import com.och.ivr.service.IFlowNodesService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
 /**
- * 子IVR节点处理
+ * 结束节点处理
+ *
  * @author danmo
  * @date 2024-12-26
  */
+@Slf4j
 @Component
-public class FlowSubIvrHandler extends AbstractIFlowNodeHandler{
+public class IFlowEndHandler extends AbstractIFlowNodeHandler {
 
 
-    public FlowSubIvrHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowNodesService iFlowNodesService, IFlowEdgesService iFlowEdgesService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient) {
+    public IFlowEndHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowNodesService iFlowNodesService, IFlowEdgesService iFlowEdgesService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient) {
         super(persister, fsCallCacheService, iFlowNoticeService, iFlowNodesService, iFlowEdgesService, iFlowInfoService, iFlowInstancesService, fsClient);
     }
 
     @Override
     public void execute(FlowDataContext flowData) {
-
+        log.info("结束节点处理 flowData：{}", flowData);
     }
 }

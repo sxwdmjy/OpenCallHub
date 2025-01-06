@@ -1,4 +1,4 @@
-package com.och.ivr.handler;
+package com.och.ivr.handler.node;
 
 import com.och.common.constant.FlowDataContext;
 import com.och.esl.client.FsClient;
@@ -12,16 +12,15 @@ import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
 /**
- * 满意度节点处理
- *
+ * 子IVR节点处理
  * @author danmo
  * @date 2024-12-26
  */
 @Component
-public class FlowSatisfactionHandler extends AbstractIFlowNodeHandler {
+public class FlowSubIvrHandler extends AbstractIFlowNodeHandler{
 
 
-    public FlowSatisfactionHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowNodesService iFlowNodesService, IFlowEdgesService iFlowEdgesService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient) {
+    public FlowSubIvrHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowNodesService iFlowNodesService, IFlowEdgesService iFlowEdgesService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient) {
         super(persister, fsCallCacheService, iFlowNoticeService, iFlowNodesService, iFlowEdgesService, iFlowInfoService, iFlowInstancesService, fsClient);
     }
 

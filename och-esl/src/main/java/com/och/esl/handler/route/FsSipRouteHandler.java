@@ -22,10 +22,10 @@ import org.springframework.stereotype.Component;
 public class FsSipRouteHandler extends FsAbstractRouteHandler {
 
     @Override
-    public void handler(String address, CallInfo callInfo, String uniqueId, String routeValue) {
-        log.info("转SIP callId:{} transfer to {}", callInfo.getCallId(), routeValue);
+    public void handler(String address, CallInfo callInfo, String uniqueId, String sipValue) {
+        log.info("转SIP callId:{} transfer to {}", callInfo.getCallId(), sipValue);
         String otherUniqueId = RandomUtil.randomNumbers(32);
-        String[] destinationArr = routeValue.split(Constants.AT);
+        String[] destinationArr = sipValue.split(Constants.AT);
         callInfo.setCallee(destinationArr[0]);
         String gatewayAddress = destinationArr[1];
         //构建被叫通道
@@ -41,12 +41,14 @@ public class FsSipRouteHandler extends FsAbstractRouteHandler {
         detail.setStartTime(DateUtil.current());
         detail.setOrderNum(callInfo.getDetailList() == null ? 0 : callInfo.getDetailList().size() + 1);
         detail.setTransferType(6);
-        callInfo.addDetailList(detail);
 
-        fsCallCacheService.saveCallInfo(callInfo);
-        fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
 
         fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCaller(),callInfo.getCallee(),otherUniqueId,callInfo.getCalleeTimeOut(), gatewayAddress);
+
+        detail.setEndTime(DateUtil.current());
+        callInfo.addDetailList(detail);
+        fsCallCacheService.saveCallInfo(callInfo);
+        fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
 
     }
 }

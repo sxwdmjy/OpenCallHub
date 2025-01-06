@@ -1,4 +1,4 @@
-package com.och.ivr.handler;
+package com.och.ivr.handler.node;
 
 import com.alibaba.fastjson.JSONObject;
 import com.och.common.constant.FlowDataContext;
@@ -49,6 +49,7 @@ public class FlowStartHandler extends AbstractIFlowNodeHandler{
             }
             callInfo.setNextNodeId(nextNodeId);
             fsCallCacheService.saveCallInfo(callInfo);
+            iFlowNoticeService.notice(2, ""+nextNodeId, flowData);
         } catch (Exception e) {
             throw new FlowNodeException(e);
         }

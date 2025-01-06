@@ -31,10 +31,7 @@ public class FsCallBridgeProcess extends FsAbstractCallProcess {
             otherChannel.setBridgeTime(event.getEventDateTimestamp() / 1000);
         }
 
-        /**
-         * 手动外呼：接通录音时在此录音
-         */
-        fsClient.record(address, callInfo.getCallId(), lfsChannelInfo.getUniqueId(), callInfo.getRecord());
+        //fsClient.record(address, callInfo.getCallId(), lfsChannelInfo.getUniqueId(), callInfo.getRecord());
 
         callInfo.setChannelInfoMap(lfsChannelInfo.getOtherUniqueId(),channel);
         callInfo.setChannelInfoMap(lfsChannelInfo.getUniqueId(),otherChannel);
