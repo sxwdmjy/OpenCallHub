@@ -91,7 +91,7 @@ public class CallRouteServiceImpl extends BaseServiceImpl<CallRouteMapper, CallR
         if(CollectionUtil.isNotEmpty(routeList)){
             sysUserService.decorate(routeList);
         }
-        return getList(query);
+        return routeList;
     }
 
     @Override
