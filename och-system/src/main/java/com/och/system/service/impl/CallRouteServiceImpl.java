@@ -1,6 +1,7 @@
 package com.och.system.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
@@ -13,6 +14,8 @@ import com.och.system.domain.query.route.CallRouteQuery;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.mapper.CallRouteMapper;
 import com.och.system.service.ICallRouteService;
+import com.och.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +29,9 @@ import java.util.Objects;
  */
 @Service
 public class CallRouteServiceImpl extends BaseServiceImpl<CallRouteMapper, CallRoute> implements ICallRouteService {
+
+    @Autowired
+    private ISysUserService sysUserService;
 
     @Override
     public void add(CallRouteAddQuery query) {
@@ -81,6 +87,10 @@ public class CallRouteServiceImpl extends BaseServiceImpl<CallRouteMapper, CallR
     @Override
     public List<CallRouteVo> getPageList(CallRouteQuery query) {
         startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
+        List<CallRouteVo> routeList = getList(query);
+        if(CollectionUtil.isNotEmpty(routeList)){
+            sysUserService.decorate(routeList);
+        }
         return getList(query);
     }
 

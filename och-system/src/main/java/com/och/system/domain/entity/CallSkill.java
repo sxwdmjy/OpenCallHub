@@ -70,7 +70,7 @@ public class CallSkill extends BaseEntity implements Serializable {
      * 描述
      */
     @Schema(description = "描述")
-    @TableField("describe")
+    @TableField("`describe`")
     private String describe;
 
 

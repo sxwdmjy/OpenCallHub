@@ -78,71 +78,71 @@
                update_by,
                update_time,
                del_flag
-        from lfs_skill
+        from call_skill
     </sql>
 
     <sql id="selectInfoVo">
-        select lsk.id,
-               lsk.group_id,
-               if(lsk.group_id = 1, '默认分组', lc.name) as group_name,
-               lsk.name,
-               lsk.`describe`,
-               lsk.priority,
-               lsk.after_time,
-               lsk.strategy_type,
-               lsk.full_busy_type,
-               lsk.overflow_type,
-               lsk.overflow_value,
-               lsk.time_out,
-               lsk.queue_length,
-               lsk.queue_voice,
-               lsk.queue_voice_value,
-               lsk.agent_voice,
-               lsk.agent_voice_value,
-               lsk.create_by,
-               lsk.create_time,
-               lsk.update_by,
-               lsk.update_time,
-               lsar.id         as rel_id,
-               lsar.agent_id,
-               la.name      as agent_name,
-               lsar.`level`
-        from lfs_skill lsk
-                 left join lfs_skill_agent_rel lsar on lsar.skill_id = lsk.id and lsar.del_flag = 0
-                 left join lfs_agent la on la.id = lsar.agent_id
-                 left join sys_category lc on lc.id = lsk.group_id
+        select cs.id,
+               cs.group_id,
+               if(cs.group_id = 1, '默认分组', sc.name) as group_name,
+               cs.name,
+               cs.`describe`,
+               cs.priority,
+               cs.after_time,
+               cs.strategy_type,
+               cs.full_busy_type,
+               cs.overflow_type,
+               cs.overflow_value,
+               cs.time_out,
+               cs.queue_length,
+               cs.queue_voice,
+               cs.queue_voice_value,
+               cs.agent_voice,
+               cs.agent_voice_value,
+               cs.create_by,
+               cs.create_time,
+               cs.update_by,
+               cs.update_time,
+               csar.id         as rel_id,
+               csar.agent_id,
+               sa.name      as agent_name,
+               csar.`level`
+        from call_skill cs
+                 left join call_skill_agent_rel csar on csar.skill_id = cs.id and csar.del_flag = 0
+                 left join sip_agent sa on sa.id = csar.agent_id
+                 left join sys_category sc on sc.id = cs.group_id
     </sql>
 
     <select id="getDetail" resultMap="CallSkillDetailMap">
         <include refid="selectInfoVo"/>
         <where>
-            and lsk.id = #{id}
+            and cs.id = #{id}
         </where>
     </select>
 
     <select id="getIdsByQuery" resultType="java.lang.Long">
-        select distinct lsk.id
-        from lfs_skill lsk
-        left join lfs_skill_agent_rel lsar on lsar.skill_id = lsk.id and lsar.del_flag = 0
-        left join lfs_agent la on la.id = lsar.agent_id
-        left join sys_category lc on lc.id = lsk.group_id
+        select distinct cs.id
+        from call_skill cs
+        left join call_skill_agent_rel csar on csar.skill_id = cs.id and csar.del_flag = 0
+        left join sip_agent sa on sa.id = csar.agent_id
+        left join sys_category sc on sc.id = cs.group_id
         <where>
             <if test="groupId != null">
-                and lsk.group_id = #{groupId}
+                and cs.group_id = #{groupId}
             </if>
             <if test="name != null and name != ''">
-                and lsk.name like concat('%',#{name},'%')
+                and cs.name like concat('%',#{name},'%')
             </if>
             <if test="describe != null and describe != ''">
-                and lsk.`describe` like concat('%',#{describe},'%')
+                and cs.`describe` like concat('%',#{describe},'%')
             </if>
             <if test="agentId != null">
-                and la.id = #{agentId}
+                and sa.id = #{agentId}
             </if>
             <if test="agentName != null and agentName != ''">
-                and la.name like concat('%',#{agentName},'%')
+                and sa.name like concat('%',#{agentName},'%')
             </if>
-            and lsk.del_flag = 0
+            and cs.del_flag = 0
         </where>
     </select>
 
@@ -150,30 +150,30 @@
         <include refid="selectInfoVo"/>
         <where>
             <if test="id != null ">
-                and lsk.id = #{id}
+                and cs.id = #{id}
             </if>
             <if test="ids != null and ids.size() > 0">
-                and lsk.id in
+                and cs.id in
                 <foreach collection="ids" item="id" open="(" separator="," close=")">
                     #{id}
                 </foreach>
             </if>
             <if test="groupId != null">
-                and lsk.group_id = #{groupId}
+                and cs.group_id = #{groupId}
             </if>
             <if test="name != null and name != ''">
-                and lsk.name like concat('%',#{name},'%')
+                and cs.name like concat('%',#{name},'%')
             </if>
             <if test="describe != null and describe != ''">
-                and lsk.`describe` like concat('%',#{describe},'%')
+                and cs.`describe` like concat('%',#{describe},'%')
             </if>
             <if test="agentId != null">
-                and la.id = #{agentId}
+                and sa.id = #{agentId}
             </if>
             <if test="agentName != null and agentName != ''">
-                and la.name like concat('%',#{agentName},'%')
+                and sa.name like concat('%',#{agentName},'%')
             </if>
-            and lsk.del_flag = 0
+            and cs.del_flag = 0
         </where>
     </select>
 
@@ -181,7 +181,7 @@
         <include refid="selectInfoVo"/>
         <where>
             <if test="ids != null and ids.size() > 0">
-                and lsk.id in
+                and cs.id in
                 <foreach collection="ids" item="id" open="(" separator="," close=")">
                     #{id}
                 </foreach>

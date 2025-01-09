@@ -38,7 +38,7 @@ public class ThreadPoolUtil {
                         }
                     });
                     applicationEventThreadPool.initialize();
-                    Runtime.getRuntime().addShutdownHook(new Thread(applicationEventThreadPool::shutdown));
+                    Runtime.getRuntime().addShutdownHook(new Thread(() -> applicationEventThreadPool.setWaitForTasksToCompleteOnShutdown(true)));
                 }
             }
         }
