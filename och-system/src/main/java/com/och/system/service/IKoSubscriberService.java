@@ -8,6 +8,7 @@ import com.och.system.domain.query.subsriber.KoSubscriberBatchAddQuery;
 import com.och.system.domain.query.subsriber.KoSubscriberQuery;
 import com.och.system.domain.query.subsriber.KoSubscriberUpdateQuery;
 import com.och.system.domain.vo.sip.KoSubscriberVo;
+import com.och.system.domain.vo.sip.SipSimpleVo;
 
 import java.util.List;
 
@@ -35,4 +36,7 @@ public interface IKoSubscriberService extends IBaseService<KoSubscriber> {
 
 
     List<KoSubscriberVo> getPageList(KoSubscriberQuery query);
+
+    List<SipSimpleVo> selectList();
+
 }

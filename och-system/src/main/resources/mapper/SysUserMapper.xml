@@ -176,5 +176,13 @@
             and del_flag = 0
         </where>
     </select>
+
+    <select id="getSelectList" resultType="com.och.system.domain.vo.user.SysSimpleUserVo">
+        select user_id, user_name, nick_name from  sys_user
+        <where>
+            and status = 1
+            and del_flag = 0
+        </where>
+    </select>
 </mapper>
 

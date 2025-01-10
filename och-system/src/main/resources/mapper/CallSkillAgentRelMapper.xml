@@ -6,7 +6,6 @@
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="skillId" column="skill_id" jdbcType="INTEGER"/>
         <result property="agentId" column="agent_id" jdbcType="VARCHAR"/>
-        <result property="level" column="level" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>

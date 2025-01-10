@@ -11,6 +11,7 @@ import com.och.system.domain.query.subsriber.KoSubscriberBatchAddQuery;
 import com.och.system.domain.query.subsriber.KoSubscriberQuery;
 import com.och.system.domain.query.subsriber.KoSubscriberUpdateQuery;
 import com.och.system.domain.vo.sip.KoSubscriberVo;
+import com.och.system.domain.vo.sip.SipSimpleVo;
 import com.och.system.service.IKoSubscriberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -88,5 +89,15 @@ public class KoSubscriberController extends BaseController {
         PageInfo<KoSubscriberVo> pageInfo = new PageInfo<>(list);
         return success(pageInfo);
     }
+
+    @Log(title = "SIP号码下拉列表", businessType = BusinessTypeEnum.SELECT)
+    @PreAuthorize("@authz.hasPerm('system:subscriber:select:list')")
+    @Operation(summary = "SIP号码下拉列表", method = "POST")
+    @PostMapping("/select/list")
+    public ResResult<List<SipSimpleVo>> selectList() {
+        List<SipSimpleVo> list = subscriberService.selectList();
+        return success(list);
+    }
+
 
 }

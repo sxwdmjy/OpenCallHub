@@ -13,6 +13,7 @@ import com.och.system.domain.query.subsriber.KoSubscriberBatchAddQuery;
 import com.och.system.domain.query.subsriber.KoSubscriberQuery;
 import com.och.system.domain.query.subsriber.KoSubscriberUpdateQuery;
 import com.och.system.domain.vo.sip.KoSubscriberVo;
+import com.och.system.domain.vo.sip.SipSimpleVo;
 import com.och.system.mapper.KoSubscriberMapper;
 import com.och.system.service.IKoSubscriberService;
 import com.och.system.service.ISysUserService;
@@ -164,6 +165,20 @@ public class KoSubscriberServiceImpl extends BaseServiceImpl<KoSubscriberMapper,
             sysUserService.decorate(list);
         }
         return list;
+    }
+
+    @Override
+    public List<SipSimpleVo> selectList() {
+        List<KoSubscriber> list = list(new LambdaQueryWrapper<KoSubscriber>().eq(KoSubscriber::getStatus, 0));
+        if(CollectionUtil.isNotEmpty(list)){
+            return list.parallelStream().map(koSubscriber -> {
+                SipSimpleVo sipSimpleVo = new SipSimpleVo();
+                sipSimpleVo.setSipId(koSubscriber.getId());
+                sipSimpleVo.setSipName(koSubscriber.getUsername());
+                return sipSimpleVo;
+            }).toList();
+        }
+        return null;
     }
 
     public List<KoSubscriber> getByUserNameList(List<String> userNameList) {

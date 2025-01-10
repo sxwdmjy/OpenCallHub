@@ -51,14 +51,6 @@ public class CallSkill extends BaseEntity implements Serializable {
 
 
     /**
-     * 话后空闲时间 1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
-     */
-    @Schema(description = "话后空闲时间 1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h")
-    @TableField("after_time")
-    private Integer afterTime;
-
-
-    /**
      * 优先级
      */
     @Schema(description = "优先级")
@@ -131,14 +123,6 @@ public class CallSkill extends BaseEntity implements Serializable {
 
 
     /**
-     * 排队音
-     */
-    @Schema(description = "排队音")
-    @TableField("queue_voice_value")
-    private String queueVoiceValue;
-
-
-    /**
      * 转坐席音
      */
     @Schema(description = "转坐席音")
@@ -146,12 +130,6 @@ public class CallSkill extends BaseEntity implements Serializable {
     private Long agentVoice;
 
 
-    /**
-     * 转坐席音名称
-     */
-    @Schema(description = "转坐席音名称")
-    @TableField("agent_voice_value")
-    private String agentVoiceValue;
 
     public void setQuery2Entity(CallSkillAddQuery query) {
         this.id = query.getId();
@@ -165,9 +143,7 @@ public class CallSkill extends BaseEntity implements Serializable {
         this.timeOut= query.getTimeOut();
         this.queueLength= query.getQueueLength();
         this.queueVoice= query.getQueueVoice();
-        this.queueVoiceValue= query.getQueueVoiceValue();
         this.agentVoice= query.getAgentVoice();
-        this.agentVoiceValue= query.getAgentVoiceValue();
     }
 }
 

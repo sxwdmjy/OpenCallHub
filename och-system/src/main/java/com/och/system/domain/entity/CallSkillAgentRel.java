@@ -49,13 +49,6 @@ public class CallSkillAgentRel extends BaseEntity implements Serializable {
     private String agentId;
 
 
-    /**
-     * 级别
-     */
-    @Schema(description = "级别")
-    @TableField("level")
-    private Integer level;
-
 
 }
 

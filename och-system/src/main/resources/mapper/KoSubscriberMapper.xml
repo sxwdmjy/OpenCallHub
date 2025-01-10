@@ -3,7 +3,7 @@
 <mapper namespace="com.och.system.mapper.KoSubscriberMapper">
 
     <resultMap type="com.och.system.domain.entity.KoSubscriber" id="SubscriberResult">
-        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="username" column="username" jdbcType="VARCHAR"/>
         <result property="domain" column="domain" jdbcType="VARCHAR"/>
         <result property="password" column="password" jdbcType="VARCHAR"/>

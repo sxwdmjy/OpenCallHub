@@ -7,6 +7,7 @@ import com.och.system.domain.feature.IUserVo;
 import com.och.system.domain.query.user.SysUserAddQuery;
 import com.och.system.domain.query.user.SysUserQuery;
 import com.och.system.domain.query.user.SysUserUpdateQuery;
+import com.och.system.domain.vo.user.SysSimpleUserVo;
 import com.och.system.domain.vo.user.SysUserVo;
 
 import java.util.List;
@@ -39,5 +40,6 @@ public interface ISysUserService extends IBaseService<SysUser> {
 
     void delete(SysUserQuery query);
 
+    List<SysSimpleUserVo> getSelectList( SysUserQuery query);
 }
 

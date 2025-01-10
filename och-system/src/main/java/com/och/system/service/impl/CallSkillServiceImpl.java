@@ -11,6 +11,7 @@ import com.och.system.domain.vo.skill.CallSkillVo;
 import com.och.system.mapper.CallSkillMapper;
 import com.och.system.service.ICallSkillAgentRelService;
 import com.och.system.service.ICallSkillService;
+import com.och.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,8 @@ public class CallSkillServiceImpl extends BaseServiceImpl<CallSkillMapper, CallS
 
     @Autowired
     private ICallSkillAgentRelService iCallSkillAgentRelService;
+    @Autowired
+    private ISysUserService iSysUserService;
 
     @Override
     public void add(CallSkillAddQuery query) {
@@ -93,6 +96,9 @@ public class CallSkillServiceImpl extends BaseServiceImpl<CallSkillMapper, CallS
         pageInfo.setTotal(pageIdInfo.getTotal());
         pageInfo.setPageNum(pageIdInfo.getPageNum());
         pageInfo.setPageSize(pageIdInfo.getPageSize());
+        if(CollectionUtil.isNotEmpty(pageInfo.getList())){
+            iSysUserService.decorate(pageInfo.getList());
+        }
         return pageInfo;
     }
 

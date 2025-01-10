@@ -2,7 +2,6 @@ package com.och.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.och.system.domain.entity.SysUser;
-import com.och.system.domain.query.BaseQuery;
 import com.och.system.domain.query.user.SysUserQuery;
 import com.och.system.domain.vo.user.SysSimpleUserVo;
 import com.och.system.domain.vo.user.SysUserVo;
@@ -30,5 +29,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
     List<SysUserVo> getPageList(SysUserQuery query);
 
+    List<SysSimpleUserVo> getSelectList(SysUserQuery query);
 }
 

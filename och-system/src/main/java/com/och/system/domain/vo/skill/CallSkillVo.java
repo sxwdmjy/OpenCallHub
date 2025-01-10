@@ -45,11 +45,7 @@ public class CallSkillVo extends BaseVo {
     @Schema(description = "优先级")
     private Integer priority;
 
-    /**
-     * 话后空闲时间
-     */
-    @Schema(description = "话后空闲时间")
-    private Integer afterTime;
+
 
     /**
      * 策略类型 0-随机 1-轮询 2-最长空闲时间 3-当天最少应答次数 4-最长话后时长
@@ -101,25 +97,10 @@ public class CallSkillVo extends BaseVo {
 
 
     /**
-     * 排队音
-     */
-    @Schema(description = "排队音")
-    private String queueVoiceValue;
-
-
-    /**
      * 转坐席音
      */
     @Schema(description = "转坐席音")
     private Long agentVoice;
-
-
-    /**
-     * 转坐席音
-     */
-    @Schema(description = "转坐席音")
-    private String agentVoiceValue;
-
 
 
 

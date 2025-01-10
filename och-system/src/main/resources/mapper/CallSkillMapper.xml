@@ -6,7 +6,6 @@
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="groupId" column="group_id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="afterTime" column="after_time" jdbcType="INTEGER"/>
         <result property="priority" column="priority" jdbcType="INTEGER"/>
         <result property="describe" column="describe" jdbcType="VARCHAR"/>
         <result property="strategyType" column="strategy_type" jdbcType="INTEGER"/>
@@ -16,9 +15,7 @@
         <result property="timeOut" column="time_out" jdbcType="INTEGER"/>
         <result property="queueLength" column="queue_length" jdbcType="INTEGER"/>
         <result property="queueVoice" column="queue_voice" jdbcType="INTEGER"/>
-        <result property="queueVoiceValue" column="queue_voice_value" jdbcType="VARCHAR"/>
         <result property="agentVoice" column="agent_voice" jdbcType="INTEGER"/>
-        <result property="agentVoiceValue" column="agent_voice_value" jdbcType="VARCHAR"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
@@ -32,7 +29,6 @@
         <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="describe" column="describe" jdbcType="VARCHAR"/>
-        <result property="afterTime" column="after_time" jdbcType="INTEGER"/>
         <result property="priority" column="priority" jdbcType="INTEGER"/>
         <result property="strategyType" column="strategy_type" jdbcType="INTEGER"/>
         <result property="fullBusyType" column="full_busy_type" jdbcType="INTEGER"/>
@@ -41,9 +37,7 @@
         <result property="timeOut" column="time_out" jdbcType="INTEGER"/>
         <result property="queueLength" column="queue_length" jdbcType="INTEGER"/>
         <result property="queueVoice" column="queue_voice" jdbcType="INTEGER"/>
-        <result property="queueVoiceValue" column="queue_voice_value" jdbcType="VARCHAR"/>
         <result property="agentVoice" column="agent_voice" jdbcType="INTEGER"/>
-        <result property="agentVoiceValue" column="agent_voice_value" jdbcType="VARCHAR"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
@@ -52,7 +46,6 @@
             <result property="id" column="rel_id" jdbcType="INTEGER"/>
             <result property="agentId" column="agent_id" jdbcType="INTEGER"/>
             <result property="agentName" column="agent_name" jdbcType="VARCHAR"/>
-            <result property="level" column="level" jdbcType="VARCHAR"/>
         </collection>
     </resultMap>
 
@@ -62,7 +55,6 @@
                name,
                `describe`,
                priority,
-               after_time,
                strategy_type,
                full_busy_type,
                overflow_type,
@@ -70,9 +62,7 @@
                time_out,
                queue_length,
                queue_voice,
-               queue_voice_value,
                agent_voice,
-               agent_voice_value,
                create_by,
                create_time,
                update_by,
@@ -84,11 +74,10 @@
     <sql id="selectInfoVo">
         select cs.id,
                cs.group_id,
-               if(cs.group_id = 1, '默认分组', sc.name) as group_name,
+               if(cs.group_id = 0, '默认分组', sc.name) as group_name,
                cs.name,
                cs.`describe`,
                cs.priority,
-               cs.after_time,
                cs.strategy_type,
                cs.full_busy_type,
                cs.overflow_type,
@@ -96,17 +85,14 @@
                cs.time_out,
                cs.queue_length,
                cs.queue_voice,
-               cs.queue_voice_value,
                cs.agent_voice,
-               cs.agent_voice_value,
                cs.create_by,
                cs.create_time,
                cs.update_by,
                cs.update_time,
                csar.id         as rel_id,
                csar.agent_id,
-               sa.name      as agent_name,
-               csar.`level`
+               sa.name      as agent_name
         from call_skill cs
                  left join call_skill_agent_rel csar on csar.skill_id = cs.id and csar.del_flag = 0
                  left join sip_agent sa on sa.id = csar.agent_id

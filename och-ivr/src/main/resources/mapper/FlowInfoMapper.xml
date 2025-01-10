@@ -48,7 +48,7 @@
       select
           fi.id,
           fi.group_id,
-          if(fi.group_id = 1, '默认分组', lc.name) as group_name,
+          if(fi.group_id = 0, '默认分组', lc.name) as group_name,
           fi.name,
           fi.desc,
           fi.status,
@@ -65,7 +65,7 @@
         select
             fi.id,
             fi.group_id,
-            if(fi.group_id = 1, '默认分组', lc.name) as group_name,
+            if(fi.group_id = 0, '默认分组', lc.name) as group_name,
             fi.name,
             fi.desc,
             fi.status,

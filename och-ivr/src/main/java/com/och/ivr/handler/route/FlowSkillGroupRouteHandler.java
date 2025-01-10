@@ -90,7 +90,6 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
         detail.setStartTime(DateUtil.current());
         detail.setOrderNum(callInfo.getDetailList() == null ? 0 : callInfo.getDetailList().size() + 1);
         detail.setTransferType(3);
-        detail.setAfterTime(callSkill.getAfterTime());
         detail.setTransferId(callInfo.getSkillId());
         callInfo.addDetailList(detail);
 

@@ -14,6 +14,7 @@ import com.och.system.domain.query.menu.SysMenuQuery;
 import com.och.system.domain.query.user.SysUserAddQuery;
 import com.och.system.domain.query.user.SysUserQuery;
 import com.och.system.domain.query.user.SysUserUpdateQuery;
+import com.och.system.domain.vo.user.SysSimpleUserVo;
 import com.och.system.domain.vo.user.SysUserVo;
 import com.och.system.service.ISysMenuService;
 import com.och.system.service.ISysUserService;
@@ -101,6 +102,13 @@ public class SysUseController extends BaseController {
     public ResResult<PageInfo<SysUserVo>> getPageList(@RequestBody SysUserQuery query) {
         PageInfo<SysUserVo> pageInfo = iSysUserService.getPageList(query);
         return success(pageInfo);
+    }
+
+    @Log(title = "获取用户下拉列表", businessType = BusinessTypeEnum.SELECT)
+    @Operation(summary = "获取用户下拉列表", method = "POST")
+    @PostMapping("/select/list")
+    public ResResult<List<SysSimpleUserVo>> getSelectList(@RequestBody SysUserQuery query) {
+        return success(iSysUserService.getSelectList(query));
     }
 
     @Log(title = "获取用户菜单", businessType = BusinessTypeEnum.SELECT)

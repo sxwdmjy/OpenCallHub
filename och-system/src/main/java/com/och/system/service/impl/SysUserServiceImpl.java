@@ -14,6 +14,7 @@ import com.och.system.domain.feature.IUserVo;
 import com.och.system.domain.query.user.SysUserAddQuery;
 import com.och.system.domain.query.user.SysUserQuery;
 import com.och.system.domain.query.user.SysUserUpdateQuery;
+import com.och.system.domain.vo.user.SysSimpleUserVo;
 import com.och.system.domain.vo.user.SysUserVo;
 import com.och.system.mapper.SysUserMapper;
 import com.och.system.service.ISysRoleService;
@@ -218,6 +219,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
                 iSysUserRoleService.update(new LambdaUpdateWrapper<SysUserRole>().set(SysUserRole::getDelFlag, DeleteStatusEnum.DELETE_YES.getIndex()).in(SysUserRole::getUserId, query.getUserIds()));
             }
         }
+    }
+
+    @Override
+    public List<SysSimpleUserVo> getSelectList(SysUserQuery query) {
+        return  this.baseMapper.getSelectList(query);
     }
 
 
