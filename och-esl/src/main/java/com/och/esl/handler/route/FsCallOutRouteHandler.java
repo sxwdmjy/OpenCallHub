@@ -41,7 +41,7 @@ public class FsCallOutRouteHandler extends FsAbstractRouteHandler {
         detail.setTransferType(5);
 
         FsSipGateway sipGateway = iFsSipGatewayService.getDetail(Long.valueOf(sipGatewayId));
-        fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCaller(),callInfo.getCallee(),otherUniqueId,callInfo.getCalleeTimeOut(), sipGateway);
+        fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCallee(),callInfo.getCalleeDisplay(),otherUniqueId,callInfo.getCalleeTimeOut(), sipGateway);
         detail.setEndTime(DateUtil.current());
         callInfo.addDetailList(detail);
         fsCallCacheService.saveCallInfo(callInfo);
