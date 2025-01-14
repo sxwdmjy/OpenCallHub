@@ -57,7 +57,7 @@ java -jar och-api.0.0.1.jar
 
 ##### 5、 [前端地址](https://gitee.com/zhongjiawei999/waihu-app) `https://gitee.com/zhongjiawei999/waihu-app`
 
-#### 6、 联系方式： 有能力可加微信交流
+#### 6、 联系方式： 有能力可加微信交流，有线路需求也可以咨询
 
 ![微信](image.png)
 
