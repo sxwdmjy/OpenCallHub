@@ -24,5 +24,6 @@ public interface FlowInfoMapper extends BaseMapper<FlowInfo> {
     FlowInfoVo getInfo(@Param("id") Long id);
 
     List<FlowInfoListVo> getList(FlowInfoQuery query);
+
 }
 

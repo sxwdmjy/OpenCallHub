@@ -65,5 +65,11 @@ public class FlowInfo extends BaseEntity implements Serializable {
     private Integer status;
 
 
+    /**
+     * 流程数据
+     */
+    @Schema(description = "流程数据")
+    @TableField("flow_data")
+    private String flowData;
 }
 

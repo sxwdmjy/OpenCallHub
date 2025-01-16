@@ -3,7 +3,6 @@ package com.och.ivr.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
-import com.och.ivr.domain.entity.FlowNodes;
 import com.och.ivr.mapper.FlowInstancesMapper;
 import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.service.IFlowInstancesService;
@@ -25,8 +24,8 @@ public class FlowInstancesServiceImpl extends BaseServiceImpl<FlowInstancesMappe
     }
 
     // 更新当前节点
-    public void updateCurrentNode(FlowInstances instance, FlowNodes nextNode) {
-        instance.setCurrentNodeId(nextNode.getId());
+    public void updateCurrentNode(FlowInstances instance, Long nextNode) {
+        instance.setCurrentNodeId(nextNode);
         updateById(instance);
     }
 

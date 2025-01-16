@@ -1,6 +1,8 @@
 package com.och.ivr.listener;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.CacheConstants;
 import com.och.common.constant.FlowDataContext;
@@ -21,9 +23,8 @@ import org.springframework.statemachine.config.builders.StateMachineTransitionCo
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -73,6 +74,7 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
             log.error("endStateMachine 恢复状态机异常:event:{},error:{}", event, e.getMessage(), e);
         }
         redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, event.getData().getInstanceId()));
+        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, info.getId()));
     }
 
     /**
@@ -149,13 +151,26 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
     private StateMachine<Object, Object> buildStateMachine(FlowInfoVo info) {
         log.info("创建状态机：info:{}", JSON.toJSONString(info));
         try {
-            List<FlowNodeVo> nodes = info.getNodes();
-            FlowNodeVo startNode = nodes.stream().filter(n -> Objects.equals(0, n.getType())).findFirst().orElseGet(null);
+            String flowData = info.getFlowData();
+            if (StringUtils.isBlank(flowData)) {
+                log.info("流程数据为空 id:{}", info.getId());
+                return null;
+            }
+            JSONObject flowDataJson = JSONObject.parseObject(flowData);
+            List<FlowNodeVo> nodes =flowDataJson.getObject("nodes", new TypeReference<List<FlowNodeVo>>(){});
+
+            if(!redisService.keyIsExists(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, info.getId()))){
+                Map<String, FlowNodeVo> flowNodeMap = nodes.stream().collect(Collectors.toMap(FlowNodeVo::getId, n -> n, (key1, key2) -> key1));
+                redisService.setCacheMap(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, info.getId()), flowNodeMap);
+            }
+
+
+            FlowNodeVo startNode = nodes.stream().filter(n -> Objects.equals(0, n.getBusinessType())).findFirst().orElseGet(null);
             if (Objects.isNull(startNode)) {
                 log.info("未找到流程开始节点 id:{}", info.getId());
                 return null;
             }
-            FlowNodeVo endNode = nodes.stream().filter(n -> Objects.equals(1, n.getType())).findFirst().orElseGet(null);
+            FlowNodeVo endNode = nodes.stream().filter(n -> Objects.equals(1, n.getBusinessType())).findFirst().orElseGet(null);
             if (Objects.isNull(endNode)) {
                 log.info("未找到流程结束节点 id:{}", info.getId());
                 return null;
@@ -170,7 +185,7 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
                     .end(endNode.getId());
 
             //配置状态机边
-            List<FlowEdgeVo> edges = info.getEdges();
+            List<FlowEdgeVo> edges = flowDataJson.getObject("nodes", new TypeReference<List<FlowEdgeVo>>(){});
             StateMachineTransitionConfigurer<Object, Object> transitionConfigurer = stateMachineBuilder.configureTransitions();
             int i = 0;
             for (FlowEdgeVo edge : edges) {

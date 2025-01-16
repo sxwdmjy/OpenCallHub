@@ -2,7 +2,6 @@ package com.och.ivr.service;
 
 import com.och.common.base.IBaseService;
 import com.och.ivr.domain.entity.FlowInstances;
-import com.och.ivr.domain.entity.FlowNodes;
 
 /**
  * 存储流程实例的基本信息(FlowInstances)表服务接口
@@ -14,7 +13,7 @@ public interface IFlowInstancesService extends IBaseService<FlowInstances> {
 
     FlowInstances getFlowInstance(String processInstanceId);
 
-    void updateCurrentNode(FlowInstances instance, FlowNodes nextNode);
+    void updateCurrentNode(FlowInstances instance, Long nextNode);
 
     void markProcessCompleted(FlowInstances instance);
 

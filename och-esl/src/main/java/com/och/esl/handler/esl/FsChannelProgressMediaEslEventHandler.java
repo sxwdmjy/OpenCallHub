@@ -26,7 +26,7 @@ public class FsChannelProgressMediaEslEventHandler extends AbstractFsEslEventHan
 
     @Override
     public void handleEslEvent(String address, EslEvent event) {
-        log.info("ChannelAnswerEslEventHandler  EslEvent:{}.", event);
+        log.info("ChannelProgressMediaEslEventHandler  EslEvent:{}.", event);
         String uniqueId = EslEventUtil.getUniqueId(event);
         String otherUniqueId = EslEventUtil.getOtherUniqueId(event);
         CallInfo callInfo = ifsCallCacheService.getCallInfoByUniqueId(uniqueId);
