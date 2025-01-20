@@ -2,6 +2,8 @@ package com.och.ivr.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseServiceImpl;
+import com.och.common.config.redis.RedisService;
+import com.och.common.constant.CacheConstants;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.common.exception.CommonException;
 import com.och.common.utils.StringUtils;
@@ -34,6 +36,7 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
 
     private final ISysUserService sysUserService;
     private final ApplicationEventPublisher publisher;
+    private final RedisService redisService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -68,8 +71,9 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
         if (StringUtils.isNotBlank(query.getFlowData())) {
             flowInfo.setFlowData(query.getFlowData());
         }
+        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowInfo.getId()));
         updateById(flowInfo);
-
+        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowInfo.getId()));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -81,6 +85,7 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
         }
         flowInfo.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
         updateById(flowInfo);
+        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowInfo.getId()));
     }
 
     @Override
