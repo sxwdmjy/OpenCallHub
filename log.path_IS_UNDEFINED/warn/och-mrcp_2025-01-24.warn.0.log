@@ -1,0 +1,19 @@
+[31m2025-01-24 11:38:15.189[0;39m [33m[pool-2-thread-1][0;39m [31mWARN [0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.s.c.t.TransactionContext[0;39m - [32m[handleInviteTimeout,367][0;39m - [31mINVITE transaction timeout, sending 408
+[0;39m[31m2025-01-24 16:07:20.404[0;39m [33m[nioEventLoopGroup-5-1][0;39m [31mWARN [0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.c.DefaultChannelPipeline[0;39m - [32m[onUnhandledInboundException,1152][0;39m - [31mAn exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+[0;39mjava.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)
+	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:254)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:357)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+[31m2025-01-24 16:44:04.126[0;39m [33m[nioEventLoopGroup-5-1][0;39m [31mWARN [0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.mrcp.MrcpSession[0;39m - [32m[process,106][0;39m - [31mReceived message in invalid state: CONNECTING
+[0;39m

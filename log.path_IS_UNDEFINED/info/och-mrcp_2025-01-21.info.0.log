@@ -1,0 +1,4 @@
+[34m2025-01-21 14:32:59.493[0;39m [33m[main][0;39m [34mINFO [0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.n.SipUdpServer[0;39m - [32m[start,50][0;39m - [34mUDP 监听服务启动
+[0;39m[34m2025-01-21 17:38:26.541[0;39m [33m[Thread-4][0;39m [34mINFO [0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mcom.och.MrcpServer[0;39m - [32m[lambda$main$0,13][0;39m - [34mShutting down MrcpServer
+[0;39m[34m2025-01-21 17:39:51.306[0;39m [33m[Thread-4][0;39m [34mINFO [0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mcom.och.MrcpServer[0;39m - [32m[lambda$main$0,13][0;39m - [34mShutting down MrcpServer
+[0;39m

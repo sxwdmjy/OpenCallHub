@@ -1,0 +1,167 @@
+[39m2025-01-29 18:30:19.177[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.l.InternalLoggerFactory[0;39m - [32m[useSlf4JLoggerFactory,63][0;39m - [39mUsing SLF4J as the default logging framework
+[0;39m[39m2025-01-29 18:30:19.179[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.c.MultithreadEventLoopGroup[0;39m - [32m[<clinit>,44][0;39m - [39m-Dio.netty.eventLoopThreads: 32
+[0;39m[39m2025-01-29 18:30:19.189[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.c.GlobalEventExecutor[0;39m - [32m[<clinit>,53][0;39m - [39m-Dio.netty.globalEventExecutor.quietPeriodSeconds: 1
+[0;39m[39m2025-01-29 18:30:19.196[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.InternalThreadLocalMap[0;39m - [32m[<clinit>,100][0;39m - [39m-Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+[0;39m[39m2025-01-29 18:30:19.197[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.InternalThreadLocalMap[0;39m - [32m[<clinit>,101][0;39m - [39m-Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+[0;39m[39m2025-01-29 18:30:19.210[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[explicitNoUnsafeCause0,515][0;39m - [39m-Dio.netty.noUnsafe: false
+[0;39m[39m2025-01-29 18:30:19.211[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[javaVersion0,1026][0;39m - [39mJava version: 17
+[0;39m[39m2025-01-29 18:30:19.212[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[<clinit>,140][0;39m - [39msun.misc.Unsafe.theUnsafe: available
+[0;39m[39m2025-01-29 18:30:19.212[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[<clinit>,164][0;39m - [39msun.misc.Unsafe.copyMemory: available
+[0;39m[39m2025-01-29 18:30:19.213[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[<clinit>,196][0;39m - [39msun.misc.Unsafe.storeFence: available
+[0;39m[39m2025-01-29 18:30:19.213[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[<clinit>,239][0;39m - [39mjava.nio.Buffer.address: available
+[0;39m[39m2025-01-29 18:30:19.214[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[<clinit>,325][0;39m - [39mdirect buffer constructor: unavailable: Reflective setAccessible(true) disabled
+[0;39m[39m2025-01-29 18:30:19.215[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[<clinit>,403][0;39m - [39mjava.nio.Bits.unaligned: available, true
+[0;39m[39m2025-01-29 18:30:19.215[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[<clinit>,471][0;39m - [39mjdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable: class io.netty.util.internal.PlatformDependent0$7 cannot access class jdk.internal.misc.Unsafe (in module java.base) because module java.base does not export jdk.internal.misc to unnamed module @491cc5c9
+[0;39m[39m2025-01-29 18:30:19.216[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent0[0;39m - [32m[<clinit>,501][0;39m - [39mjava.nio.DirectByteBuffer.<init>(long, {int,long}): unavailable
+[0;39m[39m2025-01-29 18:30:19.216[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent[0;39m - [32m[unsafeUnavailabilityCause0,1157][0;39m - [39msun.misc.Unsafe: available
+[0;39m[39m2025-01-29 18:30:19.217[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent[0;39m - [32m[tmpdir0,1303][0;39m - [39m-Dio.netty.tmpdir: C:\Users\77514\AppData\Local\Temp (java.io.tmpdir)
+[0;39m[39m2025-01-29 18:30:19.217[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent[0;39m - [32m[bitMode0,1382][0;39m - [39m-Dio.netty.bitMode: 64 (sun.arch.data.model)
+[0;39m[39m2025-01-29 18:30:19.218[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent[0;39m - [32m[isWindows0,1117][0;39m - [39mPlatform: Windows
+[0;39m[39m2025-01-29 18:30:19.219[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent[0;39m - [32m[<clinit>,176][0;39m - [39m-Dio.netty.maxDirectMemory: -1 bytes
+[0;39m[39m2025-01-29 18:30:19.219[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent[0;39m - [32m[<clinit>,183][0;39m - [39m-Dio.netty.uninitializedArrayAllocationThreshold: -1
+[0;39m[39m2025-01-29 18:30:19.220[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.CleanerJava9[0;39m - [32m[<clinit>,71][0;39m - [39mjava.nio.ByteBuffer.cleaner(): available
+[0;39m[39m2025-01-29 18:30:19.220[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent[0;39m - [32m[<clinit>,203][0;39m - [39m-Dio.netty.noPreferDirect: false
+[0;39m[39m2025-01-29 18:30:19.221[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.c.n.NioEventLoop[0;39m - [32m[<clinit>,110][0;39m - [39m-Dio.netty.noKeySetOptimization: false
+[0;39m[39m2025-01-29 18:30:19.221[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.c.n.NioEventLoop[0;39m - [32m[<clinit>,111][0;39m - [39m-Dio.netty.selectorAutoRebuildThreshold: 512
+[0;39m[39m2025-01-29 18:30:19.225[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.i.PlatformDependent[0;39m - [32m[<clinit>,1008][0;39m - [39morg.jctools-core.MpscChunkedArrayQueue: available
+[0;39m[39m2025-01-29 18:30:19.389[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.c.DefaultChannelId[0;39m - [32m[<clinit>,79][0;39m - [39m-Dio.netty.processId: 20388 (auto-detected)
+[0;39m[39m2025-01-29 18:30:19.394[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.netty.util.NetUtil[0;39m - [32m[<clinit>,148][0;39m - [39m-Djava.net.preferIPv4Stack: false
+[0;39m[39m2025-01-29 18:30:19.394[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.netty.util.NetUtil[0;39m - [32m[<clinit>,149][0;39m - [39m-Djava.net.preferIPv6Addresses: false
+[0;39m[39m2025-01-29 18:30:19.409[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.NetUtilInitializations[0;39m - [32m[determineLoopback,145][0;39m - [39mLoopback interface: lo (Software Loopback Interface 1, 127.0.0.1)
+[0;39m[39m2025-01-29 18:30:19.410[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.netty.util.NetUtil[0;39m - [32m[run,206][0;39m - [39mFailed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
+[0;39m[39m2025-01-29 18:30:19.475[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.c.DefaultChannelId[0;39m - [32m[<clinit>,101][0;39m - [39m-Dio.netty.machineId: 9c:2f:9d:ff:fe:a7:fd:2d (auto-detected)
+[0;39m[39m2025-01-29 18:30:19.483[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.ResourceLeakDetector[0;39m - [32m[<clinit>,129][0;39m - [39m-Dio.netty.leakDetection.level: simple
+[0;39m[39m2025-01-29 18:30:19.483[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.ResourceLeakDetector[0;39m - [32m[<clinit>,130][0;39m - [39m-Dio.netty.leakDetection.targetRecords: 4
+[0;39m[39m2025-01-29 18:30:19.499[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,157][0;39m - [39m-Dio.netty.allocator.numHeapArenas: 32
+[0;39m[39m2025-01-29 18:30:19.499[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,158][0;39m - [39m-Dio.netty.allocator.numDirectArenas: 32
+[0;39m[39m2025-01-29 18:30:19.499[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,160][0;39m - [39m-Dio.netty.allocator.pageSize: 8192
+[0;39m[39m2025-01-29 18:30:19.499[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,165][0;39m - [39m-Dio.netty.allocator.maxOrder: 9
+[0;39m[39m2025-01-29 18:30:19.499[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,169][0;39m - [39m-Dio.netty.allocator.chunkSize: 4194304
+[0;39m[39m2025-01-29 18:30:19.499[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,170][0;39m - [39m-Dio.netty.allocator.smallCacheSize: 256
+[0;39m[39m2025-01-29 18:30:19.500[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,171][0;39m - [39m-Dio.netty.allocator.normalCacheSize: 64
+[0;39m[39m2025-01-29 18:30:19.500[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,172][0;39m - [39m-Dio.netty.allocator.maxCachedBufferCapacity: 32768
+[0;39m[39m2025-01-29 18:30:19.500[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,173][0;39m - [39m-Dio.netty.allocator.cacheTrimInterval: 8192
+[0;39m[39m2025-01-29 18:30:19.500[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,174][0;39m - [39m-Dio.netty.allocator.cacheTrimIntervalMillis: 0
+[0;39m[39m2025-01-29 18:30:19.500[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,175][0;39m - [39m-Dio.netty.allocator.useCacheForAllThreads: false
+[0;39m[39m2025-01-29 18:30:19.500[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.PooledByteBufAllocator[0;39m - [32m[<clinit>,176][0;39m - [39m-Dio.netty.allocator.maxCachedByteBuffersPerChunk: 1023
+[0;39m[39m2025-01-29 18:30:19.509[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.ByteBufUtil[0;39m - [32m[<clinit>,89][0;39m - [39m-Dio.netty.allocator.type: pooled
+[0;39m[39m2025-01-29 18:30:19.509[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.ByteBufUtil[0;39m - [32m[<clinit>,98][0;39m - [39m-Dio.netty.threadLocalDirectBufferSize: 0
+[0;39m[39m2025-01-29 18:30:19.509[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.ByteBufUtil[0;39m - [32m[<clinit>,101][0;39m - [39m-Dio.netty.maxThreadLocalCharBufferSize: 16384
+[0;39m[39m2025-01-29 18:30:19.514[0;39m [33m[main][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.ChannelInitializerExtensions[0;39m - [32m[getExtensions,54][0;39m - [39m-Dio.netty.bootstrap.extensions: null
+[0;39m[39m2025-01-29 18:30:19.519[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.util.Recycler[0;39m - [32m[<clinit>,96][0;39m - [39m-Dio.netty.recycler.maxCapacityPerThread: 4096
+[0;39m[39m2025-01-29 18:30:19.520[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.util.Recycler[0;39m - [32m[<clinit>,97][0;39m - [39m-Dio.netty.recycler.ratio: 8
+[0;39m[39m2025-01-29 18:30:19.520[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.util.Recycler[0;39m - [32m[<clinit>,98][0;39m - [39m-Dio.netty.recycler.chunkSize: 32
+[0;39m[39m2025-01-29 18:30:19.520[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.util.Recycler[0;39m - [32m[<clinit>,99][0;39m - [39m-Dio.netty.recycler.blocking: false
+[0;39m[39m2025-01-29 18:30:19.520[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.util.Recycler[0;39m - [32m[<clinit>,100][0;39m - [39m-Dio.netty.recycler.batchFastThreadLocalOnly: true
+[0;39m[39m2025-01-29 18:30:19.534[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9] REGISTERED
+[0;39m[39m2025-01-29 18:30:19.534[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9] BIND: 0.0.0.0/0.0.0.0:8060
+[0;39m[39m2025-01-29 18:30:19.536[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] ACTIVE
+[0;39m[39m2025-01-29 18:30:25.007[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.AbstractByteBuf[0;39m - [32m[<clinit>,63][0;39m - [39m-Dio.netty.buffer.checkAccessible: true
+[0;39m[39m2025-01-29 18:30:25.008[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.b.AbstractByteBuf[0;39m - [32m[<clinit>,64][0;39m - [39m-Dio.netty.buffer.checkBounds: true
+[0;39m[39m2025-01-29 18:30:25.008[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.ResourceLeakDetectorFactory[0;39m - [32m[newResourceLeakDetector,196][0;39m - [39mLoaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@34661c5f
+[0;39m[39m2025-01-29 18:30:25.015[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] READ: INVITE sip:192.168.154.1:8060 SIP/2.0
+Via: SIP/2.0/UDP 192.168.154.1:8062;rport;branch=z9hG4bKcHcUy34rvpmDQ
+Max-Forwards: 70
+From: <sip:192.168.154.1:8062>;tag=yySFeZv19tgpF
+To: <sip:192.168.154.1:8060>
+Call-ID: e4601c73-58ce-123e-3ba0-236798579a0e
+CSeq: 986760699 INVITE
+Contact: <sip:192.168.154.1:8062;transport=udp>
+User-Agent: UniMRCP SofiaSIP 1.8.0
+Allow: INVITE, ACK, BYE, CANCEL, OPTIONS, PRACK, MESSAGE, SUBSCRIBE, NOTIFY, REFER, UPDATE
+Supported: timer, 100rel
+Content-Type: application/sdp
+Content-Disposition: session
+Content-Length: 425
+
+v=0
+o=UniMRCPClient 2225661983576333513 7120681352012163213 IN IP4 192.168.154.1
+s=-
+c=IN IP4 192.168.154.1
+t=0 0
+m=application 9 TCP/MRCPv2 1
+a=setup:active
+a=connection:new
+a=resource:speechrecog
+a=cmid:1
+m=audio 4010 RTP/AVP 0 8 9 96 101
+a=rtpmap:0 PCMU/8000
+a=rtpmap:8 PCMA/8000
+a=rtpmap:9 G722/8000
+a=rtpmap:96 L16/8000
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-15
+a=sendonly
+a=ptime:20
+a=mid:1
+
+[0;39m[39m2025-01-29 18:30:25.017[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.u.ResourceLeakDetectorFactory[0;39m - [32m[newResourceLeakDetector,196][0;39m - [39mLoaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@52afc2aa
+[0;39m[39m2025-01-29 18:30:25.026[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] WRITE: SIP/2.0 100 Trying
+Via: SIP/2.0/UDP 192.168.154.1:8062;rport;branch=z9hG4bKcHcUy34rvpmDQ
+From: <sip:192.168.154.1:8062>;tag=yySFeZv19tgpF
+To: <sip:192.168.154.1:8060>;tag=sip-tag-1738146625022
+Call-ID: e4601c73-58ce-123e-3ba0-236798579a0e
+CSeq: 986760699 INVITE
+Require: 100rel
+Contact: <sip:192.168.154.1:8060;transport=UDP>
+
+
+[0;39m[39m2025-01-29 18:30:25.034[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] FLUSH
+[0;39m[39m2025-01-29 18:30:25.050[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] WRITE: SIP/2.0 200 OK
+Via: SIP/2.0/UDP 192.168.154.1:8062;rport;branch=z9hG4bKcHcUy34rvpmDQ
+From: <sip:192.168.154.1:8062>;tag=yySFeZv19tgpF
+To: <sip:192.168.154.1:8060>;tag=sip-tag-1738146625036
+Call-ID: e4601c73-58ce-123e-3ba0-236798579a0e
+CSeq: 986760699 INVITE
+Contact: <sip:192.168.154.1:8060;transport=UDP>
+User-Agent: OCH-SIP/1.0
+Accept: application/sdp
+Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REGISTER, SUBSCRIBE, NOTIFY, REFER, MESSAGE
+Content-Disposition: session
+Content-Type: application/sdp
+Content-Length: 418
+
+v=0
+o=UniMRCPServer 2225661983576333513 7120681352012163213 IN IP4 192.168.154.1
+s=-
+c=IN IP4 192.168.154.1
+t=0 0
+m=application 1544 TCP/MRCPv2 1
+a=channel:1738146625043@speechrecog
+a=setup:passive
+a=connection:new
+a=cmid:1
+m=audio 10000 RTP/AVP 0 8 9 101
+a=rtpmap:9 G722/8000
+a=rtpmap:0 PCMU/8000
+a=rtpmap:8 PCMA/8000
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-15
+a=mid:1
+a=recvonly
+a=ptime:20
+
+[0;39m[39m2025-01-29 18:30:25.050[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] FLUSH
+[0;39m[39m2025-01-29 18:30:25.084[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.mrcp.MrcpSession[0;39m - [32m[transitionState,367][0;39m - [39mSession 1738146625043@speechrecog state transition: INIT -> CONNECTING
+[0;39m[39m2025-01-29 18:30:25.108[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] READ COMPLETE
+[0;39m[39m2025-01-29 18:30:25.109[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] READ: ACK sip:192.168.154.1:8060;transport=UDP SIP/2.0
+Via: SIP/2.0/UDP 192.168.154.1:8062;rport;branch=z9hG4bKDt5K0yNvSZa0j
+Max-Forwards: 70
+From: <sip:192.168.154.1:8062>;tag=yySFeZv19tgpF
+To: <sip:192.168.154.1:8060>;tag=sip-tag-1738146625036
+Call-ID: e4601c73-58ce-123e-3ba0-236798579a0e
+CSeq: 986760699 ACK
+Content-Length: 0
+
+
+[0;39m[39m2025-01-29 18:30:25.109[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.s.t.h.TransactionHandler[0;39m - [32m[handleAck,78][0;39m - [39mProcessing ACK for transaction: z9hG4bKDt5K0yNvSZa0j
+[0;39m[39m2025-01-29 18:30:25.109[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.s.c.t.TransactionManager[0;39m - [32m[getContextForAck,46][0;39m - [39mLooking up transaction for ACK branchId: z9hG4bKDt5K0yNvSZa0j
+[0;39m[39m2025-01-29 18:30:25.109[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.s.c.t.TransactionManager[0;39m - [32m[getContextForAck,57][0;39m - [39mFalling back to Dialog lookup with key: e4601c73-58ce-123e-3ba0-236798579a0e|yySFeZv19tgpF|sip-tag-1738146625036
+[0;39m[39m2025-01-29 18:30:25.109[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.s.c.t.TransactionManager[0;39m - [32m[getContextForAck,60][0;39m - [39mFound original branchId via Dialog key: z9hG4bKcHcUy34rvpmDQ
+[0;39m[39m2025-01-29 18:30:25.110[0;39m [33m[nioEventLoopGroup-3-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mi.n.h.l.LoggingHandler[0;39m - [32m[log,145][0;39m - [39m[id: 0xeb4b3fe9, L:/[0:0:0:0:0:0:0:0]:8060] READ COMPLETE
+[0;39m[39m2025-01-29 18:30:25.578[0;39m [33m[nioEventLoopGroup-5-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.mrcp.MrcpSession[0;39m - [32m[transitionState,367][0;39m - [39mSession mrcp-26c92a4a-1738146625576 state transition: INIT -> CONNECTING
+[0;39m[39m2025-01-29 18:35:26.014[0;39m [33m[Thread-5][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.mrcp.MrcpSession[0;39m - [32m[transitionState,367][0;39m - [39mSession 1738146625043@speechrecog state transition: CONNECTING -> TERMINATING
+[0;39m[39m2025-01-29 18:35:26.014[0;39m [33m[nioEventLoopGroup-4-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.mrcp.MrcpSession[0;39m - [32m[transitionState,367][0;39m - [39mSession 1738146625043@speechrecog state transition: TERMINATING -> CLOSED
+[0;39m[39m2025-01-29 18:35:26.014[0;39m [33m[nioEventLoopGroup-4-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.mrcp.MrcpSession[0;39m - [32m[transitionState,367][0;39m - [39mSession 1738146625043@speechrecog state transition: CLOSED -> CLOSED
+[0;39m[39m2025-01-29 18:35:26.014[0;39m [33m[nioEventLoopGroup-4-1][0;39m [39mDEBUG[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.mrcp.MrcpSession[0;39m - [32m[transitionState,367][0;39m - [39mSession 1738146625043@speechrecog state transition: CLOSED -> CLOSED
+[0;39m
