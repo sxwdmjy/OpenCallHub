@@ -80,7 +80,7 @@ public class MrcpSessionHandler extends ChannelInboundHandlerAdapter {
     private String getSessionIdFromChannel(Channel channel) {
         // 假设会话ID存储在Channel属性中（需在channelActive时设置）
         if (StringUtil.isNullOrEmpty(channel.attr(MrcpSession.SESSION_ID_ATTRIBUTE_KEY).get())){
-          return   channel.parent().attr(MrcpSession.SESSION_ID_ATTRIBUTE_KEY).get();
+          return  channel.parent().attr(MrcpSession.SESSION_ID_ATTRIBUTE_KEY).get();
         }else return channel.attr(MrcpSession.SESSION_ID_ATTRIBUTE_KEY).get();
     }
 

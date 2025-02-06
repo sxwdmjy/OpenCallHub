@@ -238,6 +238,8 @@ public class MrcpSession {
      */
     private MrcpResponse buildSuccessResponse(MrcpRequest req) {
         MrcpResponse response = new MrcpResponse();
+        response.setVersion(req.getVersion());
+        response.setLength(-1);
         response.setRequestId(req.getRequestId());
         response.setStatusCode(200);
         response.addHeader("Completion-Cause", "000 normal");
@@ -250,6 +252,8 @@ public class MrcpSession {
      */
     private void handleStopRequest(MrcpRequest req) {
         MrcpResponse res = new MrcpResponse();
+        res.setVersion(req.getVersion());
+        res.setLength(-1);
         res.setRequestId(req.getRequestId());
         res.setStatusCode(200);
         res.addHeader("Completion-Cause", "001 stop");
