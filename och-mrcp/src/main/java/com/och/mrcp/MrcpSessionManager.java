@@ -25,17 +25,14 @@ public class MrcpSessionManager {
         scheduler.scheduleAtFixedRate(this::cleanupInactiveSessions, 5, 5, TimeUnit.MINUTES);
     }
 
-    public void createSession(String sessionId, MrcpSession session) {
-        sessions.put(sessionId, session);
-    }
 
-    public void createSession(String channelId, String serverIp, int port) {
-        if (sessions.containsKey(channelId)) {
-            log.info("MRCP session already exists: {}", channelId);
+    public void createSession(String sessionId) {
+        if (sessions.containsKey(sessionId)) {
+            log.info("MRCP session already exists: {}", sessionId);
             return;
         }
-        MrcpSession mrcpSession = new MrcpSession(channelId, serverIp, port);
-        sessions.put(channelId, mrcpSession);
+        MrcpSession mrcpSession = new MrcpSession(sessionId);
+        sessions.put(sessionId, mrcpSession);
     }
 
 

@@ -4,16 +4,7 @@ import com.och.config.MrcpConfig;
 import com.och.engine.*;
 import com.och.exception.InvalidGrammarException;
 import com.och.exception.InvalidSsmlException;
-import com.och.sip.core.codec.MrcpMessageCodec;
-import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.AttributeKey;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -29,59 +20,23 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MrcpSession {
 
     public static final AttributeKey<String> SESSION_ID_ATTRIBUTE_KEY = AttributeKey.valueOf("sessionId");
-
     public enum State {INIT, CONNECTING, READY, ACTIVE, TERMINATING, CLOSED}
 
     private final String defaultPlatform = "aliyun"; // 可配置
     private final AtomicReference<State> state = new AtomicReference<>(State.INIT);
     private final String sessionId;
-    private final Channel channel;
     private Instant lastActivityTime;
+    private Channel channel;
     private final AtomicBoolean isProcessing = new AtomicBoolean(false);
     private final AtomicInteger pendingRequests = new AtomicInteger(0);
     private final AtomicInteger requestIdCounter = new AtomicInteger(0);
 
 
-    public MrcpSession(String sessionId, String serverIp, int port) {
+    public MrcpSession(String sessionId) {
         this.sessionId = sessionId;
-        this.channel = connectToServer(serverIp, port); // 创建并连接Channel
-        channel.attr(SESSION_ID_ATTRIBUTE_KEY).set(sessionId); // 绑定会话ID到Channel
         transitionState(State.CONNECTING);
         this.lastActivityTime = Instant.now();
         startSessionTimer();
-        channel.closeFuture().addListener(future -> {
-            if (state.get() != State.CLOSED) {
-                transitionState(State.CLOSED);
-            }
-        });
-    }
-
-    private Channel connectToServer(String serverIp, int port) {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup  workerGroup = new NioEventLoopGroup();
-        try {
-            ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                            .childHandler(new ChannelInitializer<SocketChannel>() {
-                                @Override
-                                protected void initChannel(SocketChannel socketChannel) throws Exception {
-                                    socketChannel.pipeline()
-                                            .addLast(new MrcpMessageCodec())
-                                            .addLast(new MrcpSessionHandler());
-                                }
-                            });
-            return bootstrap.bind(serverIp,port).sync().channel();
-        } catch (InterruptedException e) {
-            bossGroup.shutdownGracefully(); // 释放资源
-            workerGroup.shutdownGracefully();
-            throw new RuntimeException("Connection interrupted: " + e.getMessage(), e);
-        } catch (Exception e) {
-            bossGroup.shutdownGracefully(); // 释放资源
-            workerGroup.shutdownGracefully();
-            throw new RuntimeException("Failed to connect to MRCP server: " + e.getMessage(), e);
-        }
     }
 
 
@@ -207,7 +162,7 @@ public class MrcpSession {
             if (error != null) {
                 sendErrorResponse(req, 500, error.getMessage());
             } else {
-                MrcpResponse res = buildSuccessResponse(req);
+                MrcpResponse res = buildSuccessResponse(req,"COMPLETE");
                 channel.writeAndFlush(res);
             }
         }, config);
@@ -223,7 +178,7 @@ public class MrcpSession {
             if (error != null) {
                 sendErrorResponse(req, 500, error.getMessage());
             } else {
-                MrcpResponse res = buildSuccessResponse(req);
+                MrcpResponse res = buildSuccessResponse(req,"COMPLETE");
                 res.setBody(text);
                 channel.writeAndFlush(res);
             }
@@ -236,11 +191,12 @@ public class MrcpSession {
      * @param req 原始 MRCP 请求对象
      * @return 预置状态码和基础头部的成功响应对象
      */
-    private MrcpResponse buildSuccessResponse(MrcpRequest req) {
+    private MrcpResponse buildSuccessResponse(MrcpRequest req, String statusText) {
         MrcpResponse response = new MrcpResponse();
         response.setVersion(req.getVersion());
-        response.setLength(-1);
+        response.setMessageLength(-1);
         response.setRequestId(req.getRequestId());
+        response.setStatusText(statusText);
         response.setStatusCode(200);
         response.addHeader("Completion-Cause", "000 normal");
         response.addHeader("Channel-Identifier", this.sessionId);
@@ -253,7 +209,6 @@ public class MrcpSession {
     private void handleStopRequest(MrcpRequest req) {
         MrcpResponse res = new MrcpResponse();
         res.setVersion(req.getVersion());
-        res.setLength(-1);
         res.setRequestId(req.getRequestId());
         res.setStatusCode(200);
         res.addHeader("Completion-Cause", "001 stop");
@@ -279,7 +234,7 @@ public class MrcpSession {
             GrammarManager.storeGrammar(sessionId, grammarId, grammarXml);
 
             // 3. 发送成功响应
-            MrcpResponse res = buildSuccessResponse(req);
+            MrcpResponse res = buildSuccessResponse(req,"COMPLETE");
             res.addHeader("Content-Id", grammarId); // 返回存储的语法ID
             channel.writeAndFlush(res);
         } catch (InvalidGrammarException e) {
@@ -307,12 +262,17 @@ public class MrcpSession {
      * 发送错误响应
      */
     private void sendErrorResponse(MrcpRequest req, int code, String reason) {
-        MrcpResponse res = new MrcpResponse();
-        res.setRequestId(req.getRequestId());
-        res.setStatusCode(code);
-        res.addHeader("Completion-Cause", "002 error");
-        res.setBody(reason);
-        channel.writeAndFlush(res);
+        MrcpResponse response = new MrcpResponse();
+        response.setVersion(req.getVersion());
+        response.setMessageLength(reason.length());
+        response.setRequestId(req.getRequestId());
+        response.setStatusText("COMPLETE");
+        response.setStatusCode(code);
+        response.addHeader("Completion-Cause", "002 error");
+        response.addHeader("Channel-Identifier", this.sessionId);
+        response.addHeader("Content-Length", String.valueOf(reason.length()));
+        response.setBody(reason);
+        channel.writeAndFlush(response);
     }
 
     /**
@@ -427,23 +387,8 @@ public class MrcpSession {
 
     public void close() {
         if (state.get() != State.CLOSED) {
-            // 发送MRCP协议终止请求（如STOP）
-            MrcpRequest stopReq = new MrcpRequest();
-            stopReq.setMethod("STOP");
-            stopReq.setRequestId(generateRequestId());
-            channel.writeAndFlush(stopReq);
-            // 关闭底层连接
-            transitionState(State.TERMINATING);
-            channel.close().addListener(future -> {
-                if (future.isSuccess()) {
-                    transitionState(State.CLOSED);
-                }
-            });
+            transitionState(State.CLOSED);
         }
     }
 
-
-    private String generateRequestId() {
-        return sessionId + "-" + requestIdCounter.incrementAndGet();
-    }
 }

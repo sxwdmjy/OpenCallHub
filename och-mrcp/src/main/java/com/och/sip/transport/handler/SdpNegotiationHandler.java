@@ -47,9 +47,6 @@ public class SdpNegotiationHandler implements SipMessageHandler {
      * 处理 MRCP 控制通道会话
      */
     private void handleMrcpSession(SdpMessage.MediaDescription mediaDesc, String callId) {
-        String mrcpServerIp = MrcpConfig.getServerIp();
-        int mrcpServerPort = MrcpConfig.getServerPort();
-
         String channelId = null;
         // 提取或生成 MRCP 会话 ID（通过 SDP 属性或自定义规则）
         if (!mediaDesc.getAttributes().get("channel").isEmpty()) {
@@ -58,8 +55,8 @@ public class SdpNegotiationHandler implements SipMessageHandler {
             channelId = System.currentTimeMillis() + "@speechrecog";
         }
         // 创建 MRCP 会话
-        MrcpSessionManager.getInstance().createSession(channelId, mrcpServerIp, mrcpServerPort);
-        log.info("MRCP session created: {} , {}, {}", channelId, mrcpServerIp, mrcpServerPort);
+        MrcpSessionManager.getInstance().createSession(channelId);
+        log.info("MRCP session created: {} , {}", channelId, mediaDesc.getPort());
         // 获取当前事务关联的 Dialog
         SipDialog dialog = DialogManager.getInstance().findDialogByCallId(callId);
         if (dialog != null) {

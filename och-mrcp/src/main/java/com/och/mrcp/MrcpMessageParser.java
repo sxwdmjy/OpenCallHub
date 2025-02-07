@@ -55,8 +55,8 @@ public class MrcpMessageParser {
         Matcher requestMatcher = REQUEST_START_LINE_PATTERN.matcher(startLine);
         if (requestMatcher.matches()) {
             MrcpRequest request = new MrcpRequest();
-            request.setVersion(requestMatcher.group(1));
-            request.setRequestId(requestMatcher.group(2));
+            request.setVersion("MRCP/"+requestMatcher.group(1));
+            request.setRequestId(requestMatcher.group(4));
             request.setMethod(requestMatcher.group(3));
             return request;
         }

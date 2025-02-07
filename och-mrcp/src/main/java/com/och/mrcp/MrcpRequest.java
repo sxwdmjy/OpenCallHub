@@ -13,11 +13,13 @@ public class MrcpRequest extends MrcpMessage {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(version).append(" ").append(method).append(" ").append(requestId).append(" ").append("\r\n");
+        sb.append(version).append(" ").append(method).append(" ").append(requestId).append("\r\n");
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
         }
-        sb.append("\r\n").append(body);
+        if (body != null && !body.isEmpty()) {
+            sb.append("\r\n").append(body);
+        }
         return sb.toString();
     }
 }

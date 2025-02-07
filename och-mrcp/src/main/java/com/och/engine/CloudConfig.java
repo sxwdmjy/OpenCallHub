@@ -1,9 +1,12 @@
 package com.och.engine;
 
+import com.och.config.EngineConfig;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Map;
 
+@AllArgsConstructor
 @Data
 public class CloudConfig {
 
@@ -12,4 +15,8 @@ public class CloudConfig {
     private String apiSecret;     // API密钥（可选）
     private String endpoint;      // 服务端点URL
     private Map<String, String> customParams; // 平台特有参数
+
+
+
+
 }

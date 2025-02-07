@@ -7,6 +7,9 @@ import java.util.Map;
 
 @Data
 public abstract class MrcpMessage {
+
+    public static final String CRLF = "\r\n";
+
     protected String version;
     protected String requestId;
     protected Map<String, String> headers = new HashMap<>();
