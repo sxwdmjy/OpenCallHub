@@ -10,7 +10,12 @@ import lombok.Data;
 @Data
 public class FlowStartNodeProperties implements FlowNodeProperties{
 
+    // 是否录音
+    private Boolean recording;
+
+    // 是否开启asr
     private Long asrEngine;
 
+    // 是否开启tts
     private Long ttsEngine;
 }

@@ -16,16 +16,15 @@ import com.och.ivr.service.IFlowInstancesService;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 
 /**
  * 开始节点处理
+ *
  * @author danmo
  * @date 2024-12-26
  */
 @Component
-public class FlowStartHandler extends AbstractIFlowNodeHandler{
+public class FlowStartHandler extends AbstractIFlowNodeHandler {
 
 
     public FlowStartHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient, RedisService redisService) {
@@ -38,7 +37,7 @@ public class FlowStartHandler extends AbstractIFlowNodeHandler{
             FlowNodeVo flowNode = getFlowNode(flowData.getFlowId(), flowData.getCurrentNodeId());
             String properties = flowNode.getProperties();
             CallInfo callInfo = fsCallCacheService.getCallInfo(flowData.getCallId());
-            if(StringUtils.isNotBlank(properties)){
+            if (StringUtils.isNotBlank(properties)) {
                 FlowStartNodeProperties startNodeProperties = JSONObject.parseObject(properties, FlowStartNodeProperties.class);
                 callInfo.setAsrEngine(startNodeProperties.getAsrEngine());
                 callInfo.setTtsEngine(startNodeProperties.getTtsEngine());
