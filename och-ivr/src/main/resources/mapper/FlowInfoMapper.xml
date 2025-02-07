@@ -95,10 +95,10 @@
     <select id="getList" resultType="com.och.ivr.domain.vo.FlowInfoListVo">
         <include refid="selectFlowInfoInfoVo"/>
         <where>
-           <if test="id =! null">
+           <if test="id != null">
                and fi.id = #{id}
            </if>
-           <if test="groupId =! null">
+           <if test="groupId != null">
                and fi.group_id = #{groupId}
            </if>
            <if test="name != null and name != ''">

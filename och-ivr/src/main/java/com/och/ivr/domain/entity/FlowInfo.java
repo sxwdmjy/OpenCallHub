@@ -53,7 +53,7 @@ public class FlowInfo extends BaseEntity implements Serializable {
      * 流程描述
      */
     @Schema(description = "流程描述")
-    @TableField("desc")
+    @TableField("`desc`")
     private String desc;
 
 
