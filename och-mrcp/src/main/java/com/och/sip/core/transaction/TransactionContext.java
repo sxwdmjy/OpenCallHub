@@ -85,6 +85,9 @@ public class TransactionContext {
             case TERMINATED:
                 cleanup(); // 清理资源
                 break;
+            default:
+                // 其他状态处理逻辑
+                break;
         }
     }
 
@@ -193,7 +196,7 @@ public class TransactionContext {
         sendFinalResponse(503, "Service Unavailable");
     }
 
-    public void handleAck(SipRequest ackRequest) {
+    public void handleAck() {
         if (state == TransactionState.COMPLETED) {
             transitionState(TransactionState.CONFIRMED);
         } else {

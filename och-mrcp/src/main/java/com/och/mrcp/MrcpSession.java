@@ -172,17 +172,13 @@ public class MrcpSession {
      * 处理RECOGNIZE请求（语音识别）
      */
     private void handleRecognizeRequest(MrcpRequest req) {
-        CloudConfig config = CloudConfigManager.getConfig(defaultPlatform);
-        AsrEngine engine = EngineFactory.getAsrEngine(config.getPlatform());
-        engine.recognize(req.getBody().getBytes(), (text, error) -> {
-            if (error != null) {
-                sendErrorResponse(req, 500, error.getMessage());
-            } else {
-                MrcpResponse res = buildSuccessResponse(req,"COMPLETE");
-                res.setBody(text);
-                channel.writeAndFlush(res);
-            }
-        }, config);
+        //CloudConfig config = CloudConfigManager.getConfig(defaultPlatform);
+        //AsrEngine engine = EngineFactory.getAsrEngine(config.getPlatform());
+
+        // 1. 提交到ASR引擎（异步操作）
+        MrcpResponse res = buildSuccessResponse(req,"IN-PROGRESS");
+        channel.writeAndFlush(res);
+
     }
 
     /**

@@ -81,24 +81,21 @@ public class TransactionHandler implements SipMessageHandler {
         TransactionContext context = txManager.getContextForAck(ack);
         if (context == null) {
             log.error("ACK for non-existent transaction: {}", branchId);
-            sendErrorResponse(ctx, ack, 481, "Transaction Does Not Exist");
             return;
         }
 
         // 2. 检查事务状态是否为 COMPLETED
         if (context.getState() != TransactionState.COMPLETED) {
             log.error("Received ACK in invalid state: {}", context.getState());
-            context.sendFinalResponse(500, "Internal Server Error");
             return;
         }
 
         // 3. 处理 ACK 并更新 Dialog 状态
         try {
-            context.handleAck(ack);
+            context.handleAck();
             log.info("ACK processed for transaction: {}", branchId);
         } catch (Exception e) {
             log.error("Failed to handle ACK: {}", e.getMessage(), e);
-            context.sendFinalResponse(500, "Internal Server Error");
         }
     }
 

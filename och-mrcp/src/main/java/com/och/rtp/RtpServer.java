@@ -27,7 +27,7 @@ public class RtpServer {
                         @Override
                         protected void initChannel(NioDatagramChannel ch) {
                             // 添加RTP处理逻辑（例如转发到媒体处理器）
-                            ch.pipeline().addLast(new RtpHandler());
+                            ch.pipeline().addLast(new RtpDecoder(),new RtpHandler());
                         }
                     });
             channel = bootstrap.bind(port).sync().channel();
