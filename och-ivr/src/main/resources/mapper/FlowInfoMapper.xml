@@ -2,18 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.och.ivr.mapper.FlowInfoMapper">
 
-    <resultMap type="com.och.ivr.domain.entity.FlowInfo" id="FlowInfoMap">
-        <result property="id" column="id" jdbcType="BIGINT"/>
-        <result property="groupId" column="group_id" jdbcType="BIGINT"/>
-        <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="desc" column="desc" jdbcType="VARCHAR"/>
-        <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
-    </resultMap>
 
     <resultMap id="FlowInfoVoMap" type="com.och.ivr.domain.vo.FlowInfoVo">
         <result property="id" column="id" jdbcType="BIGINT"/>
@@ -22,26 +10,11 @@
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="desc" column="desc" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="flowData" column="flow_data" jdbcType="VARCHAR"/>
         <result property="createBy" column="create_by" jdbcType="BIGINT"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <collection property="nodes" ofType="com.och.ivr.domain.vo.FlowNodeVo">
-            <result property="id" column="node_id" jdbcType="BIGINT"/>
-            <result property="name" column="node_name" jdbcType="VARCHAR"/>
-            <result property="type" column="node_type" jdbcType="INTEGER"/>
-            <result property="properties" column="node_properties" jdbcType="VARCHAR"/>
-            <result property="priority" column="node_priority" jdbcType="INTEGER"/>
-            <result property="flowId" column="id" jdbcType="BIGINT"/>
-        </collection>
-        <collection property="edges" ofType="com.och.ivr.domain.vo.FlowEdgeVo">
-            <result property="id" column="edges_id" jdbcType="BIGINT"/>
-            <result property="sourceNodeId" column="source_node_id" jdbcType="BIGINT"/>
-            <result property="targetNodeId" column="target_node_id" jdbcType="BIGINT"/>
-            <result property="condition" column="condition" jdbcType="VARCHAR"/>
-            <result property="event" column="edges_event" jdbcType="VARCHAR"/>
-            <result property="flowId" column="id" jdbcType="BIGINT"/>
-        </collection>
     </resultMap>
 
   <sql id="selectFlowInfoInfoVo">
@@ -52,6 +25,7 @@
           fi.name,
           fi.desc,
           fi.status,
+          fi.flow_data,
           fi.create_by,
           fi.create_time,
           fi.update_by,
@@ -69,30 +43,19 @@
             fi.name,
             fi.desc,
             fi.status,
+            fi.flow_data,
             fi.create_by,
             fi.create_time,
             fi.update_by,
             fi.update_time,
-            fi.del_flag,
-            fn.id as node_id,
-            fn.name as node_name,
-            fn.`type` as node_type,
-            fn.properties as node_properties,
-            fn.priority as node_priority,
-            fe.id as edges_id,
-            fe.source_node_id,
-            fe.target_node_id,
-            fe.`condition` as edges_condition,
-            fe.`event` as edges_event
+            fi.del_flag
         from
             flow_info fi
-                left join flow_nodes fn on fi.id = fn.flow_id and fn.del_flag = 0
-                left join flow_edges fe on fi.id = fe.flow_id and fe.del_flag = 0
                 left join sys_category lc on lc.id = fi.group_id
         where fi.id = #{id}
     </select>
 
-    <select id="getList" resultType="com.och.ivr.domain.vo.FlowInfoListVo">
+    <select id="getList" resultMap="FlowInfoVoMap">
         <include refid="selectFlowInfoInfoVo"/>
         <where>
            <if test="id != null">

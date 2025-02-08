@@ -1,15 +1,19 @@
 package com.och.ivr.listener;
 
 import com.alibaba.fastjson.JSON;
+import com.och.common.config.redis.RedisService;
+import com.och.common.constant.CacheConstants;
+import com.och.common.constant.FlowDataContext;
 import com.och.common.enums.FlowNodeTypeEnum;
 import com.och.common.utils.SpringUtils;
 import com.och.common.utils.StringUtils;
-import com.och.common.constant.FlowDataContext;
 import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.domain.entity.FlowNodeExecutionHistory;
-import com.och.ivr.domain.entity.FlowNodes;
+import com.och.ivr.domain.vo.FlowNodeVo;
 import com.och.ivr.handler.node.AbstractIFlowNodeHandler;
-import com.och.ivr.service.*;
+import com.och.ivr.service.IFlowInfoService;
+import com.och.ivr.service.IFlowInstancesService;
+import com.och.ivr.service.IFlowNodeExecutionHistoryService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.StateContext;
@@ -19,6 +23,7 @@ import org.springframework.statemachine.listener.StateMachineListenerAdapter;
 import org.springframework.statemachine.state.State;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 
 @Getter
@@ -26,22 +31,19 @@ import java.util.Objects;
 public class FlowStateMachineListener extends StateMachineListenerAdapter<Object, Object> {
 
 
-    private final IFlowNodesService iFlowNodesService;
-    private final IFlowEdgesService iFlowEdgesService;
     private final IFlowInfoService iFlowInfoService;
     private final IFlowInstancesService iFlowInstancesService;
     private final IFlowNodeExecutionHistoryService iFlowNodeExecutionHistoryService;
     private final RedisStateMachinePersister<Object, Object> persister;
     private StateContext<Object, Object> stateContext;
+    private final RedisService redisService;
 
     public FlowStateMachineListener() {
-        this.iFlowNodesService = SpringUtils.getBean(IFlowNodesService.class);
-        this.iFlowEdgesService = SpringUtils.getBean(IFlowEdgesService.class);
         this.iFlowInfoService = SpringUtils.getBean(IFlowInfoService.class);
         this.iFlowInstancesService = SpringUtils.getBean(IFlowInstancesService.class);
         this.iFlowNodeExecutionHistoryService = SpringUtils.getBean(IFlowNodeExecutionHistoryService.class);
         this.persister = SpringUtils.getBean("redisStateMachinePersister");
-
+        this.redisService = SpringUtils.getBean(RedisService.class);
     }
 
 
@@ -53,7 +55,7 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
             log.info("状态机状态进入:{},flowData为空", state.getId());
             return;
         }
-        FlowNodes currentFlowNode = iFlowNodesService.getById((Long) state.getId());
+        FlowNodeVo currentFlowNode = redisService.getCacheMapValue(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowData.getFlowId()), String.valueOf(state.getId()));
         if (Objects.isNull(currentFlowNode)) {
             log.info("未找到当前节点flowData:{}, id:{}", JSON.toJSONString(flowData), state.getId());
             return;
@@ -70,7 +72,7 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
         iFlowNodeExecutionHistoryService.save(history);
         flowData.setCurrentHistoryId(history.getId());
         stateContext.getExtendedState().getVariables().put("flowData", flowData);
-        String handler = FlowNodeTypeEnum.getHandler(currentFlowNode.getType());
+        String handler = FlowNodeTypeEnum.getHandler(currentFlowNode.getBusinessType());
         if(StringUtils.isNotBlank(handler)){
             AbstractIFlowNodeHandler nodeHandler = SpringUtils.getBean(handler, AbstractIFlowNodeHandler.class);
             nodeHandler.handle(stateContext);

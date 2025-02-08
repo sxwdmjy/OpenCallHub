@@ -52,4 +52,6 @@ public class CacheConstants {
      */
     public static final String CALL_IVR_INSTANCES_KEY = "fs:ivr:instances:{}";
 
+    public static final String CALL_IVR_FLOW_INFO_NODE_KEY = "fs:ivr:flow:node:{}";
+
 }

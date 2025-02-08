@@ -2,6 +2,8 @@ package com.och.ivr.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseServiceImpl;
+import com.och.common.config.redis.RedisService;
+import com.och.common.constant.CacheConstants;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.common.exception.CommonException;
 import com.och.common.utils.StringUtils;
@@ -11,9 +13,7 @@ import com.och.ivr.domain.query.FlowInfoQuery;
 import com.och.ivr.domain.vo.FlowInfoListVo;
 import com.och.ivr.domain.vo.FlowInfoVo;
 import com.och.ivr.mapper.FlowInfoMapper;
-import com.och.ivr.service.IFlowEdgesService;
 import com.och.ivr.service.IFlowInfoService;
-import com.och.ivr.service.IFlowNodesService;
 import com.och.system.service.ISysUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,10 +34,9 @@ import java.util.Objects;
 @Service
 public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInfo> implements IFlowInfoService {
 
-    private final IFlowNodesService flowNodesService;
-    private final IFlowEdgesService flowEdgesService;
     private final ISysUserService sysUserService;
     private final ApplicationEventPublisher publisher;
+    private final RedisService redisService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -47,10 +46,8 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
         flowInfo.setDesc(query.getDesc());
         flowInfo.setStatus(query.getStatus());
         flowInfo.setGroupId(query.getGroupId());
-        if (save(flowInfo)) {
-            flowNodesService.addByFlowId(query.getNodes(), flowInfo.getId());
-            flowEdgesService.addByFlowId(query.getEdges(), flowInfo.getId());
-        }
+        flowInfo.setFlowData(query.getFlowData());
+        save(flowInfo);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -71,11 +68,12 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
         if (Objects.nonNull(query.getStatus())) {
             flowInfo.setStatus(query.getStatus());
         }
-        if (updateById(flowInfo)) {
-            flowNodesService.editByFlowId(query.getNodes(), flowInfo.getId());
-            flowEdgesService.editByFlowId(query.getEdges(), flowInfo.getId());
+        if (StringUtils.isNotBlank(query.getFlowData())) {
+            flowInfo.setFlowData(query.getFlowData());
         }
-
+        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowInfo.getId()));
+        updateById(flowInfo);
+        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowInfo.getId()));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -86,10 +84,8 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
             throw new CommonException("无效ID");
         }
         flowInfo.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
-        if (updateById(flowInfo)) {
-            flowNodesService.deleteByFlowId(flowInfo.getId());
-            flowEdgesService.deleteByFlowId(flowInfo.getId());
-        }
+        updateById(flowInfo);
+        redisService.deleteObject(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowInfo.getId()));
     }
 
     @Override
@@ -127,6 +123,7 @@ public class FlowInfoServiceImpl extends BaseServiceImpl<FlowInfoMapper, FlowInf
         flowInfo.setStatus(1);
         updateById(flowInfo);
     }
+
 
     private boolean checkName(String name) {
         return null != getOne(new LambdaQueryWrapper<FlowInfo>().eq(FlowInfo::getName, name).last("limit 1"));

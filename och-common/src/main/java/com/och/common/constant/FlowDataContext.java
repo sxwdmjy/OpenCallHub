@@ -31,7 +31,7 @@ public class FlowDataContext {
     /**
      * 当前节点ID
      */
-    private Long currentNodeId;
+    private String currentNodeId;
 
 
     /**

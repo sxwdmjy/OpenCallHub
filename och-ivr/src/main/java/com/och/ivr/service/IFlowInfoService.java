@@ -30,5 +30,6 @@ public interface IFlowInfoService extends IBaseService<FlowInfo> {
     void publish(Long id);
 
     void offline(Long id);
+
 }
 
