@@ -2,11 +2,18 @@ package com.och.engine;
 
 public interface AsrEngine {
 
+
+    default void start() {
+
+    }
+
+    default void end() {
+
+    }
     /**
      * 提交语音识别任务
+     *
      * @param audioData 输入的音频数据
-     * @param callback 异步回调（识别文本或错误）
-     * @param config 平台配置
      */
-    void recognize(byte[] audioData, AsrCallback callback, CloudConfig config);
+    void recognize(byte[] audioData);
 }

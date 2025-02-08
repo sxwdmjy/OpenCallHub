@@ -22,7 +22,6 @@ public class MrcpSession {
     public static final AttributeKey<String> SESSION_ID_ATTRIBUTE_KEY = AttributeKey.valueOf("sessionId");
     public enum State {INIT, CONNECTING, READY, ACTIVE, TERMINATING, CLOSED}
 
-    private final String defaultPlatform = "aliyun"; // 可配置
     private final AtomicReference<State> state = new AtomicReference<>(State.INIT);
     private final String sessionId;
     private Instant lastActivityTime;
@@ -155,29 +154,21 @@ public class MrcpSession {
      */
     private void handleSpeakRequest(MrcpRequest req) {
         log.trace("Processing SPEAK request: {}", req.getRequestId());
-        // 2. 提交到TTS引擎（异步操作）
-        CloudConfig config = CloudConfigManager.getConfig(defaultPlatform);
-        TtsEngine engine = EngineFactory.getTtsEngine(config.getPlatform());
-        engine.synthesize(req.getBody(), (audioData, error) -> {
-            if (error != null) {
-                sendErrorResponse(req, 500, error.getMessage());
-            } else {
-                MrcpResponse res = buildSuccessResponse(req,"COMPLETE");
-                channel.writeAndFlush(res);
-            }
-        }, config);
     }
 
     /**
      * 处理RECOGNIZE请求（语音识别）
      */
     private void handleRecognizeRequest(MrcpRequest req) {
-        //CloudConfig config = CloudConfigManager.getConfig(defaultPlatform);
-        //AsrEngine engine = EngineFactory.getAsrEngine(config.getPlatform());
-
+        log.trace("Processing RECOGNIZE request: {}", req.getRequestId());
+        AsrEngine asrEngine = EngineFactory.getAsrEngine("aliyun");
+        asrEngine.start();
+        EngineFactory.addMrcpAsrEngine(sessionId, asrEngine);
         // 1. 提交到ASR引擎（异步操作）
         MrcpResponse res = buildSuccessResponse(req,"IN-PROGRESS");
         channel.writeAndFlush(res);
+
+
 
     }
 

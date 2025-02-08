@@ -17,9 +17,10 @@ public class EngineConfig {
         return cloudConfigs.stream()
                 .map(c -> new CloudConfig(
                         c.getString("platform"),
+                        c.getString("appKey"),
                         c.getString("apiKey"),
                         c.getString("apiSecret"),
-                        c.getString("apiSecret"),
+                        c.getString("endpoint"),
                         c.getObject("customParams").entrySet().stream()
                                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().unwrapped().toString()))
                 )).collect(Collectors.toList());

@@ -1,2 +1,0 @@
-[1;31m2025-01-28 16:46:31.586[0;39m [33m[nioEventLoopGroup-5-1][0;39m [1;31mERROR[0;39m [31mPID:PID_IS_UNDEFINED[0;39m [34mc.o.mrcp.MrcpSession[0;39m - [32m[handleReadyState,145][0;39m - [1;31mSession 1738053983354@speechrecog setup failed: 445
-[0;39m

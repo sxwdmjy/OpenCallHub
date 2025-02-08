@@ -17,7 +17,7 @@ public class RtpServer {
         this.port = port;
     }
 
-    public void start() throws InterruptedException {
+    public void start(String mrcpSessionId) throws InterruptedException {
         NioEventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -27,7 +27,7 @@ public class RtpServer {
                         @Override
                         protected void initChannel(NioDatagramChannel ch) {
                             // 添加RTP处理逻辑（例如转发到媒体处理器）
-                            ch.pipeline().addLast(new RtpDecoder(),new RtpHandler());
+                            ch.pipeline().addLast(new RtpDecoder(),new RtpHandler(mrcpSessionId));
                         }
                     });
             channel = bootstrap.bind(port).sync().channel();

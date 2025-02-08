@@ -11,6 +11,7 @@ import java.util.Map;
 public class CloudConfig {
 
     private String platform;      // 平台名称，如 "aliyun", "tencent", "azure"
+    private String appKey;        // 应用密钥
     private String apiKey;        // API密钥
     private String apiSecret;     // API密钥（可选）
     private String endpoint;      // 服务端点URL
