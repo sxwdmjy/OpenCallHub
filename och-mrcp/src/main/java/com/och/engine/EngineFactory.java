@@ -1,6 +1,7 @@
 package com.och.engine;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EngineFactory {
 
@@ -16,6 +17,9 @@ public class EngineFactory {
             "tencent", new TencentAsrEngine()
     );
 
+    private static final  Map<String,AsrEngine> mrcpAsrEngine = new ConcurrentHashMap<>(16);
+
+
     public static TtsEngine getTtsEngine(String platform) {
         return ttsEngines.get(platform);
     }
@@ -23,4 +27,14 @@ public class EngineFactory {
     public static AsrEngine getAsrEngine(String platform) {
         return asrEngines.get(platform);
     }
+
+
+    public static AsrEngine getMrcpAsrEngine(String mrcpSessionId) {
+    	return mrcpAsrEngine.get(mrcpSessionId);
+    }
+
+    public static void addMrcpAsrEngine(String mrcpSessionId, AsrEngine asrEngine) {
+    	mrcpAsrEngine.put(mrcpSessionId, asrEngine);
+    }
+
 }
