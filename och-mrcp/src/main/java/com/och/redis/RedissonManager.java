@@ -17,8 +17,8 @@ public class RedissonManager {
                     Config config = new Config();
                     // 单节点模式配置（根据实际情况选择模式）
                     config.useSingleServer()
-                            .setAddress("redis://59.110.143.217:6379")
-                            .setPassword("opencallhub@123")
+                            .setAddress("redis://127.0.0.1:6379")
+                            .setPassword("123456")
                             .setDatabase(0)
                             .setConnectionMinimumIdleSize(5)
                             .setConnectionPoolSize(10);
