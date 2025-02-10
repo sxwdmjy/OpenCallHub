@@ -38,7 +38,6 @@ public class MrcpSessionHandler extends ChannelInboundHandlerAdapter {
                 session.process(message);
             } catch (Exception e) {
                 log.error("Failed to process MRCP message: {}", e.getMessage());
-                session.transitionState(MrcpSession.State.TERMINATING);
             }
         } else {
             log.warn("Received unsupported message type: {}", msg.getClass().getName());

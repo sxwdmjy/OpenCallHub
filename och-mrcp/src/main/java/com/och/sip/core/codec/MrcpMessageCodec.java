@@ -19,6 +19,7 @@ public class MrcpMessageCodec extends MessageToMessageCodec<ByteBuf, MrcpMessage
     @Override
     protected void encode(ChannelHandlerContext ctx, MrcpMessage msg, List<Object> out) {
         log.debug("Encoding MRCP message: {}", msg);
+
         byte[] contentBytes = msg.toString().getBytes(StandardCharsets.UTF_8);
         int contentLength = contentBytes.length;
         ByteBuf buffer = ctx.alloc().buffer(contentBytes.length);

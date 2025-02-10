@@ -11,15 +11,20 @@ import java.util.Map;
 public class MrcpResponse extends MrcpMessage {
 
 
-    private int statusCode;
+    private int statusCode; // 状态码
 
     private String statusText;
 
     private int messageLength = -1;
 
+    //方法名
+    private String method;
+
     @Override
     public String toString() {
-
+        if(!StringUtil.isNullOrEmpty(method)){
+            return toRecogString();
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(getVersion());
         sb.append(' ').append(getMessageLength());
@@ -28,6 +33,24 @@ public class MrcpResponse extends MrcpMessage {
         sb.append(' ').append(getStatusText());
         sb.append(CRLF);
 
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            sb.append(entry.getKey()).append(":").append(entry.getValue()).append(CRLF);
+        }
+        sb.append(CRLF);
+        if (!StringUtil.isNullOrEmpty(body)) {
+            sb.append(body);
+        }
+        return sb.toString();
+    }
+
+    public String toRecogString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(getVersion());
+        sb.append(' ').append(getStatusCode());
+        sb.append(' ').append(getMethod());
+        sb.append(' ').append(getRequestId());
+        sb.append(' ').append(getStatusText());
+        sb.append(CRLF);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             sb.append(entry.getKey()).append(":").append(entry.getValue()).append(CRLF);
         }

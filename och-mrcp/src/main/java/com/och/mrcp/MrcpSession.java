@@ -1,9 +1,11 @@
 package com.och.mrcp;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.nls.client.protocol.asr.SpeechTranscriberListener;
+import com.alibaba.nls.client.protocol.asr.SpeechTranscriberResponse;
 import com.och.config.MrcpConfig;
 import com.och.engine.*;
 import com.och.exception.InvalidGrammarException;
-import com.och.exception.InvalidSsmlException;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.Data;
@@ -102,6 +104,7 @@ public class MrcpSession {
      * 处理ACTIVE状态消息（处理媒体操作请求）
      */
     private void handleActiveState(MrcpMessage msg) {
+        this.lastActivityTime = Instant.now();
         if (msg instanceof MrcpRequest) {
             MrcpRequest req = (MrcpRequest) msg;
             pendingRequests.incrementAndGet();
@@ -162,13 +165,11 @@ public class MrcpSession {
     private void handleRecognizeRequest(MrcpRequest req) {
         log.trace("Processing RECOGNIZE request: {}", req.getRequestId());
         AsrEngine asrEngine = EngineFactory.getAsrEngine("aliyun");
-        asrEngine.start();
+        asrEngine.start(req,this);
         EngineFactory.addMrcpAsrEngine(sessionId, asrEngine);
         // 1. 提交到ASR引擎（异步操作）
         MrcpResponse res = buildSuccessResponse(req,"IN-PROGRESS");
         channel.writeAndFlush(res);
-
-
 
     }
 
@@ -189,6 +190,7 @@ public class MrcpSession {
         response.addHeader("Channel-Identifier", this.sessionId);
         return response;
     }
+
 
     /**
      * 处理STOP请求（终止当前操作）
@@ -276,85 +278,15 @@ public class MrcpSession {
 
 
     /**
-     * 验证SSML格式
-     */
-    private void validateSsml(String ssml) throws InvalidSsmlException {
-        if (ssml == null || !ssml.startsWith("<speak>")) {
-            throw new InvalidSsmlException("Invalid SSML format");
-        }
-    }
-
-    /**
      * 处理异步响应（例如来自TTS/ASR引擎的异步结果）
      *
      * @param response MRCP响应消息
      */
     private void processAsyncResponse(MrcpResponse response) {
-        try {
-            log.debug("Processing async response for request: {}", response.getRequestId());
-
-            // 1. 解析状态码和关键头部
-            int statusCode = response.getStatusCode();
-            String completionCause = response.getHeaders().getOrDefault("Completion-Cause", "unknown");
-
-            // 2. 根据状态码分派处理逻辑
-            switch (statusCode) {
-                case 200: // 成功
-                    handleSuccessfulAsyncResponse(response, completionCause);
-                    break;
-                case 500: // 服务器错误
-                    handleFailedAsyncResponse(response, "Server error: " + completionCause);
-                    break;
-                default:
-                    log.warn("Unhandled async response status code: {}", statusCode);
-            }
-        } catch (Exception e) {
-            log.error("Failed to process async response: {}", e.getMessage());
-            // 可选：发送错误通知或终止会话
-            transitionState(State.TERMINATING);
-        }
+        channel.writeAndFlush(response);
+        EngineFactory.getMrcpAsrEngine(sessionId).end();
     }
 
-    /**
-     * 处理成功的异步响应
-     */
-    private void handleSuccessfulAsyncResponse(MrcpResponse response, String completionCause) {
-        log.info("Async operation succeeded. Request ID: {}, Cause: {}",
-                response.getRequestId(), completionCause);
-
-        // 示例：根据 Completion-Cause 执行特定逻辑
-        switch (completionCause) {
-            case "000 normal":
-                // 正常完成，无需额外操作
-                break;
-            case "001 stop":
-                log.info("Operation was stopped by client request.");
-                break;
-            default:
-                log.warn("Unhandled completion cause: {}", completionCause);
-        }
-    }
-
-    /**
-     * 处理失败的异步响应
-     */
-    private void handleFailedAsyncResponse(MrcpResponse response, String errorMessage) {
-        log.error("Async operation failed. Request ID: {}, Error: {}",
-                response.getRequestId(), errorMessage);
-
-        // 示例：触发会话终止或重试逻辑
-        if (shouldTerminateOnError(response)) {
-            transitionState(State.TERMINATING);
-        }
-    }
-
-    /**
-     * 判断是否因错误需要终止会话（可根据业务逻辑扩展）
-     */
-    private boolean shouldTerminateOnError(MrcpResponse response) {
-        // 示例：特定错误码触发终止
-        return response.getStatusCode() == 500;
-    }
 
     private void startSessionTimer() {
         new Thread(() -> {

@@ -1,9 +1,12 @@
 package com.och.engine;
 
+import com.och.mrcp.MrcpRequest;
+import com.och.mrcp.MrcpSession;
+
 public interface AsrEngine {
 
 
-    default void start() {
+    default void start(MrcpRequest req, MrcpSession mrcpSession) {
 
     }
 

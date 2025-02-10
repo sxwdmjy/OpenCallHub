@@ -44,7 +44,7 @@
         <cos-qcloud.version>5.6.155</cos-qcloud.version>
         <tianai-captcha.version>1.5.1</tianai-captcha.version>
         <spring-statemachine.version>4.0.0</spring-statemachine.version>
-        <netty.version>4.1.101.Final</netty.version>
+        <netty.version>4.1.105.Final</netty.version>
     </properties>
 
     <dependencyManagement>

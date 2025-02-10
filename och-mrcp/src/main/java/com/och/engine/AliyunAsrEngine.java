@@ -1,5 +1,6 @@
 package com.och.engine;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nls.client.AccessToken;
 import com.alibaba.nls.client.protocol.InputFormatEnum;
 import com.alibaba.nls.client.protocol.NlsClient;
@@ -7,6 +8,9 @@ import com.alibaba.nls.client.protocol.SampleRateEnum;
 import com.alibaba.nls.client.protocol.asr.SpeechTranscriber;
 import com.alibaba.nls.client.protocol.asr.SpeechTranscriberListener;
 import com.alibaba.nls.client.protocol.asr.SpeechTranscriberResponse;
+import com.och.mrcp.MrcpRequest;
+import com.och.mrcp.MrcpResponse;
+import com.och.mrcp.MrcpSession;
 import com.och.redis.RedissonUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,18 +48,20 @@ public class AliyunAsrEngine implements AsrEngine {
 
     @Override
     public void recognize(byte[] audioData) {
-
+            if (transcriber != null){
+                transcriber.send(audioData);
+            }
     }
 
 
     @Override
-    public void start() {
+    public void start(MrcpRequest req, MrcpSession mrcpSession) {
         try {
             if (!RedissonUtil.isExists(AliEngineTokenKey)) {
                 client.setToken(getAccessToken(config));
             }
             //创建实例、建立连接。
-            transcriber = new SpeechTranscriber(client, getTranscriberListener());
+            transcriber = new SpeechTranscriber(client, getTranscriberListener(mrcpSession, req));
             transcriber.setAppKey(config.getAppKey());
             //输入音频编码方式。
             transcriber.setFormat(InputFormatEnum.PCM);
@@ -95,7 +101,7 @@ public class AliyunAsrEngine implements AsrEngine {
         return accessToken.getToken();
     }
 
-    private SpeechTranscriberListener getTranscriberListener() {
+    public SpeechTranscriberListener getTranscriberListener(MrcpSession mrcpSession, MrcpRequest req) {
 
         return new SpeechTranscriberListener() {
             //识别出中间结果。仅当setEnableIntermediateResult为true时，才会返回该消息。
@@ -141,6 +147,34 @@ public class AliyunAsrEngine implements AsrEngine {
                 result.setConfidence(response.getConfidence());
                 recog(result);*/
                 log.info("onSentenceEnd task_id: " + response.getTaskId() + ", name: " + response.getName() + ", status: " + response.getStatus() + ",result：" + response.getTransSentenceText());
+                MrcpResponse res = new MrcpResponse();
+                res.setVersion(req.getVersion());
+                res.setStatusCode(393);
+                res.setMethod("RECOGNITION-COMPLETE");
+                res.setRequestId(req.getRequestId());
+                res.setStatusText("COMPLETE");
+                res.addHeader("Channel-Identifier", mrcpSession.getSessionId());
+                res.addHeader("Completion-Cause", "000 success");
+                res.addHeader("Content-Type", "application/json");
+                JSONObject interpretation = new JSONObject();
+                interpretation.put("grammar", req.getBody());
+                interpretation.put("confidence", response.getConfidence());
+                interpretation.put("instance", response.getTransSentenceText());
+                JSONObject input = new JSONObject();
+                input.put("mode", "speech");
+                input.put("value", response.getTransSentenceText());
+                interpretation.put("input", input);
+
+                JSONObject result = new JSONObject();
+                result.put("interpretation", interpretation);
+
+                JSONObject gresponse = new JSONObject();
+                gresponse.put("result", result);
+
+                res.setBody(gresponse.toJSONString());
+                res.addHeader("Content-Length", String.valueOf(res.getBody().length()));
+                mrcpSession.getChannel().writeAndFlush(res);
+                EngineFactory.getMrcpAsrEngine(mrcpSession.getSessionId()).end();
             }
 
             //识别完毕
@@ -156,4 +190,6 @@ public class AliyunAsrEngine implements AsrEngine {
             }
         };
     }
+
+
 }
