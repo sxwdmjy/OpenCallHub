@@ -53,9 +53,10 @@ java -jar och-api.0.0.1.jar
 1. 后台管理-----------------开发中
 2. 技能组-----------------开发中
 3. ivr流程-----------------开发中
-4. 外呼任务
-5. 电话条集成
-6. 报表
+4. mrcp实现 ---------------已完成
+5. 外呼任务
+6. 电话条集成
+7. 报表
 
 ##### 5、 [前端地址](https://gitee.com/zhongjiawei999/waihu-app) `https://gitee.com/zhongjiawei999/waihu-app`
 
