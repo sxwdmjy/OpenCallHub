@@ -17,9 +17,6 @@ public class EngineFactory {
             "tencent", new TencentAsrEngine()
     );
 
-    private static final  Map<String,AsrEngine> mrcpAsrEngine = new ConcurrentHashMap<>(16);
-
-
     public static TtsEngine getTtsEngine(String platform) {
         return ttsEngines.get(platform);
     }
@@ -28,13 +25,5 @@ public class EngineFactory {
         return asrEngines.get(platform);
     }
 
-
-    public static AsrEngine getMrcpAsrEngine(String mrcpSessionId) {
-    	return mrcpAsrEngine.get(mrcpSessionId);
-    }
-
-    public static void addMrcpAsrEngine(String mrcpSessionId, AsrEngine asrEngine) {
-    	mrcpAsrEngine.put(mrcpSessionId, asrEngine);
-    }
 
 }

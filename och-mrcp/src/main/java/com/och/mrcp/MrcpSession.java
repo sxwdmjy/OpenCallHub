@@ -164,13 +164,11 @@ public class MrcpSession {
      */
     private void handleRecognizeRequest(MrcpRequest req) {
         log.trace("Processing RECOGNIZE request: {}", req.getRequestId());
-        AsrEngine asrEngine = EngineFactory.getAsrEngine("aliyun");
-        asrEngine.start(req,this);
-        EngineFactory.addMrcpAsrEngine(sessionId, asrEngine);
         // 1. 提交到ASR引擎（异步操作）
         MrcpResponse res = buildSuccessResponse(req,"IN-PROGRESS");
         channel.writeAndFlush(res);
-
+        AsrEngine asrEngine = EngineFactory.getAsrEngine("aliyun");
+        asrEngine.start(req, this);
     }
 
     /**
@@ -213,7 +211,7 @@ public class MrcpSession {
         try {
             // 1. 解析语法内容（SRGS XML）
             String grammarXml = req.getBody();
-            validateGrammar(grammarXml); // 语法验证逻辑
+            //validateGrammar(grammarXml); // 语法验证逻辑
 
             // 2. 存储语法（示例：关联到当前会话）
             String grammarId = req.getHeader("Content-Id");
@@ -284,7 +282,6 @@ public class MrcpSession {
      */
     private void processAsyncResponse(MrcpResponse response) {
         channel.writeAndFlush(response);
-        EngineFactory.getMrcpAsrEngine(sessionId).end();
     }
 
 

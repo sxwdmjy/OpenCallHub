@@ -10,6 +10,8 @@ public class RedissonManager {
 
     private RedissonManager() {} // 防止实例化
 
+
+
     public static RedissonClient getRedisson() {
         if (redissonClient == null) {
             synchronized (RedissonManager.class) {

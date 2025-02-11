@@ -8,9 +8,8 @@
     <property name="log.pattern" value="%highlight(%d{yyyy-MM-dd HH:mm:ss.SSS}) %yellow([%thread]) %highlight(%-5level) %red(PID:${PID}) %blue(%logger{20}) - %green([%method,%line]) - %highlight(%msg%n)" />
 
 
-
     <!-- 日志根目录-->
-    <springProperty scope="context" name="log.path" defaultValue="./logs/${app_name}"/>
+    <property name="log.path" value="./logs/${app_name}"/>
 
     <!-- 控制台输出 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">

@@ -12,8 +12,8 @@
     <groupId>com.och</groupId>
     <artifactId>och-mrcp</artifactId>
     <version>0.0.1</version>
-    <name>och-websocket</name>
-    <description>och-websocket</description>
+    <name>och-mrcp</name>
+    <description>och-mrcp</description>
 
     <properties>
         <java.version>17</java.version>
@@ -75,5 +75,37 @@
             <version>2.3.1</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.och.OchMrcpServer</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <!-- 这个jar-with-dependencies是assembly预先写好的一个，组装描述引用 -->
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <!--工程名-->
+                    <finalName>${project.name}</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

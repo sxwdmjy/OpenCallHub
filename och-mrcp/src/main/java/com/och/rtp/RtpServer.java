@@ -1,5 +1,7 @@
 package com.och.rtp;
 
+import com.och.engine.AsrEngine;
+import com.och.engine.EngineFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -13,11 +15,15 @@ public class RtpServer {
     private final int port;
     private Channel channel;
 
+    private AsrEngine asrEngine;
+
     public RtpServer(int port) {
         this.port = port;
+        this.asrEngine = EngineFactory.getAsrEngine("aliyun");
     }
 
-    public void start(String mrcpSessionId) throws InterruptedException {
+    public void start() throws InterruptedException {
+
         NioEventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -27,7 +33,7 @@ public class RtpServer {
                         @Override
                         protected void initChannel(NioDatagramChannel ch) {
                             // 添加RTP处理逻辑（例如转发到媒体处理器）
-                            ch.pipeline().addLast(new RtpDecoder(),new RtpHandler(mrcpSessionId));
+                            ch.pipeline().addLast(new RtpDecoder(),new RtpHandler(asrEngine));
                         }
                     });
             channel = bootstrap.bind(port).sync().channel();

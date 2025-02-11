@@ -1,6 +1,7 @@
 package com.och.sip.sdp;
 
 import com.och.config.MrcpConfig;
+import com.och.mrcp.MrcpSessionManager;
 import com.och.rtp.PortPoolManager;
 
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class AudioVideoStrategy implements SdpStrategy {
         if (!offerFormats.contains(MRCP_FORMAT)) {
             return null; // 不支持MRCPv2，拒绝该媒体流
         }
-
+       String channelId = System.currentTimeMillis()+"@speechrecog";
         // 生成Answer媒体描述
         SdpMessage.MediaDescription answerMd = new SdpMessage.MediaDescription();
         answerMd.setMediaType("application");
@@ -63,8 +64,9 @@ public class AudioVideoStrategy implements SdpStrategy {
         answerMd.setFormats(Collections.singletonList(MRCP_FORMAT));
         answerMd.addAttribute("setup", "passive");
         answerMd.addAttribute("connection", "new");
-        answerMd.addAttribute("channel", System.currentTimeMillis()+"@speechrecog");
+        answerMd.addAttribute("channel",channelId) ;
         answerMd.addAttribute("cmid", "1");
+        MrcpSessionManager.getInstance().createSession(channelId);
         return answerMd;
     }
 

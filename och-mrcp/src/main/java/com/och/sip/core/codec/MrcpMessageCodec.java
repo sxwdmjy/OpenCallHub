@@ -31,19 +31,6 @@ public class MrcpMessageCodec extends MessageToMessageCodec<ByteBuf, MrcpMessage
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws MrcpParseException {
         String rawMessage = in.toString(StandardCharsets.UTF_8); // 直接解析为字符串
         log.debug("Decoded raw MRCP message:\n{}", rawMessage);
-
-        // 解析 MRCP 头部，找到 `Content-Length`
-        int contentLength = parseContentLength(rawMessage);
-        if (contentLength < 0) {
-            throw new MrcpParseException("Missing or invalid Content-Length");
-        }
-
-        // 确保 `ByteBuf` 包含完整的消息体
-        int totalExpectedLength = rawMessage.indexOf("\r\n\r\n") + 4 + contentLength;
-        if (in.readableBytes() < totalExpectedLength) {
-            return; // 等待完整数据
-        }
-
         out.add(MrcpMessageParser.parse(rawMessage));
     }
 

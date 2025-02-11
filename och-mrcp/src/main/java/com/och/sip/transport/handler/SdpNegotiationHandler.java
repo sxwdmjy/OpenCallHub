@@ -1,6 +1,7 @@
 package com.och.sip.transport.handler;
 
-import com.och.config.MrcpConfig;
+import com.och.engine.AsrEngine;
+import com.och.engine.EngineFactory;
 import com.och.mrcp.MrcpSessionManager;
 import com.och.rtp.PortPoolManager;
 import com.och.rtp.RtpServer;
@@ -54,9 +55,6 @@ public class SdpNegotiationHandler implements SipMessageHandler {
         } else {
             channelId = System.currentTimeMillis() + "@speechrecog";
         }
-        // 创建 MRCP 会话
-        MrcpSessionManager.getInstance().createSession(channelId);
-        log.info("MRCP session created: {} , {}", channelId, mediaDesc.getPort());
         // 获取当前事务关联的 Dialog
         SipDialog dialog = DialogManager.getInstance().findDialogByCallId(callId);
         if (dialog != null) {
@@ -70,22 +68,20 @@ public class SdpNegotiationHandler implements SipMessageHandler {
     /**
      * 处理音频媒体会话
      */
-    private void handleMediaSession(SdpMessage.MediaDescription mediaDesc , String callId) {
-        // 3. 绑定端口到Dialog
-        SipDialog dialog = DialogManager.getInstance().findDialogByCallId(callId);
+    private void handleMediaSession(SdpMessage.MediaDescription mediaDesc, String callId) {
         // 1. 从端口池分配唯一端口
         int allocatedPort = mediaDesc.getPort();
         // 2. 创建并启动RTP服务器
         RtpServer rtpServer = new RtpServer(allocatedPort);
         try {
-            rtpServer.start(dialog.getMrcpSessionId());
+            rtpServer.start();
         } catch (InterruptedException e) {
             log.error("Failed to start RTP server on port {}: {}", allocatedPort, e.getMessage());
             PortPoolManager.getInstance().releasePort(allocatedPort); // 释放端口
             return;
         }
-
         // 3. 绑定端口到Dialog
+        SipDialog dialog = DialogManager.getInstance().findDialogByCallId(callId);
         if (dialog != null) {
             dialog.bindRtpPort(allocatedPort);
             dialog.setRtpServer(rtpServer); // 新增Dialog字段保存RtpServer实例

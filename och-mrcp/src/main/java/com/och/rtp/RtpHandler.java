@@ -6,17 +6,19 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 @Slf4j
 public class RtpHandler extends SimpleChannelInboundHandler<RtpPacket> {
     private static final int G722_PAYLOAD_TYPE = 9;
     private static final int G711_PAYLOAD_ULAW_TYPE = 0;
     private static final int G711_PAYLOAD_ALAW_TYPE = 8;
 
-    private final String mrcpSessionId;
+    private final AsrEngine asrEngine;
 
-    public RtpHandler(String mrcpSessionId) {
-        this.mrcpSessionId = mrcpSessionId;
 
+    public RtpHandler(AsrEngine asrEngine) {
+        this.asrEngine = asrEngine;
     }
 
     @Override
@@ -38,8 +40,7 @@ public class RtpHandler extends SimpleChannelInboundHandler<RtpPacket> {
             System.out.println("解码得到 PCM 样本数：" + pcmData.length);
         }
         if (pcmData != null) {
-            AsrEngine mrcpAsrEngine = EngineFactory.getMrcpAsrEngine(mrcpSessionId);
-            mrcpAsrEngine.recognize(processPCMData(pcmData));
+            asrEngine.recognize(processPCMData(pcmData));
         }
 
     }

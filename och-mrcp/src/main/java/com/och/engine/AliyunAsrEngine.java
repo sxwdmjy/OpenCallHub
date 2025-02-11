@@ -61,19 +61,20 @@ public class AliyunAsrEngine implements AsrEngine {
                 client.setToken(getAccessToken(config));
             }
             //创建实例、建立连接。
-            transcriber = new SpeechTranscriber(client, getTranscriberListener(mrcpSession, req));
-            transcriber.setAppKey(config.getAppKey());
+            SpeechTranscriber speechTranscriber = new SpeechTranscriber(client, getTranscriberListener(mrcpSession, req));
+            speechTranscriber.setAppKey(config.getAppKey());
             //输入音频编码方式。
-            transcriber.setFormat(InputFormatEnum.PCM);
+            speechTranscriber.setFormat(InputFormatEnum.PCM);
             //输入音频采样率。
-            transcriber.setSampleRate(SampleRateEnum.SAMPLE_RATE_8K);
+            speechTranscriber.setSampleRate(SampleRateEnum.SAMPLE_RATE_8K);
             //是否返回中间识别结果。
-            transcriber.setEnableIntermediateResult(false);
+            speechTranscriber.setEnableIntermediateResult(false);
             //是否生成并返回标点符号。
-            transcriber.setEnablePunctuation(true);
+            speechTranscriber.setEnablePunctuation(true);
             //是否将返回结果规整化，比如将一百返回为100。
-            transcriber.setEnableITN(false);
-            transcriber.start();
+            speechTranscriber.setEnableITN(false);
+            speechTranscriber.start();
+            setTranscriber(speechTranscriber);
         } catch (Exception e) {
             log.error("ASR exception: " + e.getMessage(), e);
         }
@@ -134,18 +135,6 @@ public class AliyunAsrEngine implements AsrEngine {
             //识别出一句话。服务端会智能断句，当识别到一句话结束时会返回此消息。
             @Override
             public void onSentenceEnd(SpeechTranscriberResponse response) {
-              /*  RtpMsgResult result = new RtpMsgResult();
-                result.setTaskId(response.getTaskId());
-                result.setCallId(callId);
-                result.setRoleType(roleType);
-                result.setResultIndex(response.getTransSentenceIndex());
-                result.setResult();
-                result.setBeginTime(Long.valueOf(response.getSentenceBeginTime()));
-                result.setEndTime(Long.valueOf(response.getSentenceBeginTime() + response.getTransSentenceTime()));
-                result.setDuration(response.getTransSentenceTime());
-                result.setStatus(response.getStatus());
-                result.setConfidence(response.getConfidence());
-                recog(result);*/
                 log.info("onSentenceEnd task_id: " + response.getTaskId() + ", name: " + response.getName() + ", status: " + response.getStatus() + ",result：" + response.getTransSentenceText());
                 MrcpResponse res = new MrcpResponse();
                 res.setVersion(req.getVersion());
@@ -173,8 +162,7 @@ public class AliyunAsrEngine implements AsrEngine {
 
                 res.setBody(gresponse.toJSONString());
                 res.addHeader("Content-Length", String.valueOf(res.getBody().length()));
-                mrcpSession.getChannel().writeAndFlush(res);
-                EngineFactory.getMrcpAsrEngine(mrcpSession.getSessionId()).end();
+                mrcpSession.process(res);
             }
 
             //识别完毕
@@ -192,4 +180,7 @@ public class AliyunAsrEngine implements AsrEngine {
     }
 
 
+    public void setTranscriber(SpeechTranscriber transcriber) {
+        this.transcriber = transcriber;
+    }
 }

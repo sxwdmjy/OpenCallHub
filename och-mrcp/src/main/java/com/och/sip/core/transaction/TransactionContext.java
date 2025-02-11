@@ -291,7 +291,6 @@ public class TransactionContext {
         if (code != 200 || StringUtil.isNullOrEmpty(originalRequest.getBody())) {
             return; // 仅对200 OK且存在SDP Offer时处理
         }
-
         try {
             SdpOffer sdpOffer = parseSdpOffer();
             SdpAnswer sdpAnswer = negotiateSdp(sdpOffer);
