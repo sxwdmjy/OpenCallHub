@@ -12,8 +12,10 @@ import com.och.common.enums.ProcessEnum;
 import com.och.common.enums.RouteTypeEnum;
 import com.och.esl.client.FsClient;
 import com.och.esl.handler.route.FsAbstractRouteHandler;
+import com.och.esl.service.IFlowNoticeService;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.ivr.properties.FlowNodeProperties;
+import com.och.ivr.properties.FlowTransferNodeProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,8 +30,9 @@ import org.springframework.stereotype.Component;
 public class FlowSipRouteHandler {
     private final FsClient fsClient;
     private final IFsCallCacheService fsCallCacheService;
+    protected final IFlowNoticeService iFlowNoticeService;
 
-    public void handler(FlowDataContext flowData, FlowNodeProperties properties) {
+    public void handler(FlowDataContext flowData, FlowTransferNodeProperties properties) {
         String sipValue = properties.getRouteValue();
         log.info("转SIP callId:{} transfer to {}", flowData.getCallId(), sipValue);
         CallInfo callInfo = fsCallCacheService.getCallInfo(flowData.getCallId());
@@ -59,6 +62,6 @@ public class FlowSipRouteHandler {
         callInfo.addDetailList(detail);
         fsCallCacheService.saveCallInfo(callInfo);
         fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
-
+        iFlowNoticeService.notice(2, "next", flowData);
     }
 }

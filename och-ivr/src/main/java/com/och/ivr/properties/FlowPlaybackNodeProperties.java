@@ -1,9 +1,11 @@
 package com.och.ivr.properties;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class FlowPlaybackNodeProperties implements FlowNodeProperties{
+public class FlowPlaybackNodeProperties extends FlowNodeProperties{
 
     /**
      * 打断
@@ -29,4 +31,9 @@ public class FlowPlaybackNodeProperties implements FlowNodeProperties{
      * 播放内容
      */
     private String content;
+
+    /**
+     * 播放次数
+     */
+    private Integer num;
 }

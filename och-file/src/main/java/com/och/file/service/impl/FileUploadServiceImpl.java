@@ -13,6 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class FileUploadServiceImpl implements IFileUploadService, InitializingBe
 
 
     @Override
-    public FileUploadVo fileUpload(MultipartFile file, String type) throws IOException {
+    public FileUploadVo fileUpload(MultipartFile file, String type) {
         if(StringUtils.isEmpty(type)){
             type = lfsSettingConfig.getUploadType();
         }
@@ -45,6 +46,19 @@ public class FileUploadServiceImpl implements IFileUploadService, InitializingBe
         }
         return fileUploadHandler.upload(file);
     }
+
+    @Override
+    public FileUploadVo fileUpload(File file, String type) {
+        if(StringUtils.isEmpty(type)){
+            type = lfsSettingConfig.getUploadType();
+        }
+        AbstractFileUploadHandler fileUploadHandler = handlerTable.get(type);
+        if(Objects.isNull(fileUploadHandler)){
+            throw new FileException("未知存储类型");
+        }
+        return fileUploadHandler.upload(file);
+    }
+
 
     @Override
     public void afterPropertiesSet() throws Exception {

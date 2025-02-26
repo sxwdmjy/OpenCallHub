@@ -1,7 +1,7 @@
 package com.och.common.constant;
 
-import com.och.common.config.oss.AliCosConfig;
-import com.och.common.config.oss.TxCosConfig;
+import com.och.common.config.oss.AliCloudConfig;
+import com.och.common.config.oss.TxCloudConfig;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -41,13 +41,18 @@ public class SysSettingConfig {
     private String uploadType;
 
     /**
-     * 腾讯云cos配置
+     * 默认语音合成方式
      */
-    private TxCosConfig txCosConfig;
+    private String ttsType;
 
     /**
-     * 阿里云云cos配置
+     * 腾讯云配置
      */
-    private AliCosConfig aliCosConfig;
+    private TxCloudConfig txConfig;
+
+    /**
+     * 阿里云云配置
+     */
+    private AliCloudConfig aliConfig;
 
 }

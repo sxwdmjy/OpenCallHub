@@ -40,7 +40,6 @@ public class FsChannelExecuteCompleteEslEventHandler extends AbstractFsEslEventH
             case "playback":
                 if ("FILE PLAYED".equals(EslEventUtil.getApplicationResponse(event))) {
                     log.info("uniqueId:{}, playback:{} success", uniqueId, EslEventUtil.getApplicationData(event));
-                    //正常排队放音在放完之后，需要循环放音
                     if (callInfo.getQueueStartTime() != null && callInfo.getQueueEndTime() == null) {
                         fsClient.playFile(address, uniqueId, "queue.wav");
                         return;

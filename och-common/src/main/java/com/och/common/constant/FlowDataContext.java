@@ -43,4 +43,18 @@ public class FlowDataContext {
      * 挂机原因
      */
     private String hangUpCause;
+
+    /**
+     * 语音识别引擎
+     */
+    private String asrEngine;
+    /**
+     * 语音合成引擎
+     */
+    private String ttsEngine;
+
+    /**
+     * 语音合成音色
+     */
+    private String ttsVoice;
 }

@@ -395,6 +395,21 @@ public class FsClient {
     }
 
     /**
+     * 循环次数播放音乐
+     * @param address 地址
+     * @param uniqueId 通道ID
+     * @param file 文件路径
+     * @param number 循环次数
+     */
+    public void playFile(String address, String uniqueId, String file, Integer number) {
+        SendMsg playfile = new SendMsg(uniqueId);
+        playfile.addCallCommand(EslConstant.EXECUTE);
+        playfile.addExecuteAppName(EslConstant.LOOP_PLAYBACK);
+        playfile.addExecuteAppArg("+"+number+ " "+ file);
+        this.sendMsg(address, playfile);
+    }
+
+    /**
      * 开启ASR
      *
      * @param address
@@ -415,5 +430,56 @@ public class FsClient {
         speech.addExecuteAppName(EslConstant.DETECT_SPEECH);
         speech.addExecuteAppArg(EslConstant.RESUME);
         this.sendMsg(address, speech);
+    }
+
+
+    /**
+     * <min> <max> <tries> <timeout> <terminators> <file> <invalid_file> [<var_name> [<regexp> [<digit_timeout> [<transfer_on_failure>]]]]
+     * play_and_get_digits(301,1 1 1 2000 q /sounds/welcaome.wav silence_stream://250 SYMWRD_DTMF_RETURN [\*0-9#]+ 2000) execute ok
+     * 放音并收号
+     * @param adress 媒体地址
+     * @param uniqueId 通道ID
+     * @param min 最小位数（最小值为 0）
+     * @param max 最大位数（最大值为 128）
+     * @param tries 声音播放的尝试次数
+     * @param timeout 在文件播放结束后和 PAGD 执行重试之前等待拨号响应的毫秒数。
+     * @param terminators 终止符 = 如果按下的数字少于 <max>，则用于结束输入的数字。如果它以 '=' 开头，则必须存在终止符才能接受输入（通常为 '#'，可以为空）。在终止数字前面添加 '+' 以始终将其附加到 var_name 中指定的结果变量。
+     * @param file 播放声音文件，提示呼叫者拨打数字;播放可以被第一个拨号数字打断（可以为空或特殊字符串 “silence” 以省略消息）。
+     * @param invalid_file 当数字与 regexp 不匹配时播放的声音文件（可以为空以省略消息）。
+     * @param var_name 应将有效数字放入其中的通道变量（可选，默认情况下不设置任何变量。另请参见下面的“var_name_invalid”）
+     * @param regexp 匹配数字的正则表达式（可选，空字符串允许所有输入（默认））。
+     * @param digit_timeout 数字间超时;数字之间允许的毫秒数，而不是拨打终止符数字;到达此号码后，PAGD 假定呼叫方没有更多数字可拨打（可选，默认为 <timeout> 的值）。
+     * @param transfer_on_failure 达到最大尝试次数时将呼叫转接到何处
+     */
+    public void playAndGetDigits(String adress, String uniqueId, Integer min, Integer max, Integer tries, Integer timeout, String terminators, String file, String invalid_file, String var_name, String regexp, Integer digit_timeout, String transfer_on_failure){
+        SendMsg speech = new SendMsg(uniqueId);
+        speech.addCallCommand(EslConstant.EXECUTE);
+        speech.addExecuteAppName(EslConstant.PLAY_AND_GET_DIGITS);
+        StringBuilder builder = new StringBuilder();
+        builder.append(min).append(EslConstant.SPACE)
+                .append(max).append(EslConstant.SPACE)
+                .append(tries).append(EslConstant.SPACE)
+                .append(timeout).append(EslConstant.SPACE)
+                .append(terminators).append(EslConstant.SPACE)
+                .append(file).append(EslConstant.SPACE)
+                .append(invalid_file).append(EslConstant.SPACE)
+                .append(var_name).append(EslConstant.SPACE)
+                .append(regexp).append(EslConstant.SPACE);
+        if(StringUtils.isNotBlank(transfer_on_failure)){
+            builder.append(transfer_on_failure);
+        }
+        speech.addExecuteAppArg(builder.toString());
+        this.sendMsg(adress, speech);
+    }
+
+    /**
+     * 放音识别
+     * @param address
+     * @param uniqueId
+     * @param content
+     */
+    public void playAndDetectSpeech(String address, String uniqueId, String content) {
+        SendMsg speech = new SendMsg(uniqueId);
+        speech.addCallCommand(EslConstant.EXECUTE);
     }
 }

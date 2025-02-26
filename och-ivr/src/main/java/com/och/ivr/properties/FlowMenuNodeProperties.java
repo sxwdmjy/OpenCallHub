@@ -1,11 +1,13 @@
 package com.och.ivr.properties;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class FlowMenuNodeProperties implements FlowNodeProperties{
+public class FlowMenuNodeProperties extends FlowNodeProperties{
 
     /**
      * 是否支持打断 true:支持 false:不支持

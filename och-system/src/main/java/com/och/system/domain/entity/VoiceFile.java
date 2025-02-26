@@ -70,7 +70,7 @@ public class VoiceFile extends BaseEntity implements Serializable {
      */
     @Schema(description = "文件ID")
     @TableField("file_id")
-    private String fileId;
+    private Long fileId;
 
 
 

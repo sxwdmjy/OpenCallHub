@@ -3,21 +3,6 @@ package com.och.common.constant;
 
 public class EslConstant {
 
-    /**
-     * Constant <code>BACKGROUND_JOB="BACKGROUND_JOB"</code>
-     */
-    public static final String BACKGROUND_JOB = "BACKGROUND_JOB";
-    /**
-     * Constant <code>PLAIN="plain"</code>
-     */
-    public static final String PLAIN = "plain";
-
-    public static final String SMF_ALEG = "aleg";
-    public static final String SMF_BLEG = "bleg";
-    public static final String SMF_HOLDB = "holdb";
-    public static final String SMF_BOTH = "both";
-
-
     public final static String SPACE = " ";
 
     public final static String SPLIT = ",";
@@ -35,6 +20,8 @@ public class EslConstant {
     public final static String EXECUTE = "execute";
 
     public final static String PLAYBACK = "playback";
+
+    public final static String LOOP_PLAYBACK = "loop_playback";
 
     public final static String BREAK_ = "break";
 
@@ -91,11 +78,17 @@ public class EslConstant {
 
     public final static String PLAYBACK_TERMINATORS = "playback_terminators=none";
 
+    public final static String PLAYBACK_TERMINATORS_ANY = "playback_terminator_digits=any";
+
     public final static String SPEAK = "speak";
 
-    public final static String TTS_ENGINE = "tts_engine=unimrcp";
+    public final static String TTS_ENGINE = "tts_engine=";
 
     public final static String TTS_VOICE = "tts_voice=";
+
+    public final static String PLAYBACK_SLEEP_VAL = "playback_sleep_val=0";
+
+    private final static String PLAY_AND_DETECT_SPEECH = "play_and_detect_speech";
 
     public final static String FIRE_ASR_EVENT = "fire_asr_events=true";
 

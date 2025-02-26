@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 4320
   forward-headers-strategy: framework
 
 spring:
@@ -36,6 +36,7 @@ spring:
           max-idle: 8
           max-active: 8
           max-wait: -1ms
+      client-type: jedis
 #  rabbitmq:
 #    host: 127.0.0.1
 #    port: 5672
@@ -84,16 +85,56 @@ fs:
 
 system:
   setting:
-    fsProfile: 1 # freeswitch文件地址
+    localHost: 127.0.0.1
+    fsProfile: /record  # freeswitch文件地址
     fsFileSuffix: .wav # freeswitch文件后缀
-    baseProfile: 1 # 文件上传地址
-    uploadType: local # 上传类型 loca-本地上传、tx-腾讯云cos、ali-阿里云
-    ali-cos-config: # 阿里云cos配置
-      host: 231
-      bucketName: 12312
-    tx-cos-config: # 腾讯云cos配置
-      host: 12321
-      bucketName: 21321
-      regionName: 213
-      accessKey: 2312
-      secretKey: 123
+    baseProfile: /temp # 文件上传地址
+    uploadType: local # 默认上传类型 loca-本地上传、tx-腾讯云cos、ali-阿里云
+    ttsType: ali # 默认语音合成类型 ali-阿里云、tx-腾讯云、xf-讯飞
+    ali-config: # 阿里云cos配置
+      cos:
+        host: 231
+        bucketName: 12312
+      tts:
+        appKey:
+        accessKeyId:
+        accessKeySecret:
+        url:
+        voice: zhixiaomei
+    tx-config: # 腾讯云cos配置
+      cos:
+        host: 12321
+        bucketName: 21321
+        regionName: 213
+        accessKey: 2312
+        secretKey: 123
+      tts:
+        appKey: 123
+
+# 滑块验证码配置
+captcha:
+  # 如果项目中使用到了redis，滑块验证码会自动把验证码数据存到redis中， 这里配置redis的key的前缀,默认是captcha:slider
+  prefix: captcha
+  # 验证码过期时间，默认是2分钟,单位毫秒， 可以根据自身业务进行调整
+  expire:
+    # 默认缓存时间 2分钟
+    default: 10000
+    # 针对 点选验证码 过期时间设置为 2分钟， 因为点选验证码验证比较慢，把过期时间调整大一些
+    WORD_IMAGE_CLICK: 20000
+  # 使用加载系统自带的资源， 默认是 false
+  init-default-resource: false
+  # 缓存控制， 默认为false不开启
+  local-cache-enabled: true
+  # 验证码会提前缓存一些生成好的验证数据， 默认是20
+  local-cache-size: 20
+  # 缓存拉取失败后等待时间 默认是 5秒钟
+  local-cache-wait-time: 5000
+  # 缓存检查间隔 默认是2秒钟
+  local-cache-period: 2000
+  secondary:
+    # 二次验证， 默认false 不开启
+    enabled: false
+    # 二次验证过期时间， 默认 2分钟
+    expire: 120000
+    # 二次验证缓存key前缀，默认是 captcha:secondary
+    keyPrefix: "captcha:secondary"

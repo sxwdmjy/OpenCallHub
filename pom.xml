@@ -41,6 +41,8 @@
         <security-crypto.version>6.3.1</security-crypto.version>
         <dom4j.version>2.1.3</dom4j.version>
         <aliyun-sdk-oss.version>3.15.1</aliyun-sdk-oss.version>
+        <aliyun-sdk-tts.version>2.2.17</aliyun-sdk-tts.version>
+        <qclod-sdk-tts.version>3.1.1171</qclod-sdk-tts.version>
         <cos-qcloud.version>5.6.155</cos-qcloud.version>
         <tianai-captcha.version>1.5.1</tianai-captcha.version>
         <spring-statemachine.version>4.0.0</spring-statemachine.version>
@@ -278,6 +280,19 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>${netty.version}</version>
+            </dependency>
+            <!--tts-->
+            <dependency>
+                <groupId>com.alibaba.nls</groupId>
+                <artifactId>nls-sdk-tts</artifactId>
+                <!-- 请将 'the-latest-version' 替换为查询到的最新版本号：https://mvnrepository.com/artifact/com.alibaba.nls/nls-sdk-tts -->
+                <version>${aliyun-sdk-tts.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tencentcloudapi</groupId>
+                <artifactId>tencentcloud-sdk-java-tts</artifactId>
+                <!-- 请到 maven 官网查询 sdk 的所有版本，例如 cvm 的产品包链接为 https://central.sonatype.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java-tts/versions -->
+                <version>${qclod-sdk-tts.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

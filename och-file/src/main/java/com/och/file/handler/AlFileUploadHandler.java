@@ -11,7 +11,8 @@ import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import com.aliyuncs.exceptions.ClientException;
 import com.och.common.annotation.FileUploadType;
-import com.och.common.config.oss.AliCosConfig;
+import com.och.common.config.oss.AliCloudConfig;
+import com.och.common.constant.SysSettingConfig;
 import com.och.common.domain.file.FileUploadVo;
 import com.och.common.exception.FileException;
 import com.och.common.utils.MimeTypeUtils;
@@ -19,11 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * 阿里
+ *
  * @author danmo
  * @date 2023-11-01 15:16
  **/
@@ -33,8 +36,12 @@ import java.io.InputStream;
 public class AlFileUploadHandler extends AbstractFileUploadHandler {
 
 
+    public AlFileUploadHandler(SysSettingConfig lfsSettingConfig) {
+        super(lfsSettingConfig);
+    }
+
     @Override
-    public FileUploadVo upload(MultipartFile file) throws IOException {
+    public FileUploadVo upload(MultipartFile file) {
 
         String oldName = file.getOriginalFilename();
         String suffix = FileUtil.getSuffix(oldName);
@@ -46,11 +53,48 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
         String uuid = IdUtil.fastSimpleUUID();
         String fileName = uuid + "." + suffix;
         String saveUrl = newPath + fileName;
-        AliCosConfig aliCosConfig = lfsSettingConfig.getAliCosConfig();
+        AliCloudConfig.AliCosConfig aliCosConfig = lfsSettingConfig.getAliConfig().getCos();
         try {
             uploadFile(saveUrl, file.getInputStream(), aliCosConfig.getHost(), aliCosConfig.getBucketName());
-        } catch (ClientException e) {
-            throw new RuntimeException(e);
+        } catch (ClientException | IOException e) {
+            throw new FileException(e.getMessage());
+        }
+        FileUploadVo fileUploadVo = new FileUploadVo();
+        fileUploadVo.setCosId(uuid);
+        fileUploadVo.setFileName(oldName);
+        fileUploadVo.setFilePath(aliCosConfig.getHost() + saveUrl);
+        fileUploadVo.setFileSuffix(suffix);
+        fileUploadVo.setFileType(fileType);
+        return fileUploadVo;
+    }
+
+    @Override
+    public FileUploadVo upload(File uploadFile) {
+        String oldName = uploadFile.getAbsolutePath();
+        String suffix = FileUtil.getSuffix(oldName);
+        if (!checkFileFormat(suffix)) {
+            throw new FileException(String.format("%s文件格式不被允许上传", suffix));
+        }
+        Integer fileType = MimeTypeUtils.getFileType(suffix).getCode();
+        String newPath = getFileTempPath(fileType);
+        String uuid = IdUtil.fastSimpleUUID();
+        String fileName = uuid + "." + suffix;
+        String saveUrl = newPath + fileName;
+        AliCloudConfig.AliCosConfig aliCosConfig = lfsSettingConfig.getAliConfig().getCos();
+        InputStream inputStream = FileUtil.getInputStream(uploadFile);
+        try {
+            Boolean aBoolean = uploadFile(saveUrl, inputStream, aliCosConfig.getHost(), aliCosConfig.getBucketName());
+            if (!aBoolean) {
+                throw new FileException("上传阿里云存储异常");
+            }
+        } catch (ClientException | FileException e) {
+            throw new FileException(e.getMessage());
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                log.error("上传阿里云存储异常 msg:{}", e.getMessage(), e);
+            }
         }
         FileUploadVo fileUploadVo = new FileUploadVo();
         fileUploadVo.setCosId(uuid);
@@ -75,7 +119,7 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
         } catch (OSSException oe) {
             log.error("上传阿里云存储异常 msg:{}, url:{}", oe.getMessage(), url, oe);
             return false;
-        }  finally {
+        } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
             }

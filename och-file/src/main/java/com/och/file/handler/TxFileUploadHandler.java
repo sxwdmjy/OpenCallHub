@@ -3,7 +3,8 @@ package com.och.file.handler;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import com.och.common.annotation.FileUploadType;
-import com.och.common.config.oss.TxCosConfig;
+import com.och.common.config.oss.TxCloudConfig;
+import com.och.common.constant.SysSettingConfig;
 import com.och.common.domain.file.FileUploadVo;
 import com.och.common.exception.FileException;
 import com.och.common.utils.MimeTypeUtils;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
@@ -38,9 +40,12 @@ import java.util.concurrent.Executors;
 @Service
 public class TxFileUploadHandler extends AbstractFileUploadHandler {
 
+    public TxFileUploadHandler(SysSettingConfig lfsSettingConfig) {
+        super(lfsSettingConfig);
+    }
 
     @Override
-    public FileUploadVo upload(MultipartFile file) throws IOException {
+    public FileUploadVo upload(MultipartFile file) {
         String oldName = file.getOriginalFilename();
         //获取扩展名，默认是wav
         String suffix = FileUtil.getSuffix(oldName);
@@ -52,8 +57,46 @@ public class TxFileUploadHandler extends AbstractFileUploadHandler {
         String uuid = IdUtil.fastSimpleUUID();
         String fileName = uuid + "." + suffix;
         String saveUrl = newPath + fileName;
-        TxCosConfig txCosConfig = lfsSettingConfig.getTxCosConfig();
-        uploadFile(saveUrl, file.getInputStream(), txCosConfig.getAccessKey(), txCosConfig.getSecretKey(), txCosConfig.getRegionName(), txCosConfig.getBucketName());
+        TxCloudConfig.TxCosConfig txCosConfig = lfsSettingConfig.getTxConfig().getCos();
+        try {
+            uploadFile(saveUrl, file.getInputStream(), txCosConfig.getAccessKey(), txCosConfig.getSecretKey(), txCosConfig.getRegionName(), txCosConfig.getBucketName());
+        } catch (IOException e) {
+            throw new FileException(e.getMessage());
+        }
+
+        FileUploadVo fileUploadVo = new FileUploadVo();
+        fileUploadVo.setCosId(uuid);
+        fileUploadVo.setFileName(oldName);
+        fileUploadVo.setFilePath(txCosConfig.getHost() + saveUrl);
+        fileUploadVo.setFileSuffix(suffix);
+        fileUploadVo.setFileType(MimeTypeUtils.getFileType(suffix).getCode());
+        return fileUploadVo;
+    }
+
+    @Override
+    public FileUploadVo upload(File file) {
+        String oldName = file.getAbsolutePath();
+        //获取扩展名，默认是wav
+        String suffix = FileUtil.getSuffix(oldName);
+        if (!checkFileFormat(suffix)) {
+            throw new FileException(String.format("%s文件格式不被允许上传", suffix));
+        }
+        Integer fileType = MimeTypeUtils.getFileType(suffix).getCode();
+        String newPath = getFileTempPath(fileType);
+        String uuid = IdUtil.fastSimpleUUID();
+        String fileName = uuid + "." + suffix;
+        String saveUrl = newPath + fileName;
+        TxCloudConfig.TxCosConfig txCosConfig = lfsSettingConfig.getTxConfig().getCos();
+        InputStream inputStream = FileUtil.getInputStream(file);
+        Boolean aBoolean = uploadFile(saveUrl, inputStream, txCosConfig.getAccessKey(), txCosConfig.getSecretKey(), txCosConfig.getRegionName(), txCosConfig.getBucketName());
+        if (!aBoolean) {
+            throw new FileException("上传腾讯云存储异常");
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            log.error("上传腾讯云存储文件流关闭异常 msg:{}", e.getMessage(), e);
+        }
 
         FileUploadVo fileUploadVo = new FileUploadVo();
         fileUploadVo.setCosId(uuid);

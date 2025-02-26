@@ -19,8 +19,10 @@ import com.och.common.utils.StringUtils;
 import com.och.esl.client.FsClient;
 import com.och.esl.handler.route.FsAbstractRouteHandler;
 import com.och.esl.queue.CallQueue;
+import com.och.esl.service.IFlowNoticeService;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.ivr.properties.FlowNodeProperties;
+import com.och.ivr.properties.FlowTransferNodeProperties;
 import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.query.fssip.FsSipGatewayQuery;
 import com.och.system.domain.query.skill.CallSkillQuery;
@@ -58,6 +60,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
     private final RedisService redisService;
     private final IFsSipGatewayService iFsSipGatewayService;
     private final ISipAgentService iSipAgentService;
+    protected final IFlowNoticeService iFlowNoticeService;
+    private final Map<Long, FlowDataContext> channelInfoMap = new ConcurrentHashMap<>();
 
     private Map<Long, PriorityQueue<CallQueue>> callQueueMap = new ConcurrentHashMap<>();
 
@@ -69,7 +73,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
     private static ScheduledExecutorService fsAcdThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("flow-acd-pool-%d"));
 
 
-    public void handler(FlowDataContext flowData, FlowNodeProperties properties) {
+    public void handler(FlowDataContext flowData, FlowTransferNodeProperties properties) {
+        channelInfoMap.put(flowData.getCallId(), flowData);
         String skillId = properties.getRouteValue();
         log.info("转技能组 callId:{} transfer to {}", flowData.getCallId(), skillId);
 
@@ -79,6 +84,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
         if (Objects.isNull(callSkill)) {
             log.info("转技能组获取技能组失败 callee:{}, skillId:{}", callInfo.getCallee(), skillId);
             fsClient.hangupCall(flowData.getAddress(), callInfo.getCallId(), flowData.getUniqueId());
+            iFlowNoticeService.notice(2, "end", flowData);
+            channelInfoMap.remove(flowData.getCallId());
             return;
         }
         callInfo.setSkillId(callSkill.getId());
@@ -99,6 +106,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
             log.info("转技能组未配置坐席失败 callee:{}, skillId:{}", callInfo.getCallee(), skillId);
             callInfo.setSkillHangUpReason(HangupCauseEnum.FULLBUSY.getDesc());
             fsClient.hangupCall(flowData.getAddress(), callInfo.getCallId(), flowData.getUniqueId());
+            iFlowNoticeService.notice(2, "end", flowData);
+            channelInfoMap.remove(flowData.getCallId());
             return;
         }
         List<String> agentIds = agentList.stream().map(CallSkillAgentRelVo::getAgentId).map(String::valueOf).toList();
@@ -134,6 +143,7 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
                     callInfo.setHangupCause(HangupCauseEnum.OVERFLOW.getCode());
                     fsClient.hangupCall(flowData.getAddress(), callInfo.getCallId(), flowData.getUniqueId());
                     fsCallCacheService.saveCallInfo(callInfo);
+                    iFlowNoticeService.notice(2, "end", flowData);
                     break;
                 default:
                     break;
@@ -149,10 +159,11 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
             log.info("转技能组 获取空闲坐席失败 callee:{}, skillId:{}", callInfo.getCallee(), skillId);
             callInfo.setSkillHangUpReason(HangupCauseEnum.FULLBUSY.getDesc());
             fsClient.hangupCall(flowData.getAddress(), callInfo.getCallId(), flowData.getUniqueId());
+            iFlowNoticeService.notice(2, "end", flowData);
+            channelInfoMap.remove(flowData.getCallId());
             return;
         }
-        transferAgentHandler(flowData.getAddress(),agentInfo, callInfo, flowData.getUniqueId());
-
+        transferAgentHandler(flowData.getAddress(),agentInfo, callInfo,flowData.getUniqueId());
     }
 
     private void callQueueStrategy(String address, CallInfo callInfo, String uniqueId, CallSkillVo skill) {
@@ -308,6 +319,7 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
     }
 
     private void transferAgentHandler(String address, SipAgentVo agentInfo, CallInfo callInfo, String uniqueId) {
+        FlowDataContext flowData = channelInfoMap.get(callInfo.getCallId());
         String agentNumber = agentInfo.getAgentNumber();
         String otherUniqueId = RandomUtil.randomNumbers(32);
 
@@ -315,6 +327,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
             log.error("transferAgentHandler agent:{} 坐席未绑定SIP号码, callId:{}", agentInfo.getId(), callInfo.getCallId());
             callInfo.setSkillHangUpReason(HangupCauseEnum.AGENT_NO_BAND_SIP.getDesc());
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
+            iFlowNoticeService.notice(2, "end", flowData);
+            channelInfoMap.remove(callInfo.getCallId());
             return;
         }
         CallRouteVo callRoute = fsCallCacheService.getCallRoute(callInfo.getCallee(), 1);
@@ -322,6 +336,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
             log.info("transferAgentHandler 未配置号码路由 callee:{}",agentNumber);
             callInfo.setSkillHangUpReason(HangupCauseEnum.NOT_ROUTE.getDesc());
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
+            iFlowNoticeService.notice(2, "end", flowData);
+            channelInfoMap.remove(callInfo.getCallId());
             return;
         }
         FsSipGatewayQuery query = new FsSipGatewayQuery();
@@ -331,6 +347,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
             log.info("transferAgentHandler 号码路由未关联网关信息 callee:{}",agentNumber);
             callInfo.setSkillHangUpReason(HangupCauseEnum.ROUTE_NOT_GATEWAY.getDesc());
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
+            iFlowNoticeService.notice(2, "end", flowData);
+            channelInfoMap.remove(callInfo.getCallId());
             return;
         }
         callInfo.setAgentId(agentInfo.getId());
@@ -358,6 +376,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
             agentStatusVo.setReceptionNum(agentStatusVo.getReceptionNum() + 1);
             redisService.setCacheMapValue(CacheConstants.AGENT_CURRENT_STATUS_KEY,String.valueOf(agentStatusVo.getId()),agentStatusVo);
         }
+        iFlowNoticeService.notice(2, "next", flowData);
+        channelInfoMap.remove(callInfo.getCallId());
     }
 
     /**
@@ -365,6 +385,7 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
      * @param callQueue
      */
     private void queueTimeout(CallQueue callQueue) {
+        Long callId = callQueue.getCallId();
         fsClient.playBreak(callQueue.getAddress(), callQueue.getUniqueId());
         Long current = DateUtil.current();
         CallInfo callInfo = fsCallCacheService.getCallInfo(callQueue.getCallId());
@@ -387,6 +408,8 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
 
         fsClient.hangupCall(callQueue.getAddress(), callQueue.getCallId(), callQueue.getUniqueId());
         fsCallCacheService.saveCallInfo(callInfo);
+        iFlowNoticeService.notice(2, "end", channelInfoMap.get(callId));
+        channelInfoMap.remove(callId);
     }
 
     @Override

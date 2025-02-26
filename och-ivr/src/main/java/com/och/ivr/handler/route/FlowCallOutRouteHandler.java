@@ -11,8 +11,10 @@ import com.och.common.enums.ProcessEnum;
 import com.och.common.enums.RouteTypeEnum;
 import com.och.esl.client.FsClient;
 import com.och.esl.handler.route.FsAbstractRouteHandler;
+import com.och.esl.service.IFlowNoticeService;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.ivr.properties.FlowNodeProperties;
+import com.och.ivr.properties.FlowTransferNodeProperties;
 import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.service.IFsSipGatewayService;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +33,10 @@ public class FlowCallOutRouteHandler {
     private final IFsCallCacheService fsCallCacheService;
     private final IFsSipGatewayService iFsSipGatewayService;
     private final FsClient fsClient;
+    protected final IFlowNoticeService iFlowNoticeService;
 
 
-    public void handler(FlowDataContext flowData, FlowNodeProperties properties) {
+    public void handler(FlowDataContext flowData, FlowTransferNodeProperties properties) {
         String sipGatewayId = properties.getRouteValue();
         log.info("转外呼 callId:{} transfer to {}", flowData.getCallId(), sipGatewayId);
 
@@ -61,5 +64,6 @@ public class FlowCallOutRouteHandler {
         callInfo.addDetailList(detail);
         fsCallCacheService.saveCallInfo(callInfo);
         fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
+        iFlowNoticeService.notice(2, "next", flowData);
     }
 }

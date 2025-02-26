@@ -1,20 +1,14 @@
 package com.och.ivr.properties;
 
-public interface FlowNodeProperties {
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
-    default Long getAsrEngine(){return null;};
-    default Long getTtsEngine(){return null;};
+@Data
+public class FlowNodeProperties {
 
-    default Integer getRouteType(){return null;};
-
-
-    default String getRouteValue(){return null;}
-
-    default Boolean getHangUp(){return null;}
-
-    default Boolean getInterrupt(){return null;}
-    default Long getFileId(){return null;}
-    default String getFile(){return null;}
-    default Integer getPlaybackType(){return null;}
-    default String getContent(){return null;}
+    /**
+     * 节点业务类型 0-开始 1-结束 2-放音 3-菜单 4-收号 5-人工  6-转接  7-应答 8-挂机 9-路由 10-子IVR 11-满意度
+     */
+    @Schema(description = "节点业务类型 0-开始 1-结束 2-放音 3-菜单 4-收号 5-人工  6-转接  7-应答 8-挂机 9-路由 10-子IVR 11-满意度")
+    public Integer businessType;
 }

@@ -9,6 +9,7 @@ import com.och.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -19,10 +20,15 @@ import java.util.Date;
 @FileUploadType(value = "local")
 public abstract class AbstractFileUploadHandler {
 
-    @Autowired
     protected SysSettingConfig lfsSettingConfig;
 
-    public abstract FileUploadVo upload(MultipartFile file) throws IOException;
+    public AbstractFileUploadHandler(SysSettingConfig lfsSettingConfig) {
+        this.lfsSettingConfig = lfsSettingConfig;
+    }
+
+    public abstract FileUploadVo upload(MultipartFile file);
+    public abstract FileUploadVo upload(File file);
+
 
     public Boolean checkFileFormat(String suffix){
         for (String str : MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION) {
@@ -45,19 +51,20 @@ public abstract class AbstractFileUploadHandler {
             case 0 -> {
                 //判断url是否为空，如果为空，使用默认
                 if (StringUtils.isEmpty(strbd)) {
-                    strbd.append("/data/lfs/file");
+                    strbd.append("/data/och/file");
                 }
-                strbd.append("/").append("temp").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+                strbd.append("/").append("temp").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
             }
-            case 3 -> strbd.append("/").append("voice").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
-            case 2 -> strbd.append("/").append("file").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
-            case 4 -> strbd.append("/").append("video").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
-            case 1 -> strbd.append("/").append("image").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
-            default -> strbd.append("/").append("unknown").append("/").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            case 2 -> strbd.append("/").append("voice").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            case 3 -> strbd.append("/").append("file").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            case 4 -> strbd.append("/").append("video").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            case 1 -> strbd.append("/").append("image").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            default -> strbd.append("/").append("unknown").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
         }
 
         return strbd.toString();
     }
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.och.ivr.listener;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.CacheConstants;
 import com.och.common.constant.FlowDataContext;
@@ -11,6 +12,7 @@ import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.domain.entity.FlowNodeExecutionHistory;
 import com.och.ivr.domain.vo.FlowNodeVo;
 import com.och.ivr.handler.node.AbstractIFlowNodeHandler;
+import com.och.ivr.properties.FlowNodeProperties;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
 import com.och.ivr.service.IFlowNodeExecutionHistoryService;
@@ -60,6 +62,7 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
             log.info("未找到当前节点flowData:{}, id:{}", JSON.toJSONString(flowData), state.getId());
             return;
         }
+        FlowNodeProperties flowNodeProperties = JSONObject.parseObject(currentFlowNode.getProperties(), FlowNodeProperties.class);
         flowData.setCurrentNodeId(currentFlowNode.getId());
         FlowInstances instances = FlowInstances.builder().currentNodeId((Long) state.getId()).variables(currentFlowNode.getProperties()).id(flowData.getInstanceId()).build();
         iFlowInstancesService.updateById(instances);
@@ -72,7 +75,7 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
         iFlowNodeExecutionHistoryService.save(history);
         flowData.setCurrentHistoryId(history.getId());
         stateContext.getExtendedState().getVariables().put("flowData", flowData);
-        String handler = FlowNodeTypeEnum.getHandler(currentFlowNode.getBusinessType());
+        String handler = FlowNodeTypeEnum.getHandler(flowNodeProperties.getBusinessType());
         if(StringUtils.isNotBlank(handler)){
             AbstractIFlowNodeHandler nodeHandler = SpringUtils.getBean(handler, AbstractIFlowNodeHandler.class);
             nodeHandler.handle(stateContext);

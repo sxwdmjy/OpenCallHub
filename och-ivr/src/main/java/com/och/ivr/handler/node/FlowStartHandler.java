@@ -13,8 +13,15 @@ import com.och.ivr.domain.vo.FlowNodeVo;
 import com.och.ivr.properties.FlowStartNodeProperties;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
+import com.och.system.domain.CallEngine;
+import com.och.system.service.ICallEngineService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 
 /**
@@ -23,12 +30,16 @@ import org.springframework.stereotype.Component;
  * @author danmo
  * @date 2024-12-26
  */
+@Slf4j
 @Component
 public class FlowStartHandler extends AbstractIFlowNodeHandler {
 
+    @Autowired
+    private ICallEngineService iCallEngineService;
 
-    public FlowStartHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient, RedisService redisService) {
+    public FlowStartHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient, RedisService redisService, ICallEngineService iCallEngineService) {
         super(persister, fsCallCacheService, iFlowNoticeService, iFlowInfoService, iFlowInstancesService, fsClient, redisService);
+        this.iCallEngineService = iCallEngineService;
     }
 
     @Override
@@ -36,15 +47,25 @@ public class FlowStartHandler extends AbstractIFlowNodeHandler {
         try {
             FlowNodeVo flowNode = getFlowNode(flowData.getFlowId(), flowData.getCurrentNodeId());
             String properties = flowNode.getProperties();
-            CallInfo callInfo = fsCallCacheService.getCallInfo(flowData.getCallId());
             if (StringUtils.isNotBlank(properties)) {
                 FlowStartNodeProperties startNodeProperties = JSONObject.parseObject(properties, FlowStartNodeProperties.class);
-                callInfo.setAsrEngine(startNodeProperties.getAsrEngine());
-                callInfo.setTtsEngine(startNodeProperties.getTtsEngine());
+                if(Objects.nonNull(startNodeProperties.getAsrEngine())){
+                    CallEngine asrEngine = iCallEngineService.getDetail(startNodeProperties.getAsrEngine());
+                    if(Objects.nonNull(asrEngine)){
+                        flowData.setAsrEngine(asrEngine.getProfile());
+                    }
+                }
+                if(Objects.nonNull(startNodeProperties.getTtsEngine())){
+                    CallEngine ttsEngine = iCallEngineService.getDetail(startNodeProperties.getTtsEngine());
+                    if(Objects.nonNull(ttsEngine)){
+                        flowData.setTtsEngine(ttsEngine.getProfile());
+                        flowData.setTtsVoice(ttsEngine.getTimbre());
+                    }
+                }
             }
-            fsCallCacheService.saveCallInfo(callInfo);
             iFlowNoticeService.notice(2, "next", flowData);
         } catch (Exception e) {
+            log.error("开始节点处理异常", e);
             throw new FlowNodeException(e);
         }
     }

@@ -54,4 +54,6 @@ public class CacheConstants {
 
     public static final String CALL_IVR_FLOW_INFO_NODE_KEY = "fs:ivr:flow:node:{}";
 
+    public static final String ALI_TTS_TOKEN_KEY = "ali_tts_token";
+
 }

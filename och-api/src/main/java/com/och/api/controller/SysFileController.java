@@ -25,12 +25,13 @@ public class SysFileController extends BaseController {
      * 文件上传
      *
      * @param file 文件
+     * @param type 上传方式 local ali  tx
      * @return 文件上传结果
      */
     @Operation(description = "文件上传", method = "POST")
     @PostMapping("/upload")
-    public ResResult<FileUploadVo> uploadFile(@RequestParam("file") MultipartFile file) {
-        FileUploadVo uploadedFile = sysFileService.uploadFile(file);
+    public ResResult<FileUploadVo> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("type") String type) {
+        FileUploadVo uploadedFile = sysFileService.uploadFile(file,type);
         return success(uploadedFile);
     }
 

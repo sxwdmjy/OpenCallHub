@@ -47,7 +47,7 @@ public class FlowTransferHandler extends AbstractIFlowNodeHandler{
     @Override
     public void execute(FlowDataContext flowData) {
         FlowNodeVo flowNode = getFlowNode(flowData.getFlowId(), flowData.getCurrentNodeId());
-        FlowNodeProperties transferNodeProperties = JSONObject.parseObject(flowNode.getProperties(), FlowTransferNodeProperties.class);
+        FlowTransferNodeProperties transferNodeProperties = JSONObject.parseObject(flowNode.getProperties(), FlowTransferNodeProperties.class);
         if(Objects.isNull(transferNodeProperties)){
             throw new FlowNodeException("转接节点配置错误");
         }
@@ -62,6 +62,5 @@ public class FlowTransferHandler extends AbstractIFlowNodeHandler{
             case 4 -> flowSkillGroupRouteHandler.handler(flowData,transferNodeProperties);
             default -> throw new FlowNodeException("转接节点配置错误");
         }
-        iFlowNoticeService.notice(2, "next", flowData);
     }
 }

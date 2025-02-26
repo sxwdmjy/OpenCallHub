@@ -50,6 +50,15 @@
             <artifactId>och-common</artifactId>
             <version>0.0.1</version>
         </dependency>
+        <!--tts-->
+        <dependency>
+            <groupId>com.alibaba.nls</groupId>
+            <artifactId>nls-sdk-tts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java-tts</artifactId>
+        </dependency>
     </dependencies>
 
 

@@ -3,6 +3,7 @@ package com.och.file.service;
 import com.och.common.domain.file.FileUploadVo;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -15,9 +16,9 @@ public interface IFileUploadService {
      * @param file 文件
      * @param type 上传方式 local ali  tx
      * @return
-     * @throws IOException
      */
-    FileUploadVo fileUpload(MultipartFile file, String type) throws IOException;
+    FileUploadVo fileUpload(MultipartFile file, String type);
 
 
+    FileUploadVo fileUpload(File file, String type);
 }

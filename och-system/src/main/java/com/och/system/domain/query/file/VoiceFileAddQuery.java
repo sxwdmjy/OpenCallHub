@@ -52,6 +52,6 @@ public class VoiceFileAddQuery {
      * 文件ID
      */
     @Schema(description = "文件ID")
-    private String fileId;
+    private Long fileId;
 
 }

@@ -15,8 +15,10 @@ import com.och.common.exception.FlowNodeException;
 import com.och.common.utils.StringUtils;
 import com.och.esl.client.FsClient;
 import com.och.esl.handler.route.FsAbstractRouteHandler;
+import com.och.esl.service.IFlowNoticeService;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.ivr.properties.FlowNodeProperties;
+import com.och.ivr.properties.FlowTransferNodeProperties;
 import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.query.fssip.FsSipGatewayQuery;
 import com.och.system.domain.vo.agent.SipAgentVo;
@@ -44,9 +46,11 @@ public class FlowAgentRouteHandler {
     private final IFsSipGatewayService iFsSipGatewayService;
     private final ISipAgentService iSipAgentService;
     private final FsClient fsClient;
+    protected final IFlowNoticeService iFlowNoticeService;
 
 
-    public void handler(FlowDataContext flowData, FlowNodeProperties properties) {
+
+    public void handler(FlowDataContext flowData, FlowTransferNodeProperties properties) {
         String address = flowData.getAddress();
         CallInfo callInfo = fsCallCacheService.getCallInfo(flowData.getCallId());
         if(Objects.isNull(callInfo)){
@@ -57,6 +61,7 @@ public class FlowAgentRouteHandler {
         if(Objects.isNull(sipAgent)){
             log.error("转坐席未查询到坐席信息 callId:{}  callerNumber:{} calleeNumber:{},agentId:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCallee(),agentId);
             fsClient.hangupCall(address,callInfo.getCallId(),flowData.getUniqueId());
+            iFlowNoticeService.notice(2, "end", flowData);
             return;
         }
 
@@ -67,6 +72,7 @@ public class FlowAgentRouteHandler {
         if(StringUtils.isEmpty(calleeNumber)){
             log.error("坐席未配置sip号码 callId:{}  callerNumber:{} calleeNumber:{},agentId:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCallee(),agentId);
             fsClient.hangupCall(address,callInfo.getCallId(),flowData.getUniqueId());
+            iFlowNoticeService.notice(2, "end", flowData);
             return;
         }
         log.info("转坐席 callId:{}, agent:{}", callInfo.getCallId(), agentId);
@@ -100,10 +106,12 @@ public class FlowAgentRouteHandler {
         }else {
             log.error("转坐席未查询到非外线网关 callId:{}  callerNumber:{} calleeNumber:{},agentId:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCallee(),agentId);
             fsClient.hangupCall(address,callInfo.getCallId(),flowData.getUniqueId());
+            iFlowNoticeService.notice(2, "end", flowData);
         }
         detail.setEndTime(DateUtil.current());
         callInfo.addDetailList(detail);
         fsCallCacheService.saveCallInfo(callInfo);
         fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
+        iFlowNoticeService.notice(2, "next", flowData);
     }
 }

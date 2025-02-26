@@ -165,12 +165,12 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
             }
 
 
-            FlowNodeVo startNode = nodes.stream().filter(n -> Objects.equals(0, n.getBusinessType())).findFirst().orElseGet(null);
+            FlowNodeVo startNode = nodes.stream().filter(n -> Objects.equals("start", n.getId())).findFirst().orElseGet(null);
             if (Objects.isNull(startNode)) {
                 log.info("未找到流程开始节点 id:{}", info.getId());
                 return null;
             }
-            FlowNodeVo endNode = nodes.stream().filter(n -> Objects.equals(1, n.getBusinessType())).findFirst().orElseGet(null);
+            FlowNodeVo endNode = nodes.stream().filter(n -> Objects.equals("end", n.getId())).findFirst().orElseGet(null);
             if (Objects.isNull(endNode)) {
                 log.info("未找到流程结束节点 id:{}", info.getId());
                 return null;
@@ -185,7 +185,7 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
                     .end(endNode.getId());
 
             //配置状态机边
-            List<FlowEdgeVo> edges = flowDataJson.getObject("nodes", new TypeReference<List<FlowEdgeVo>>(){});
+            List<FlowEdgeVo> edges = flowDataJson.getObject("edges", new TypeReference<List<FlowEdgeVo>>(){});
             StateMachineTransitionConfigurer<Object, Object> transitionConfigurer = stateMachineBuilder.configureTransitions();
             int i = 0;
             for (FlowEdgeVo edge : edges) {
