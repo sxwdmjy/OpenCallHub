@@ -21,10 +21,30 @@ public class AliCloudConfig {
          * 阿里云域名
          */
         private String host;
+
+        /**
+         * 域名
+         */
+        private String endpoint;
+
         /**
          * 桶名称
          */
         private String bucketName;
+
+        /**
+         * 桶区域
+         */
+        private String region;
+
+        /**
+         * 应用ID
+         */
+        private String accessKeyId;
+        /**
+         * 应用密钥
+         */
+        private String accessKeySecret;
     }
 
     @Data

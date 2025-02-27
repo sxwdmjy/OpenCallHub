@@ -55,11 +55,11 @@ public abstract class AbstractFileUploadHandler {
                 }
                 strbd.append("/").append("temp").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
             }
-            case 2 -> strbd.append("/").append("voice").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
-            case 3 -> strbd.append("/").append("file").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
-            case 4 -> strbd.append("/").append("video").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
-            case 1 -> strbd.append("/").append("image").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
-            default -> strbd.append("/").append("unknown").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            case 2 -> strbd.append("/").append("voice").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date) + 1).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            case 3 -> strbd.append("/").append("file").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)+ 1).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            case 4 -> strbd.append("/").append("video").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)+ 1).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            case 1 -> strbd.append("/").append("image").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)+ 1).append("/").append(DateUtil.dayOfMonth(date)).append("/");
+            default -> strbd.append("/").append("unknown").append("/").append(DateUtil.year(date)).append("/").append(DateUtil.month(date)+ 1).append("/").append(DateUtil.dayOfMonth(date)).append("/");
         }
 
         return strbd.toString();

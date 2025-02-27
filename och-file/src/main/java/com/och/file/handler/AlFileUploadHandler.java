@@ -2,11 +2,13 @@ package com.och.file.handler;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
+import com.aliyun.oss.ClientBuilderConfiguration;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.OSSException;
-import com.aliyun.oss.common.auth.CredentialsProviderFactory;
-import com.aliyun.oss.common.auth.EnvironmentVariableCredentialsProvider;
+import com.aliyun.oss.common.auth.CredentialsProvider;
+import com.aliyun.oss.common.auth.DefaultCredentialProvider;
+import com.aliyun.oss.common.comm.SignVersion;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import com.aliyuncs.exceptions.ClientException;
@@ -16,6 +18,7 @@ import com.och.common.constant.SysSettingConfig;
 import com.och.common.domain.file.FileUploadVo;
 import com.och.common.exception.FileException;
 import com.och.common.utils.MimeTypeUtils;
+import com.och.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +58,7 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
         String saveUrl = newPath + fileName;
         AliCloudConfig.AliCosConfig aliCosConfig = lfsSettingConfig.getAliConfig().getCos();
         try {
-            uploadFile(saveUrl, file.getInputStream(), aliCosConfig.getHost(), aliCosConfig.getBucketName());
+            uploadFile(saveUrl, file.getInputStream());
         } catch (ClientException | IOException e) {
             throw new FileException(e.getMessage());
         }
@@ -64,6 +67,7 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
         fileUploadVo.setFileName(oldName);
         fileUploadVo.setFilePath(aliCosConfig.getHost() + saveUrl);
         fileUploadVo.setFileSuffix(suffix);
+        fileUploadVo.setFileSize(String.valueOf(file.getSize()));
         fileUploadVo.setFileType(fileType);
         return fileUploadVo;
     }
@@ -83,7 +87,7 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
         AliCloudConfig.AliCosConfig aliCosConfig = lfsSettingConfig.getAliConfig().getCos();
         InputStream inputStream = FileUtil.getInputStream(uploadFile);
         try {
-            Boolean aBoolean = uploadFile(saveUrl, inputStream, aliCosConfig.getHost(), aliCosConfig.getBucketName());
+            Boolean aBoolean = uploadFile(saveUrl, inputStream);
             if (!aBoolean) {
                 throw new FileException("上传阿里云存储异常");
             }
@@ -101,28 +105,37 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
         fileUploadVo.setFileName(oldName);
         fileUploadVo.setFilePath(aliCosConfig.getHost() + saveUrl);
         fileUploadVo.setFileSuffix(suffix);
+        fileUploadVo.setFileSize(String.valueOf(uploadFile.length()));
         fileUploadVo.setFileType(fileType);
         return fileUploadVo;
     }
 
 
-    private Boolean uploadFile(String url, InputStream inputStream, String endpoint, String bucketName) throws ClientException {
-        // 从环境变量中获取访问凭证。运行本代码示例之前，请确保已设置环境变量OSS_ACCESS_KEY_ID和OSS_ACCESS_KEY_SECRET。
-        EnvironmentVariableCredentialsProvider credentialsProvider = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
+    private Boolean uploadFile(String url, InputStream inputStream) throws ClientException {
+        AliCloudConfig.AliCosConfig aliCosConfig = lfsSettingConfig.getAliConfig().getCos();
+        CredentialsProvider credentialsProvider = new DefaultCredentialProvider(aliCosConfig.getAccessKeyId(), aliCosConfig.getAccessKeySecret());
+        ClientBuilderConfiguration clientBuilderConfiguration = new ClientBuilderConfiguration();
+        clientBuilderConfiguration.setSignatureVersion(SignVersion.V4);
         // 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder().build(endpoint, credentialsProvider);
+        OSS ossClient = OSSClientBuilder.create()
+                .endpoint(aliCosConfig.getEndpoint())
+                .credentialsProvider(credentialsProvider)
+                .clientConfiguration(clientBuilderConfiguration)
+                .region(aliCosConfig.getRegion())
+                .build();
         try {
             // 创建PutObjectRequest对象。
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, url, inputStream);
+            if(StringUtils.startsWith(url,"/")){
+                url = url.substring(1);
+            }
+            PutObjectRequest putObjectRequest = new PutObjectRequest(aliCosConfig.getBucketName(), url, inputStream);
             // 创建PutObject请求。
             PutObjectResult result = ossClient.putObject(putObjectRequest);
         } catch (OSSException oe) {
             log.error("上传阿里云存储异常 msg:{}, url:{}", oe.getMessage(), url, oe);
             return false;
         } finally {
-            if (ossClient != null) {
-                ossClient.shutdown();
-            }
+            ossClient.shutdown();
         }
         return true;
     }

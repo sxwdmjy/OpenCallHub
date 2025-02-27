@@ -30,8 +30,8 @@ public class SysFileController extends BaseController {
      */
     @Operation(description = "文件上传", method = "POST")
     @PostMapping("/upload")
-    public ResResult<FileUploadVo> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("type") String type) {
-        FileUploadVo uploadedFile = sysFileService.uploadFile(file,type);
+    public ResResult<FileUploadVo> uploadFile(@RequestParam("file") MultipartFile file) {
+        FileUploadVo uploadedFile = sysFileService.uploadFile(file,null);
         return success(uploadedFile);
     }
 
