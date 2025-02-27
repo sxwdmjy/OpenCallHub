@@ -1,6 +1,6 @@
 # openCallHub
-OpenCallHub 是一个强大且灵活的开源呼叫中心解决方案，旨在提供全面的客户服务和支持功能
-
+openCallHub 是一个强大且灵活的开源呼叫中心解决方案，旨在提供全面的客户服务和支持功能
+#### [github地址](https://github.com/iFindCallCenter/openCallHub)
 #### [演示地址](http://59.110.143.217/) `账号admin/12345678`
 软话机登录1000账号和1001账号，然后1000号发起呼叫，接听1001号，挂断。 如需体验联系作者
 
@@ -60,7 +60,7 @@ java -jar och-api.0.0.1.jar
 
 ##### 5、 [前端地址](https://gitee.com/zhongjiawei999/waihu-app) `https://gitee.com/zhongjiawei999/waihu-app`
 
-#### 6、 联系方式： 有能力可加微信交流，有线路需求也可以咨询
+#### 6、 联系方式： 有能力可加微信交流（不再无偿答疑部署使用问题），有线路需求也可以咨询
 
 ![微信](image.png)
 

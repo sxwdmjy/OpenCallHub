@@ -22,9 +22,28 @@ make install
 ```
 
 3. 配置Kamailio
+```
+替换配置文件kamailio.cfg
+vim /etc/kamailio/kamailio.cfg
+修改配置文件中数据库连接信息和IP端口监听信息
 
-4. 启动Kamailio
-5. 开启Kamailio日志
+将kamailio.lua复制到/etc/kamailio/kamailio.lua
+```
+```sql
+INSERT INTO version(id, table_name, table_version)VALUES(1, 'ko_location', 9);
+INSERT INTO version(id, table_name, table_version)VALUES(2, 'ko_subscriber', 6);
+INSERT INTO version(id, table_name, table_version)VALUES(3, 'version', 1);
+INSERT INTO version(id, table_name, table_version)VALUES(4, 'ko_dispatcher', 2);
+INSERT INTO version(id, table_name, table_version)VALUES(5, 'aliases', 3);
+INSERT INTO version(id, table_name, table_version)VALUES(7, 'ko_address', 6);
+``` 
+4. 配置freeswitch
+```
+ko_dispatcher表中配置freeswitch信息
+ko_address 表中配置IP授权信息
+```
+5. 启动Kamailio
+6. 开启Kamailio日志
 ````
 #日志输出
 vim /etc/rsyslog.conf

@@ -62,63 +62,44 @@ make install
 make -j cd-sounds-install
 make -j cd-moh-install
 ```
-5. #### 安装G729 
-```shell
-cd /opt
-git clone https://github.com/xadhoom/mod_bcg729.git
-cd mod_bcg729
-vim Makefile
-FS_INCLUDES=/usr/local/freeswitch/include/freeswitch
-make 
+5. #### 配置freeswitch 
 ```
-6. #### 连接数据库
-```shell
-yum install -y mysql-connector-odbc
-vim /etc/odbcinst.ini 
-[MySQL]
-Description     = ODBC for MySQL
-Driver          = /usr/lib/libmyodbc5.so
-Setup           = /usr/lib/libodbcmyS.so
-Driver64        = /usr/lib64/libmyodbc5.so
-Setup64         = /usr/lib64/libodbcmyS.so
-FileUsage       = 1
+cd /usr/local/freeswitch/conf/autoload_configs/
+1、修改modules.conf.xml
+放开配置
+<load module="mod_xml_curl"/>
+2、修改xml_curl.conf.xml，并添加
+ <binding name="all configs">
+   <param name="gateway-url" value="http://127.0.0.1:8080/fs/curl/api" bindings="dialplan|configuration|phrases"/>
+   <param name="timeout" value="10"/>
+   <param name="gateway-credentials" value="密钥"/>
+   <param name="auth-scheme" value="basic"/>
+</binding>
+对应项目文件中
+fs:
+  xml-curl:
+    auth-scheme: basic # basic、digest
+    secretKey: 1233333 # 密钥
 
-#sql连接
-vim /etc/odbc.ini 
-[freeswitch]
-Driver          = /usr/lib64/libmyodbc5.so
-SERVER       = 127.0.0.1
-PORT           = 3306
-DATABASE  = freeswitch
-OPTION      = 67108864
-USER           = root
-PASSWORD  = 123456
-Threading    = 0
-
-#测试mysql连接
-isql -v freeswitch
-
-#修改mysql相关配置
-cd /usr/local/freeswitch/etc/freeswitch/autoload_configs/
-vim ./autoload_configs/switch.conf.xml 
-vim ./autoload_configs/db.conf.xml 
-vim ./sip_profiles/internal.xml 
-<param name="core-db-dsn" value="freeswitch::" />
+3、修改event_socket.conf.xml
+<settings>
+    <param name="nat-map" value="false"/>
+    <param name="listen-ip" value="0.0.0.0"/>
+    <param name="listen-port" value="8021"/>
+    <param name="password" value="密码"/>
+    <param name="apply-inbound-acl" value="loopback.auto"/>
+    <!--<param name="stop-on-bind-error" value="true"/>-->
+ </settings>
+ loopback.auto 需在acl中配置loopback.auto，可以在项目FS访问控制管理中配置访问IP
+ 4、如需向外拨打电话修改var.xml
+ <X-PRE-PROCESS cmd="set" data="default_password=默认密码"/>
+ <X-PRE-PROCESS cmd="set" data="external_rtp_ip=外网IP"/>
+ <X-PRE-PROCESS cmd="set" data="external_sip_ip=外网IP"/> 
+ <X-PRE-PROCESS cmd="set" data="external_auth_calls=true"/> 
 ```
+6. 使用kamailio或者openSips作为SIP网关，请在FS网关管理中配置SIP网关
 7. #### 启动freeswitch
 ```shell
 #启动
 freeswitch -nc
-freeswitch -nc -nonat
-```
-8. #### 修改event_socket.conf
-```shell
-<settings>
-    <param name="nat-map" value="false"/>
-    <param name="listen-ip" value="127.0.0.1"/>
-    <param name="listen-port" value="8021"/>
-    <param name="password" value="123456"/>
-    <!--<param name="apply-inbound-acl" value="loopback.auto"/>-->
-    <!--<param name="stop-on-bind-error" value="true"/>-->
-  </settings>
 ```
