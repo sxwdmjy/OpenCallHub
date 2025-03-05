@@ -47,7 +47,7 @@ public class RtpHandler extends SimpleChannelInboundHandler<RtpPacket> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("RTP channel error: {}", cause.getMessage());
+        log.error("RTP channel error: {}", cause.getMessage(),cause);
         ctx.close();
     }
 

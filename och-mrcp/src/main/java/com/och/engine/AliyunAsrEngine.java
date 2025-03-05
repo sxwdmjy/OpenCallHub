@@ -1,5 +1,6 @@
 package com.och.engine;
 
+import cn.hutool.core.util.XmlUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nls.client.AccessToken;
 import com.alibaba.nls.client.protocol.InputFormatEnum;
@@ -13,8 +14,21 @@ import com.och.mrcp.MrcpResponse;
 import com.och.mrcp.MrcpSession;
 import com.och.redis.RedissonUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -138,22 +152,24 @@ public class AliyunAsrEngine implements AsrEngine {
                 log.info("onSentenceEnd task_id: " + response.getTaskId() + ", name: " + response.getName() + ", status: " + response.getStatus() + ",result：" + response.getTransSentenceText());
                 MrcpResponse res = new MrcpResponse();
                 res.setVersion(req.getVersion());
-                res.setStatusCode(393);
                 res.setMethod("RECOGNITION-COMPLETE");
                 res.setRequestId(req.getRequestId());
-                res.setStatusText("COMPLETE");
+                res.setRequestState("COMPLETE");
                 res.addHeader("Channel-Identifier", mrcpSession.getSessionId());
                 res.addHeader("Completion-Cause", "000 success");
                 res.addHeader("Content-Type", "application/json");
                 JSONObject interpretation = new JSONObject();
                 interpretation.put("grammar", req.getBody());
                 interpretation.put("confidence", response.getConfidence());
-                interpretation.put("instance", response.getTransSentenceText());
+                JSONObject instance = new JSONObject();
+                instance.put("result", response.getTransSentenceText());
+                instance.put("beginTime", response.getSentenceBeginTime());
+                instance.put("taskId", response.getTaskId());
+                interpretation.put("instance", instance);
                 JSONObject input = new JSONObject();
                 input.put("mode", "speech");
                 input.put("value", response.getTransSentenceText());
                 interpretation.put("input", input);
-
                 JSONObject result = new JSONObject();
                 result.put("interpretation", interpretation);
 

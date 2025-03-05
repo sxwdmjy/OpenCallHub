@@ -75,7 +75,7 @@ public class MrcpSessionHandler extends ChannelInboundHandlerAdapter {
             res.setVersion(req.getVersion());
             res.setMessageLength(reason.length());
             res.setRequestId(req.getRequestId());
-            res.setStatusText("COMPLETE");
+            res.setRequestState("COMPLETE");
             res.setStatusCode(code);
             res.addHeader("Completion-Cause", "002 error");
             res.addHeader("Content-Length", String.valueOf(reason.length()));

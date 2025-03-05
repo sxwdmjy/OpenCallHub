@@ -182,7 +182,7 @@ public class MrcpSession {
         response.setVersion(req.getVersion());
         response.setMessageLength(-1);
         response.setRequestId(req.getRequestId());
-        response.setStatusText(statusText);
+        response.setRequestState(statusText);
         response.setStatusCode(200);
         response.addHeader("Completion-Cause", "000 normal");
         response.addHeader("Channel-Identifier", this.sessionId);
@@ -253,7 +253,7 @@ public class MrcpSession {
         response.setVersion(req.getVersion());
         response.setMessageLength(reason.length());
         response.setRequestId(req.getRequestId());
-        response.setStatusText("COMPLETE");
+        response.setRequestState("COMPLETE");
         response.setStatusCode(code);
         response.addHeader("Completion-Cause", "002 error");
         response.addHeader("Channel-Identifier", this.sessionId);
@@ -281,6 +281,8 @@ public class MrcpSession {
      * @param response MRCP响应消息
      */
     private void processAsyncResponse(MrcpResponse response) {
+        AsrEngine asrEngine = EngineFactory.getAsrEngine("aliyun");
+        asrEngine.end();
         channel.writeAndFlush(response);
     }
 

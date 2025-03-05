@@ -13,7 +13,7 @@ public class MrcpResponse extends MrcpMessage {
 
     private int statusCode; // 状态码
 
-    private String statusText;
+    private String requestState;
 
     private int messageLength = -1;
 
@@ -30,7 +30,7 @@ public class MrcpResponse extends MrcpMessage {
         sb.append(' ').append(getMessageLength());
         sb.append(' ').append(getRequestId());
         sb.append(' ').append(getStatusCode());
-        sb.append(' ').append(getStatusText());
+        sb.append(' ').append(getRequestState());
         sb.append(CRLF);
 
         for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -46,10 +46,10 @@ public class MrcpResponse extends MrcpMessage {
     public String toRecogString(){
         StringBuilder sb = new StringBuilder();
         sb.append(getVersion());
-        sb.append(' ').append(getStatusCode());
+        sb.append(' ').append(getMessageLength());
         sb.append(' ').append(getMethod());
         sb.append(' ').append(getRequestId());
-        sb.append(' ').append(getStatusText());
+        sb.append(' ').append(getRequestState());
         sb.append(CRLF);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             sb.append(entry.getKey()).append(":").append(entry.getValue()).append(CRLF);
