@@ -4,7 +4,7 @@ public class TencentTtsEngine implements TtsEngine{
 
 
     @Override
-    public void synthesize(String text, TtsCallback callback, CloudConfig config) {
+    public void synthesize(String text, String voice, TtsCallback callback) {
 
     }
 }

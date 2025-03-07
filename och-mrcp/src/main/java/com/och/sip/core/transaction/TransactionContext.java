@@ -3,7 +3,6 @@ package com.och.sip.core.transaction;
 import com.och.config.SipConfig;
 import com.och.exception.SdpParseException;
 import com.och.sip.core.dialog.DialogManager;
-import com.och.sip.core.dialog.DialogState;
 import com.och.sip.core.dialog.SipDialog;
 import com.och.sip.core.message.SipRequest;
 import com.och.sip.core.message.SipResponse;
@@ -92,8 +91,6 @@ public class TransactionContext {
     }
 
 
-
-
     private void cancelTimer(TimerType type) {
         Timeout timeout = activeTimers.remove(type);
         if (timeout != null && !timeout.isCancelled()) {
@@ -166,6 +163,12 @@ public class TransactionContext {
                 transitionState(TransactionState.COMPLETED);
                 // 创建 Dialog 并绑定到事务
                 SipDialog dialog = DialogManager.getInstance().createDialog(originalRequest, response);
+                SdpOffer sdpOffer = parseSdpOffer();
+                sdpOffer.getMediaDescriptions().stream().filter(md -> md.getMediaType().equals("audio")).forEach(md -> {
+                    String connectionInfo = sdpOffer.getConnectionInfo();
+                    String rtpEndpoint = "rtp://" + connectionInfo.split(" ")[2] + ":" + md.getPort();
+                    dialog.setRemoteRtpEndpoint(rtpEndpoint);
+                });
                 log.info("Dialog created: {}", dialog.getCallId());
                 // 创建 Dialog 并记录映射
                 String dialogKey = TransactionManager.getInstance().generateDialogKey(response);
@@ -293,7 +296,7 @@ public class TransactionContext {
         }
         try {
             SdpOffer sdpOffer = parseSdpOffer();
-            SdpAnswer sdpAnswer = negotiateSdp(sdpOffer);
+            SdpAnswer sdpAnswer = negotiateSdp(response.getCallId(),sdpOffer);
             setResponseBody(response, sdpAnswer);
         } catch (SdpParseException e) {
             log.error("SDP negotiation failed: {}", e.getMessage());
@@ -332,8 +335,8 @@ public class TransactionContext {
     /**
      * 使用策略生成SDP Answer
      */
-    private SdpAnswer negotiateSdp(SdpOffer offer) {
-        return new AudioVideoStrategy().negotiate(offer);
+    private SdpAnswer negotiateSdp(String callId, SdpOffer offer) {
+        return new AudioVideoStrategy().negotiate(callId,offer);
     }
 
     /**

@@ -8,6 +8,7 @@ import com.och.rtp.RtpServer;
 import com.och.sip.core.dialog.DialogManager;
 import com.och.sip.core.dialog.SipDialog;
 import com.och.sip.core.message.SipMessage;
+import com.och.sip.core.transaction.TransactionManager;
 import com.och.sip.sdp.SdpAnswer;
 import com.och.sip.sdp.SdpMessage;
 import com.och.sip.sdp.SdpParser;
@@ -23,7 +24,6 @@ public class SdpNegotiationHandler implements SipMessageHandler {
                 SdpAnswer sdpAnswer = new SdpAnswer();
                 SdpParser.parse(message.getBody(), sdpAnswer);
                 String callId = message.getCallId(); // 新增：从 SIP 消息获取 Call-ID
-
                 // 2. 遍历所有媒体描述，分别处理 MRCP 和媒体会话
                 for (SdpMessage.MediaDescription mediaDesc : sdpAnswer.getMediaDescriptions()) {
                     if (isMrcpMedia(mediaDesc)) {
@@ -69,6 +69,7 @@ public class SdpNegotiationHandler implements SipMessageHandler {
      * 处理音频媒体会话
      */
     private void handleMediaSession(SdpMessage.MediaDescription mediaDesc, String callId) {
+
         // 1. 从端口池分配唯一端口
         int allocatedPort = mediaDesc.getPort();
         // 2. 创建并启动RTP服务器

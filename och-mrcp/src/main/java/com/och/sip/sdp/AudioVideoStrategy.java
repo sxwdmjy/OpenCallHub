@@ -1,11 +1,15 @@
 package com.och.sip.sdp;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.google.common.collect.ListMultimap;
 import com.och.config.MrcpConfig;
+import com.och.mrcp.MrcpSession;
 import com.och.mrcp.MrcpSessionManager;
 import com.och.rtp.PortPoolManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AudioVideoStrategy implements SdpStrategy {
@@ -13,14 +17,13 @@ public class AudioVideoStrategy implements SdpStrategy {
     private static final String MRCP_FORMAT = "1"; // MRCPv2 使用格式参数1
 
     @Override
-    public SdpAnswer negotiate(SdpOffer offer) {
+    public SdpAnswer negotiate(String callId, SdpOffer offer) {
         SdpAnswer answer = new SdpAnswer();
         copyCommonFields(offer, answer);
-
         for (SdpMessage.MediaDescription md : offer.getMediaDescriptions()) {
             if ("application".equals(md.getMediaType()) && "TCP/MRCPv2".equals(md.getProtocol())) {
                 // 处理MRCPv2
-                SdpMessage.MediaDescription mrcpMd = processMrcp(md);
+                SdpMessage.MediaDescription mrcpMd = processMrcp(callId,md);
                 answer.addMediaDescription(mrcpMd);
             } else if ("audio".equals(md.getMediaType())) {
                 // 处理音频编解码器
@@ -49,13 +52,16 @@ public class AudioVideoStrategy implements SdpStrategy {
     /**
      * 处理 MRCP 资源描述
      */
-    private SdpMessage.MediaDescription processMrcp(SdpMessage.MediaDescription offerMd) {
+    private SdpMessage.MediaDescription processMrcp(String callId, SdpMessage.MediaDescription offerMd) {
         // 检查Offer是否支持MRCPv2
         List<String> offerFormats = offerMd.getFormats();
         if (!offerFormats.contains(MRCP_FORMAT)) {
             return null; // 不支持MRCPv2，拒绝该媒体流
         }
-       String channelId = System.currentTimeMillis()+"@speechrecog";
+        String channelId = System.currentTimeMillis() + "@";
+        if(CollectionUtil.isNotEmpty(offerMd.getAttributes().get("resource"))){
+            channelId = channelId + offerMd.getAttributes().get("resource").get(0);;
+        }
         // 生成Answer媒体描述
         SdpMessage.MediaDescription answerMd = new SdpMessage.MediaDescription();
         answerMd.setMediaType("application");
@@ -66,14 +72,16 @@ public class AudioVideoStrategy implements SdpStrategy {
         answerMd.addAttribute("connection", "new");
         answerMd.addAttribute("channel",channelId) ;
         answerMd.addAttribute("cmid", "1");
-        MrcpSessionManager.getInstance().createSession(channelId);
+        MrcpSession session = MrcpSessionManager.getInstance().createSession(channelId);
+        if(Objects.nonNull(session)){
+            session.setCallId(callId);
+        }
         return answerMd;
     }
 
     private SdpMessage.MediaDescription processAudio(SdpMessage.MediaDescription offerMd) {
         SdpMessage.MediaDescription answerMd = new SdpMessage.MediaDescription();
         answerMd.setMediaType("audio");
-
         // 从端口池动态分配唯一端口
         int selectedPort = PortPoolManager.getInstance().allocatePort();
         answerMd.setPort(selectedPort);
@@ -107,7 +115,12 @@ public class AudioVideoStrategy implements SdpStrategy {
         });
         answerMd.addAttribute("rtpmap", "101 telephone-event/8000");
         answerMd.addAttribute("fmtp", "101 0-15");
-        answerMd.addAttribute("recvonly", "");
+        ListMultimap<String, String> attributes = offerMd.getAttributes();
+        if (CollectionUtil.isNotEmpty(attributes.get("recvonly"))){
+            answerMd.addAttribute("sendonly", "");
+        }else if (CollectionUtil.isNotEmpty(attributes.get("sendonly"))){
+            answerMd.addAttribute("recvonly", "");
+        }
         answerMd.addAttribute("ptime", "20");
         answerMd.addAttribute("mid", "1");
 

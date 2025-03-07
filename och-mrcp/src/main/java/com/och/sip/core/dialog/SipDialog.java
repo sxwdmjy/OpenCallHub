@@ -24,6 +24,7 @@ public class SipDialog {
     private String mrcpSessionId; // 关联的MRCP会话ID
     private Integer allocatedRtpPort; // 新增：分配的RTP端口
     private RtpServer rtpServer;
+    private String remoteRtpEndpoint; // 远端RTP终结点
 
     public SipDialog(SipRequest inviteRequest, SipResponse okResponse) {
         this.callId = inviteRequest.getCallId();

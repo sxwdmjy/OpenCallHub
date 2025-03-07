@@ -1,6 +1,9 @@
 package com.och.engine;
 
-@FunctionalInterface
+import com.alibaba.fastjson.JSONObject;
+
 public interface TtsCallback {
     void onComplete(byte[] audioData, Throwable error);
+
+    void onComplete(JSONObject result);
 }

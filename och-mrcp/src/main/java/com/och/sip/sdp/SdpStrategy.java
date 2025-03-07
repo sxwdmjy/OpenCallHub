@@ -1,5 +1,5 @@
 package com.och.sip.sdp;
 
 public interface SdpStrategy {
-    SdpAnswer negotiate(SdpOffer offer);
+    SdpAnswer negotiate(String callId, SdpOffer offer);
 }

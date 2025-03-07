@@ -57,6 +57,11 @@ public class SdpParser {
                     message.getMediaDescriptions().size() - 1
             );
             lastMd.addAttribute(keyValue[0].trim(), keyValue[1].trim());
+        }else if (keyValue.length == 1 && !message.getMediaDescriptions().isEmpty()) {
+            SdpMessage.MediaDescription lastMd = message.getMediaDescriptions().get(
+                    message.getMediaDescriptions().size() - 1
+            );
+            lastMd.addAttribute(keyValue[0].trim(), "");
         }
     }
 }

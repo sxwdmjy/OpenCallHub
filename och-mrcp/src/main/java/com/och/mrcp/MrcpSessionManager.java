@@ -26,13 +26,14 @@ public class MrcpSessionManager {
     }
 
 
-    public void createSession(String sessionId) {
+    public MrcpSession createSession(String sessionId) {
         if (sessions.containsKey(sessionId)) {
             log.info("MRCP session already exists: {}", sessionId);
-            return;
+            return null;
         }
         MrcpSession mrcpSession = new MrcpSession(sessionId);
         sessions.put(sessionId, mrcpSession);
+        return mrcpSession;
     }
 
 

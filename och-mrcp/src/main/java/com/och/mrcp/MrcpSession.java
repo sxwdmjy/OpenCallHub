@@ -1,12 +1,16 @@
 package com.och.mrcp;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.nls.client.protocol.asr.SpeechTranscriberListener;
-import com.alibaba.nls.client.protocol.asr.SpeechTranscriberResponse;
 import com.och.config.MrcpConfig;
-import com.och.engine.*;
+import com.och.engine.AsrEngine;
+import com.och.engine.EngineFactory;
+import com.och.engine.TtsCallback;
+import com.och.engine.TtsEngine;
 import com.och.exception.InvalidGrammarException;
+import com.och.sip.core.dialog.DialogManager;
+import com.och.sip.core.dialog.SipDialog;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +26,12 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MrcpSession {
 
     public static final AttributeKey<String> SESSION_ID_ATTRIBUTE_KEY = AttributeKey.valueOf("sessionId");
+
     public enum State {INIT, CONNECTING, READY, ACTIVE, TERMINATING, CLOSED}
 
     private final AtomicReference<State> state = new AtomicReference<>(State.INIT);
     private final String sessionId;
+    private String callId;
     private Instant lastActivityTime;
     private Channel channel;
     private final AtomicBoolean isProcessing = new AtomicBoolean(false);
@@ -157,6 +163,37 @@ public class MrcpSession {
      */
     private void handleSpeakRequest(MrcpRequest req) {
         log.trace("Processing SPEAK request: {}", req.getRequestId());
+        String text = req.getBody();
+        String voice = req.getHeader("Voice-Name");
+        MrcpResponse res = buildSuccessResponse(req, "IN-PROGRESS");
+        channel.writeAndFlush(res);
+        TtsEngine ttsEngine = EngineFactory.getTtsEngine("aliyun");
+        ttsEngine.synthesize(text, voice, new TtsCallback() {
+            @Override
+            public void onComplete(byte[] audioData, Throwable error) {
+                if (error != null) {
+                    log.error("语音合成失败: {}", error.getMessage());
+                    sendErrorResponse(req, 500, "Internal Server Error");
+                } else {
+                    log.info("语音合成成功，开始发送音频数据");
+                    SipDialog dialog = DialogManager.getInstance().findDialogByCallId(callId);
+                    dialog.getRtpServer().sendRtpAudio(audioData, dialog.getRemoteRtpEndpoint());
+                }
+            }
+
+            @Override
+            public void onComplete(JSONObject result) {
+                MrcpResponse response = new MrcpResponse();
+                response.setVersion(req.getVersion());
+                response.setMethod("SPEAK-COMPLETE");
+                response.setRequestId(req.getRequestId());
+                response.setRequestState("COMPLETE");
+                response.addHeader("Channel-Identifier", getSessionId());
+                response.addHeader("Completion-Cause", "000 success");
+                response.addHeader("Content-Type", "application/json");
+                channel.writeAndFlush(response);
+            }
+        });
     }
 
     /**
@@ -165,7 +202,7 @@ public class MrcpSession {
     private void handleRecognizeRequest(MrcpRequest req) {
         log.trace("Processing RECOGNIZE request: {}", req.getRequestId());
         // 1. 提交到ASR引擎（异步操作）
-        MrcpResponse res = buildSuccessResponse(req,"IN-PROGRESS");
+        MrcpResponse res = buildSuccessResponse(req, "IN-PROGRESS");
         channel.writeAndFlush(res);
         AsrEngine asrEngine = EngineFactory.getAsrEngine("aliyun");
         asrEngine.start(req, this);
@@ -221,7 +258,7 @@ public class MrcpSession {
             GrammarManager.storeGrammar(sessionId, grammarId, grammarXml);
 
             // 3. 发送成功响应
-            MrcpResponse res = buildSuccessResponse(req,"COMPLETE");
+            MrcpResponse res = buildSuccessResponse(req, "COMPLETE");
             res.addHeader("Content-Id", grammarId); // 返回存储的语法ID
             channel.writeAndFlush(res);
         } catch (InvalidGrammarException e) {

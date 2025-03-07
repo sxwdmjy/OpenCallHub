@@ -13,6 +13,7 @@ import com.och.mrcp.MrcpRequest;
 import com.och.mrcp.MrcpResponse;
 import com.och.mrcp.MrcpSession;
 import com.och.redis.RedissonUtil;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,6 +30,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -36,28 +38,15 @@ public class AliyunAsrEngine implements AsrEngine {
 
     private volatile NlsClient client;
 
-    private final String AliEngineTokenKey = "ali_engine_token";
-
     private final CloudConfig config;
 
     private SpeechTranscriber transcriber;
 
     public AliyunAsrEngine() {
         this.config = CloudConfigManager.getConfig("aliyun");
-        init();
+        getAccessToken(config);
     }
 
-    //单例获取NlsClient
-    private void init() {
-        String rtpEngineAddress = config.getEndpoint();
-        String accessToken = getAccessToken(config);
-        if (rtpEngineAddress.isEmpty()) {
-            client = new NlsClient(accessToken);
-        } else {
-            client = new NlsClient(rtpEngineAddress, accessToken);
-        }
-
-    }
 
 
     @Override
@@ -71,8 +60,15 @@ public class AliyunAsrEngine implements AsrEngine {
     @Override
     public void start(MrcpRequest req, MrcpSession mrcpSession) {
         try {
-            if (!RedissonUtil.isExists(AliEngineTokenKey)) {
-                client.setToken(getAccessToken(config));
+            String appToken = getAccessToken(config);
+            if(Objects.isNull(client)){
+                if(StringUtil.isNullOrEmpty(config.getEndpoint())){
+                    client = new NlsClient(appToken);
+                }else {
+                    client = new NlsClient(config.getEndpoint(), appToken);
+                }
+            }else {
+                client.setToken(appToken);
             }
             //创建实例、建立连接。
             SpeechTranscriber speechTranscriber = new SpeechTranscriber(client, getTranscriberListener(mrcpSession, req));
@@ -103,12 +99,17 @@ public class AliyunAsrEngine implements AsrEngine {
 
 
     private String getAccessToken(CloudConfig config) {
+        String aliEngineTokenKey = "ali_asr_engine_token";
+        Boolean exists = RedissonUtil.isExists(aliEngineTokenKey);
+        if(exists){
+            return RedissonUtil.getValue(aliEngineTokenKey);
+        }
         AccessToken accessToken = new AccessToken(config.getApiKey(), config.getApiSecret());
         try {
             accessToken.apply();
             log.info("get token: " + ", expire time: " + accessToken.getExpireTime());
             long expireTime = accessToken.getExpireTime() - System.currentTimeMillis() / 1000;
-            RedissonUtil.setValue(AliEngineTokenKey, accessToken.getToken(), expireTime, TimeUnit.SECONDS);
+            RedissonUtil.setValue(aliEngineTokenKey, accessToken.getToken(), expireTime, TimeUnit.SECONDS);
         } catch (IOException e) {
             log.error("get token exception: " + e.getMessage(), e);
             return null;
