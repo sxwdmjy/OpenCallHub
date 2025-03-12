@@ -309,6 +309,7 @@
         <module>och-websocket</module>
         <module>och-ivr</module>
         <module>och-mrcp</module>
+        <module>och-file-client</module>
     </modules>
 
     <!--项目本身的jar从指定镜像下载-->
