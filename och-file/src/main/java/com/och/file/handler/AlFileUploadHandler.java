@@ -74,7 +74,7 @@ public class AlFileUploadHandler extends AbstractFileUploadHandler {
 
     @Override
     public FileUploadVo upload(File uploadFile) {
-        String oldName = uploadFile.getAbsolutePath();
+        String oldName = uploadFile.getName();
         String suffix = FileUtil.getSuffix(oldName);
         if (!checkFileFormat(suffix)) {
             throw new FileException(String.format("%s文件格式不被允许上传", suffix));

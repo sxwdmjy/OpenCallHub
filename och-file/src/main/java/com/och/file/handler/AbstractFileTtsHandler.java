@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import com.och.common.annotation.FileTtsType;
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.SysSettingConfig;
-import com.och.common.utils.StringUtils;
 
 import java.io.File;
 import java.util.Date;
@@ -28,18 +27,10 @@ public abstract class AbstractFileTtsHandler {
 
     /**
      * 文本转语音
-     * @param text 文本
+     *
+     * @param text     文本
      * @param consumer 文件回调
      */
     public abstract void tts(String text, Consumer<File> consumer);
 
-
-    /**
-     * 获取上传文件地址
-     * @return
-     */
-    public String getFileTempPath(){
-        Date date = new Date();
-        return lfsSettingConfig.getBaseProfile() + "/" + "voice" + "/" + DateUtil.year(date) + "/" + DateUtil.month(date) + "/" + DateUtil.dayOfMonth(date) + "/";
-    }
 }
