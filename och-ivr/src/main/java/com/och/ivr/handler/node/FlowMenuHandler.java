@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.EslConstant;
 import com.och.common.constant.FlowDataContext;
-import com.och.common.domain.CallInfo;
 import com.och.common.exception.FlowNodeException;
 import com.och.common.utils.StringUtils;
 import com.och.esl.client.FsClient;
@@ -14,6 +13,10 @@ import com.och.ivr.domain.vo.FlowNodeVo;
 import com.och.ivr.properties.FlowMenuNodeProperties;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
+import com.och.system.domain.entity.SysFile;
+import com.och.system.domain.entity.VoiceFile;
+import com.och.system.service.ISysFileService;
+import com.och.system.service.IVoiceFileService;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +31,11 @@ import java.util.Objects;
 @Component
 public class FlowMenuHandler extends AbstractIFlowNodeHandler {
 
+    private final ISysFileService fileService;
 
-    public FlowMenuHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient, RedisService redisService) {
+    public FlowMenuHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient, RedisService redisService, ISysFileService fileService) {
         super(persister, fsCallCacheService, iFlowNoticeService, iFlowInfoService, iFlowInstancesService, fsClient, redisService);
+        this.fileService = fileService;
     }
 
     @Override
@@ -51,8 +56,10 @@ public class FlowMenuHandler extends AbstractIFlowNodeHandler {
         String fileName = "";
         String errorFileName = "";
         if (flowMenuNodeProperties.getPlaybackType() == 1) {
-            fileName = flowMenuNodeProperties.getFile();
-            errorFileName = flowMenuNodeProperties.getErrorFile();
+            SysFile file = fileService.getById(flowMenuNodeProperties.getFileId());
+            fileName = file.getFileName();
+            SysFile errorFile = fileService.getById(flowMenuNodeProperties.getErrorFileId());
+            errorFileName = errorFile.getFileName();
         } else if (flowMenuNodeProperties.getPlaybackType() == 2) {
             //tts 播放
             String ttsEngine = flowData.getTtsEngine();

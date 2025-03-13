@@ -25,11 +25,6 @@ public class FlowMenuNodeProperties extends FlowNodeProperties{
     private Long fileId;
 
     /**
-     * 播放文件
-     */
-    private String file;
-
-    /**
      * 播放内容
      */
     private String content;
@@ -45,11 +40,6 @@ public class FlowMenuNodeProperties extends FlowNodeProperties{
     private Long notFileId;
 
     /**
-     * 未按键播放文件
-     */
-    private String notFile;
-
-    /**
      * 未按键播放内容
      */
     private String notContent;
@@ -63,11 +53,6 @@ public class FlowMenuNodeProperties extends FlowNodeProperties{
      * 错按键播放文件
      */
     private Long errorFileId;
-
-    /**
-     * 错按键播放文件
-     */
-    private String errorFile;
 
     /**
      * 错按键播放内容

@@ -60,7 +60,7 @@ public class AlFileTtsHandler extends AbstractFileTtsHandler {
         }else {
             client.setToken(appToken);
         }
-        String fileName = "/temp"+ "/"+DateUtil.format(DateUtil.date(), "yyyyMMddHHmmssSSS") + ".wav";
+        String fileName = getFileTempPath() + DateUtil.format(DateUtil.date(), "yyyyMMddHHmmssSSS") + ".wav";
         File file = FileUtil.touch(fileName);
         process(ttsConfig.getAppKey(), text, getSynthesizerListener(file,fileConsumer));
     }

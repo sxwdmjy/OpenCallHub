@@ -14,6 +14,7 @@ import com.och.ivr.domain.vo.FlowNodeVo;
 import com.och.ivr.properties.FlowPlaybackNodeProperties;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
+import com.och.system.domain.entity.SysFile;
 import com.och.system.service.ISysFileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
@@ -48,21 +49,23 @@ public class FlowPlaybackHandler extends AbstractIFlowNodeHandler {
             FlowPlaybackNodeProperties playbackNodeProperties = JSONObject.parseObject(properties, FlowPlaybackNodeProperties.class);
             if (playbackNodeProperties.getInterrupt()){
                 fsClient.sendArgs(flowData.getAddress(), flowData.getUniqueId(), EslConstant.SET, EslConstant.PLAYBACK_TERMINATORS_ANY);
-                if (playbackNodeProperties.getPlaybackType() == 1){
-                    fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), playbackNodeProperties.getFile());
-                }else if (playbackNodeProperties.getPlaybackType() == 2){
-                    //tts 播放
 
-                }
             }else {
                 fsClient.sendArgs(flowData.getAddress(), flowData.getUniqueId(), EslConstant.SET, EslConstant.PLAYBACK_TERMINATORS);
-
-                if (playbackNodeProperties.getPlaybackType() == 1){
-                    fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), playbackNodeProperties.getFile(),playbackNodeProperties.getNum());
-                }else if (playbackNodeProperties.getPlaybackType() == 2){
-                    //tts 播放
-
+            }
+            if (playbackNodeProperties.getPlaybackType() == 1){
+                SysFile sysFile = sysFileService.getById(playbackNodeProperties.getFileId());
+                fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), sysFile.getFileName());
+            }else if (playbackNodeProperties.getPlaybackType() == 2){
+                //tts 播放
+                String ttsEngine = flowData.getTtsEngine();
+                if(StringUtils.isNotBlank(ttsEngine)){
+                    String ttsVoice = flowData.getTtsVoice();
+                    fsClient.sendArgs(flowData.getAddress(), flowData.getUniqueId(), EslConstant.SET, EslConstant.TTS_ENGINE+ ttsEngine);
+                    fsClient.sendArgs(flowData.getAddress(), flowData.getUniqueId(), EslConstant.SET, EslConstant.TTS_VOICE+ ttsVoice);
                 }
+                String fileName = "say:" + playbackNodeProperties.getContent() + "'";
+                fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), fileName);
             }
         }
         iFlowNoticeService.notice(2, "next", flowData);

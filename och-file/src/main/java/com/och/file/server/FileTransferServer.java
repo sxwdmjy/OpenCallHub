@@ -20,10 +20,14 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Component
 @Slf4j
@@ -117,5 +121,39 @@ public class FileTransferServer {
         }
         bossGroup.shutdownGracefully().syncUninterruptibly();
         workerGroup.shutdownGracefully().syncUninterruptibly();
+    }
+
+
+    public void sendFileToClient(String fileName, String filePath) {
+        if (fileName != null && filePath != null){
+            if(isFileURL(filePath)){
+                try {
+                    File file = new File(fileName);
+                    FileUtils.copyURLToFile(new URL(filePath), file, 10 * 1000, 10 * 1000);
+                    System.out.println("文件下载成功");
+                    //sendFileToClient(file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }else {
+                try {
+                    File file = new File(fileName);
+                    FileUtils.copyFile(new File(filePath), file);
+                    System.out.println("文件下载成功");
+                  //  sendFileToClient(file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private static boolean isFileURL(String path) {
+        try {
+            new URL(path);
+            return true;
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 }

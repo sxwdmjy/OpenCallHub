@@ -46,7 +46,6 @@ public class SysFileServiceImpl extends BaseServiceImpl<SysFileMapper, SysFile> 
         sysFile.setFileSuffix(fileUploadVo.getFileSuffix());
         sysFile.setFileType(fileUploadVo.getFileType());
         save(sysFile);
-        fileUploadVo.setId(sysFile.getId());
         return fileUploadVo;
     }
 

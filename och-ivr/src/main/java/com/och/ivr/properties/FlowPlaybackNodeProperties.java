@@ -23,11 +23,6 @@ public class FlowPlaybackNodeProperties extends FlowNodeProperties{
     private Long fileId;
 
     /**
-     * 播放文件
-     */
-    private String file;
-
-    /**
      * 播放内容
      */
     private String content;

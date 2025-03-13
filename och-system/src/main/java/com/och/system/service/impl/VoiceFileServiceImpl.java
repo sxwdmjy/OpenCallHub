@@ -7,7 +7,9 @@ import com.och.common.domain.file.FileUploadVo;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.common.exception.CommonException;
 import com.och.common.utils.StringUtils;
+import com.och.file.server.FileTransferServer;
 import com.och.file.service.IFileTtsService;
+import com.och.system.domain.entity.SysFile;
 import com.och.system.domain.entity.VoiceFile;
 import com.och.system.domain.query.file.VoiceFileAddQuery;
 import com.och.system.domain.query.file.VoiceFileQuery;
@@ -35,18 +37,26 @@ public class VoiceFileServiceImpl extends BaseServiceImpl<VoiceFileMapper, Voice
 
     private final IFileTtsService iFileTtsService;
     private final ISysFileService iSysFileService;
+    private final FileTransferServer fileTransferServer;
 
     @Override
     public void add(VoiceFileAddQuery query) {
         checkName(query.getName());
         VoiceFile voiceFile = new VoiceFile();
         voiceFile.setQuery2Entity(query);
-        if(save(voiceFile) && Objects.nonNull(query.getType()) && query.getType() == 2){
-            iFileTtsService.textToSpeech(query.getSpeechText(), query.getType(), file -> {
-                FileUploadVo fileUploadVo = iSysFileService.uploadFile(file, null);
-                voiceFile.setFileId(fileUploadVo.getId());
-                updateById(voiceFile);
-            });
+        if(save(voiceFile)){
+            if(Objects.nonNull(query.getType()) && query.getType() == 1){
+                SysFile sysFile = iSysFileService.getById(voiceFile.getFileId());
+                fileTransferServer.sendFileToClient(sysFile.getFileName(), sysFile.getFilePath());
+            }
+            if(Objects.nonNull(query.getType()) && query.getType() == 2){
+                iFileTtsService.textToSpeech(query.getSpeechText(), query.getType(), file -> {
+                    FileUploadVo fileUploadVo = iSysFileService.uploadFile(file, null);
+                    voiceFile.setFileId(fileUploadVo.getId());
+                    updateById(voiceFile);
+                    fileTransferServer.sendFileToClient(file);
+                });
+            }
         }
     }
 
@@ -60,16 +70,25 @@ public class VoiceFileServiceImpl extends BaseServiceImpl<VoiceFileMapper, Voice
         if(!StringUtils.equals(voiceFile.getName(), query.getName())){
             checkName(query.getName());
         }
+        Long currentFileId = voiceFile.getFileId();
         updateVoiceFile.setQuery2Entity(query);
         boolean update = updateById(updateVoiceFile);
-        if(update && Objects.nonNull(query.getType()) && query.getType() == 2){
-            if(!StringUtils.equals(voiceFile.getSpeechText(), query.getSpeechText())){
-                iFileTtsService.textToSpeech(query.getSpeechText(), query.getType(), file -> {
-                    FileUploadVo fileUploadVo = iSysFileService.uploadFile(file, null);
-                    updateVoiceFile.setFileId(fileUploadVo.getId());
-                    updateById(updateVoiceFile);
-                });
+        if(update){
+            if(Objects.nonNull(query.getType()) && query.getType() == 1 &&  !Objects.equals(currentFileId, query.getFileId())){
+                SysFile sysFile = iSysFileService.getById(query.getFileId());
+                fileTransferServer.sendFileToClient(sysFile.getFileName(), sysFile.getFilePath());
             }
+            if(Objects.nonNull(query.getType()) && query.getType() == 2){
+                if(!StringUtils.equals(voiceFile.getSpeechText(), query.getSpeechText())){
+                    iFileTtsService.textToSpeech(query.getSpeechText(), query.getType(), file -> {
+                        FileUploadVo fileUploadVo = iSysFileService.uploadFile(file, null);
+                        updateVoiceFile.setFileId(fileUploadVo.getId());
+                        updateById(updateVoiceFile);
+                        fileTransferServer.sendFileToClient(file);
+                    });
+                }
+            }
+
         }
     }
 
