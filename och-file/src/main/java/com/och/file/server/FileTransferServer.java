@@ -127,22 +127,32 @@ public class FileTransferServer {
     public void sendFileToClient(String fileName, String filePath) {
         if (fileName != null && filePath != null){
             if(isFileURL(filePath)){
+                File file = new File(fileName);
                 try {
-                    File file = new File(fileName);
                     FileUtils.copyURLToFile(new URL(filePath), file, 10 * 1000, 10 * 1000);
-                    System.out.println("文件下载成功");
-                    //sendFileToClient(file);
+                    sendFileToClient(file);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                }finally {
+                    try {
+                        FileUtils.delete(file);
+                    } catch (IOException e) {
+
+                    }
                 }
             }else {
+                File file = new File(fileName);
                 try {
-                    File file = new File(fileName);
                     FileUtils.copyFile(new File(filePath), file);
-                    System.out.println("文件下载成功");
-                  //  sendFileToClient(file);
+                   sendFileToClient(file);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                }finally {
+                    try {
+                        FileUtils.delete(file);
+                    } catch (IOException e) {
+
+                    }
                 }
             }
         }
