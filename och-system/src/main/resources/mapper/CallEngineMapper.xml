@@ -37,8 +37,8 @@
             <if test="providers != null">
                 and providers = #{providers}
             </if>
+            and del_flag = 0
         </where>
-        and del_flag = 0
     </select>
 
 </mapper>

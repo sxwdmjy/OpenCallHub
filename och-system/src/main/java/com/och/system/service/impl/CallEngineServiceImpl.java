@@ -38,12 +38,12 @@ public class CallEngineServiceImpl extends BaseServiceImpl<CallEngineMapper, Cal
 
     @Override
     public void edit(CallEngineAddQuery query) {
-        checkParams(query);
         CallEngine callEngine = getById(query.getId());
         if(Objects.isNull(callEngine)){
             throw new RuntimeException("无效ID");
         }
         if(!Objects.equals(query.getName(), callEngine.getName())){
+            checkParams(query);
             callEngine.setName(query.getName());
         }
         if(!Objects.equals(query.getProfile(), callEngine.getProfile())){
