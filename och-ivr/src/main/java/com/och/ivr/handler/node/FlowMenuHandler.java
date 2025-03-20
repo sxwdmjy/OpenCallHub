@@ -15,6 +15,7 @@ import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
 import com.och.system.domain.entity.SysFile;
 import com.och.system.domain.entity.VoiceFile;
+import com.och.system.domain.vo.file.VoiceFileVo;
 import com.och.system.service.ISysFileService;
 import com.och.system.service.IVoiceFileService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +34,11 @@ import java.util.Objects;
 @Component("FlowMenuHandler")
 public class FlowMenuHandler extends AbstractIFlowNodeHandler {
 
-    private final ISysFileService fileService;
+    private final IVoiceFileService iVoiceFileService;
 
-    public FlowMenuHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient, RedisService redisService, ISysFileService fileService) {
+    public FlowMenuHandler(RedisStateMachinePersister<Object, Object> persister, IFsCallCacheService fsCallCacheService, IFlowNoticeService iFlowNoticeService, IFlowInfoService iFlowInfoService, IFlowInstancesService iFlowInstancesService, FsClient fsClient, RedisService redisService, IVoiceFileService iVoiceFileService) {
         super(persister, fsCallCacheService, iFlowNoticeService, iFlowInfoService, iFlowInstancesService, fsClient, redisService);
-        this.fileService = fileService;
+        this.iVoiceFileService = iVoiceFileService;
     }
 
     @Override
@@ -58,9 +59,9 @@ public class FlowMenuHandler extends AbstractIFlowNodeHandler {
         String fileName = "";
         String errorFileName = "";
         if (flowMenuNodeProperties.getPlaybackType() == 1) {
-            SysFile file = fileService.getById(flowMenuNodeProperties.getFileId());
-            fileName = file.getFileName();
-            SysFile errorFile = fileService.getById(flowMenuNodeProperties.getErrorFileId());
+            VoiceFileVo voiceFile = iVoiceFileService.getDetail(flowMenuNodeProperties.getFileId());
+            fileName = voiceFile.getFileName();
+            VoiceFileVo errorFile = iVoiceFileService.getDetail(flowMenuNodeProperties.getErrorFileId());
             errorFileName = errorFile.getFileName();
         } else if (flowMenuNodeProperties.getPlaybackType() == 2) {
             //tts 播放

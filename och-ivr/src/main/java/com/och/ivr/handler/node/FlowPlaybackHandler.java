@@ -68,9 +68,16 @@ public class FlowPlaybackHandler extends AbstractIFlowNodeHandler {
             }else {
                 fsClient.sendArgs(flowData.getAddress(), flowData.getUniqueId(), EslConstant.SET, EslConstant.PLAYBACK_TERMINATORS);
             }
+            fsClient.sendArgs(flowData.getAddress(), flowData.getUniqueId(), EslConstant.SET, EslConstant.PLAYBACK_DELIMITER);
             if (playbackNodeProperties.getPlaybackType() == 1){
                 VoiceFileVo voiceFile = iVoiceFileService.getDetail(playbackNodeProperties.getFileId());
-                fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), voiceFile.getFileName());
+                StringBuilder fileName = new StringBuilder(voiceFile.getFileName());
+                if(playbackNodeProperties.getNum() > 1){
+                    for (int i = 1; i < playbackNodeProperties.getNum(); i++){
+                        fileName.append(EslConstant.EXCLAMATION).append(voiceFile.getFileName());
+                    }
+                }
+                fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), fileName.toString());
             }else if (playbackNodeProperties.getPlaybackType() == 2){
                 //tts 播放
                 String ttsEngine = flowData.getTtsEngine();
@@ -79,8 +86,13 @@ public class FlowPlaybackHandler extends AbstractIFlowNodeHandler {
                     fsClient.sendArgs(flowData.getAddress(), flowData.getUniqueId(), EslConstant.SET, EslConstant.TTS_ENGINE+ ttsEngine);
                     fsClient.sendArgs(flowData.getAddress(), flowData.getUniqueId(), EslConstant.SET, EslConstant.TTS_VOICE+ ttsVoice);
                 }
-                String fileName = "say:" + playbackNodeProperties.getContent() + "'";
-                fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), fileName);
+                StringBuilder fileName = new StringBuilder("say:" + playbackNodeProperties.getContent() + "'");
+                if (playbackNodeProperties.getNum() > 1){
+                    for (int i = 1; i < playbackNodeProperties.getNum(); i++){
+                        fileName.append(EslConstant.EXCLAMATION + "say:").append(playbackNodeProperties.getContent()).append("'");
+                    }
+                }
+                fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), fileName.toString());
             }
         }
 

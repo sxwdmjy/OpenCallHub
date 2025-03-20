@@ -71,6 +71,15 @@ public class FsChannelExecuteCompleteEslEventHandler extends AbstractFsEslEventH
                 break;
 
             case "play_and_get_digits":
+                String returnInvalid = EslEventUtil.getMenuDtmfReturnInvalid(event);
+                if (StringUtils.isNotBlank(returnInvalid)) {
+                    if (CollectionUtil.isNotEmpty(callInfo.getDetailList())){
+                        CallInfoDetail callInfoDetail = callInfo.getDetailList().get(0);
+                        if (callInfoDetail.getTransferType() == 2) {
+                            iFlowNoticeService.notice(2,"next_" + returnInvalid, callInfo.getFlowDataContext());
+                        }
+                    }
+                }
                 break;
             case "break":
                 break;

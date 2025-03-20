@@ -7,6 +7,10 @@ public class EslConstant {
 
     public final static String SPLIT = ",";
 
+    public final static String EQUAL = "=";
+
+    public final static String EXCLAMATION  = "!";
+
     public static final String CO = ":";
 
     public final static String SET = "set";
@@ -78,7 +82,7 @@ public class EslConstant {
 
     public final static String PLAYBACK_TERMINATORS = "playback_terminators=none";
 
-    public final static String PLAYBACK_TERMINATORS_ANY = "playback_terminator_digits=any";
+    public final static String PLAYBACK_TERMINATORS_ANY = "playback_terminator=any";
 
     public final static String SPEAK = "speak";
 

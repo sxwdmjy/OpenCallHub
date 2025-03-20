@@ -469,6 +469,7 @@ public class FsClient {
             builder.append(transfer_on_failure);
         }
         speech.addExecuteAppArg(builder.toString());
+        speech.addGenericLine("async", "true");
         this.sendMsg(adress, speech);
     }
 
