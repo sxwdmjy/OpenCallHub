@@ -84,7 +84,7 @@ public class FlowInstances extends BaseEntity implements Serializable {
      */
     @Schema(description = "当前节点ID")
     @TableField("current_node_id")
-    private Long currentNodeId;
+    private String currentNodeId;
     
     
      

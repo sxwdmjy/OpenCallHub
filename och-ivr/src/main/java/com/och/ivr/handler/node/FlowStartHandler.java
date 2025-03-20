@@ -31,7 +31,7 @@ import java.util.Objects;
  * @date 2024-12-26
  */
 @Slf4j
-@Component
+@Component("FlowStartHandler")
 public class FlowStartHandler extends AbstractIFlowNodeHandler {
 
     @Autowired

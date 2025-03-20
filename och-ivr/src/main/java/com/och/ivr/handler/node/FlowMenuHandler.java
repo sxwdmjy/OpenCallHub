@@ -17,6 +17,7 @@ import com.och.system.domain.entity.SysFile;
 import com.och.system.domain.entity.VoiceFile;
 import com.och.system.service.ISysFileService;
 import com.och.system.service.IVoiceFileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,8 @@ import java.util.Objects;
  * @author danmo
  * @date 2024-12-26
  */
-@Component
+@Slf4j
+@Component("FlowMenuHandler")
 public class FlowMenuHandler extends AbstractIFlowNodeHandler {
 
     private final ISysFileService fileService;

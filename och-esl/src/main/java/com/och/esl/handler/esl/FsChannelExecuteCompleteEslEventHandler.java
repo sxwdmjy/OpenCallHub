@@ -2,10 +2,15 @@
 package com.och.esl.handler.esl;
 
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.och.common.annotation.EslEventName;
 import com.och.common.constant.EslEventNames;
+import com.och.common.constant.FlowDataContext;
 import com.och.common.domain.CallInfo;
+import com.och.common.domain.CallInfoDetail;
+import com.och.common.enums.RouteTypeEnum;
 import com.och.esl.factory.AbstractFsEslEventHandler;
+import com.och.esl.service.IFlowNoticeService;
 import com.och.esl.utils.EslEventUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.freeswitch.esl.client.transport.event.EslEvent;
@@ -24,6 +29,12 @@ import com.alibaba.fastjson.JSONObject;
 @Component
 public class FsChannelExecuteCompleteEslEventHandler extends AbstractFsEslEventHandler {
 
+    private final IFlowNoticeService iFlowNoticeService;
+
+    public FsChannelExecuteCompleteEslEventHandler(IFlowNoticeService iFlowNoticeService) {
+        this.iFlowNoticeService = iFlowNoticeService;
+    }
+
     @Override
     public void handleEslEvent(String address, EslEvent event) {
         log.info("ChannelExecuteCompleteEslEventHandler EslEvent:{}.", JSONObject.toJSONString(event));
@@ -35,15 +46,22 @@ public class FsChannelExecuteCompleteEslEventHandler extends AbstractFsEslEventH
         if (callInfo == null) {
             return;
         }
-
         switch (EslEventUtil.getApplication(event)) {
             case "playback":
                 if ("FILE PLAYED".equals(EslEventUtil.getApplicationResponse(event))) {
                     log.info("uniqueId:{}, playback:{} success", uniqueId, EslEventUtil.getApplicationData(event));
-                    if (callInfo.getQueueStartTime() != null && callInfo.getQueueEndTime() == null) {
+                    if (CollectionUtil.isNotEmpty(callInfo.getDetailList())){
+                        CallInfoDetail callInfoDetail = callInfo.getDetailList().get(0);
+                        if (callInfoDetail.getTransferType() == 2) {
+                            iFlowNoticeService.notice(2,"next", callInfo.getFlowDataContext());
+                        }
+                    }else {
+
+                    }
+/*                    if (callInfo.getQueueStartTime() != null && callInfo.getQueueEndTime() == null) {
                         fsClient.playFile(address, uniqueId, "queue.wav");
                         return;
-                    }
+                    }*/
 
                 } else if ("FILE NOT FOUND".equals(EslEventUtil.getApplicationResponse(event))) {
                     log.error("uniqueId:{}  file:{} not found", uniqueId, EslEventUtil.getApplicationData(event));

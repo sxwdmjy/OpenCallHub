@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * @date 2024-12-26
  */
 @Slf4j
-@Component
+@Component("FlowHangupHandler")
 public class FlowHangUpHandler extends AbstractIFlowNodeHandler {
 
 

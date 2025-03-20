@@ -13,7 +13,7 @@ public interface IFlowInstancesService extends IBaseService<FlowInstances> {
 
     FlowInstances getFlowInstance(String processInstanceId);
 
-    void updateCurrentNode(FlowInstances instance, Long nextNode);
+    void updateCurrentNode(FlowInstances instance, String nextNode);
 
     void markProcessCompleted(FlowInstances instance);
 

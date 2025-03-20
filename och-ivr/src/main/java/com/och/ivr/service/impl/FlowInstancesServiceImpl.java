@@ -24,7 +24,7 @@ public class FlowInstancesServiceImpl extends BaseServiceImpl<FlowInstancesMappe
     }
 
     // 更新当前节点
-    public void updateCurrentNode(FlowInstances instance, Long nextNode) {
+    public void updateCurrentNode(FlowInstances instance, String nextNode) {
         instance.setCurrentNodeId(nextNode);
         updateById(instance);
     }

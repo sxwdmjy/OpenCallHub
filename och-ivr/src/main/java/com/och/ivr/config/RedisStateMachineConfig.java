@@ -3,7 +3,6 @@ package com.och.ivr.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.statemachine.StateMachinePersist;
 import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.data.redis.RedisStateMachineContextRepository;
@@ -12,7 +11,6 @@ import org.springframework.statemachine.persist.RepositoryStateMachinePersist;
 
 @Configuration
 @EnableStateMachine
-@EnableRedisHttpSession
 public class RedisStateMachineConfig {
 
 

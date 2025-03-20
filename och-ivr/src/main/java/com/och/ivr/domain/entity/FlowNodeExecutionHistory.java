@@ -49,7 +49,7 @@ public class FlowNodeExecutionHistory extends BaseEntity implements Serializable
      */
     @Schema(description = "节点ID")
     @TableField("node_id")
-    private Long nodeId;
+    private String nodeId;
     
     
      

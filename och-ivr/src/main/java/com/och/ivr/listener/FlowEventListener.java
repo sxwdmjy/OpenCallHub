@@ -97,14 +97,10 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
         }
         try {
             StateMachine<Object, Object> restore = persister.restore(stateMachine, StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, flowData.getInstanceId()));
+            restore.getExtendedState().getVariables().put("flowData", event.getData());
             restore.sendEvent(event.getEvent());
         } catch (Exception e) {
             log.error("transfer 恢复状态机异常:event:{},error:{}", event, e.getMessage(), e);
-        }
-        try {
-            persister.persist(stateMachine, StringUtils.format(CacheConstants.CALL_IVR_INSTANCES_KEY, flowData.getInstanceId()));
-        } catch (Exception e) {
-            log.error("transfer 持久化状态机异常:event:{},error:{}", event.getEvent(), e.getMessage(), e);
         }
     }
 

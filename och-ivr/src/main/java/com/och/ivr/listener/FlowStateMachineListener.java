@@ -64,12 +64,12 @@ public class FlowStateMachineListener extends StateMachineListenerAdapter<Object
         }
         FlowNodeProperties flowNodeProperties = JSONObject.parseObject(currentFlowNode.getProperties(), FlowNodeProperties.class);
         flowData.setCurrentNodeId(currentFlowNode.getId());
-        FlowInstances instances = FlowInstances.builder().currentNodeId((Long) state.getId()).variables(currentFlowNode.getProperties()).id(flowData.getInstanceId()).build();
+        FlowInstances instances = FlowInstances.builder().currentNodeId((String) state.getId()).variables(currentFlowNode.getProperties()).id(flowData.getInstanceId()).build();
         iFlowInstancesService.updateById(instances);
         //记录节点执行历史
         FlowNodeExecutionHistory history = new FlowNodeExecutionHistory();
         history.setInstanceId(flowData.getInstanceId());
-        history.setNodeId((Long)state.getId());
+        history.setNodeId((String)state.getId());
         history.setStatus(1);
         history.setStartTime(new Date());
         iFlowNodeExecutionHistoryService.save(history);

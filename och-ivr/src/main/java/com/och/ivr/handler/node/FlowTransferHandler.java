@@ -17,6 +17,7 @@ import com.och.ivr.properties.FlowNodeProperties;
 import com.och.ivr.properties.FlowTransferNodeProperties;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +28,8 @@ import java.util.Objects;
  * @author danmo
  * @date 2024-12-26
  */
-@Component
+@Slf4j
+@Component("FlowTransferHandler")
 public class FlowTransferHandler extends AbstractIFlowNodeHandler{
 
     private final FlowAgentRouteHandler flowAgentRouteHandler;

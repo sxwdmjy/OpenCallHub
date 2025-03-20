@@ -16,12 +16,13 @@ public class FlowNoticeServiceImpl implements IFlowNoticeService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
-    public void notice(String address, Long callId, Long flowId) {
+    public void notice(String address, Long callId, String uniqueId, Long flowId) {
         log.info("flowNotice address:{},callId:{}, flowId:{}", address, callId, flowId);
         FlowDataContext data = new FlowDataContext();
         data.setAddress(address);
         data.setCallId(callId);
         data.setFlowId(flowId);
+        data.setUniqueId(uniqueId);
         applicationEventPublisher.publishEvent(new FlowEvent(1,  data));
     }
 

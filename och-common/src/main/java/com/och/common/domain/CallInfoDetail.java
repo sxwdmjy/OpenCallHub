@@ -53,6 +53,11 @@ public class CallInfoDetail {
     private Long transferId;
 
     /**
+     * 流程实例ID
+     */
+    private Long instanceId;
+
+    /**
      * 出队列原因:排队挂机或者转坐席
      */
     private String reason;

@@ -9,7 +9,7 @@
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
         <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
-        <result property="currentNodeId" column="current_node_id" jdbcType="BIGINT"/>
+        <result property="currentNodeId" column="current_node_id" jdbcType="VARCHAR"/>
         <result property="variables" column="variables" jdbcType="VARCHAR"/>
         <result property="createBy" column="create_by" jdbcType="BIGINT"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>

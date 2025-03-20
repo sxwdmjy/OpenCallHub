@@ -31,10 +31,8 @@ public class FsIvrRouteHandler extends FsAbstractRouteHandler {
         detail.setStartTime(DateUtil.current());
         detail.setOrderNum(callInfo.getDetailList() == null ? 0 : callInfo.getDetailList().size() + 1);
         detail.setTransferType(2);
-
-        iFlowNoticeService.notice(address, callInfo.getCallId(), Long.parseLong(flowId));
-
-        detail.setEndTime(DateUtil.current());
+        detail.setTransferId(Long.parseLong(flowId));
+        iFlowNoticeService.notice(address, callInfo.getCallId(),uniqueId, Long.parseLong(flowId));
         callInfo.addDetailList(detail);
         fsCallCacheService.saveCallInfo(callInfo);
     }

@@ -12,19 +12,19 @@ public class FlowEdgeVo {
      */
 
     @Schema(description = "边的唯一标识符")
-    private Long id;
+    private String id;
 
     /**
      * 源节点ID
      */
     @Schema(description = "源节点ID")
-    private Long sourceNodeId;
+    private String sourceNodeId;
 
     /**
      * 目标节点ID
      */
     @Schema(description = "目标节点ID")
-    private Long targetNodeId;
+    private String targetNodeId;
 
 
     @Schema(description = "事件")

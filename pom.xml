@@ -294,6 +294,7 @@
                 <!-- 请到 maven 官网查询 sdk 的所有版本，例如 cvm 的产品包链接为 https://central.sonatype.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java-tts/versions -->
                 <version>${qclod-sdk-tts.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

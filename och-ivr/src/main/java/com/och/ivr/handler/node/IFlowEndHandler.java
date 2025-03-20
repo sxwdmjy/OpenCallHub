@@ -1,8 +1,10 @@
 package com.och.ivr.handler.node;
 
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.FlowDataContext;
+import com.och.common.domain.CallInfo;
 import com.och.common.exception.FlowNodeException;
 import com.och.common.utils.StringUtils;
 import com.och.esl.client.FsClient;
@@ -25,7 +27,7 @@ import java.util.Objects;
  * @date 2024-12-26
  */
 @Slf4j
-@Component
+@Component("FlowEndHandler")
 public class IFlowEndHandler extends AbstractIFlowNodeHandler {
 
 
@@ -40,6 +42,18 @@ public class IFlowEndHandler extends AbstractIFlowNodeHandler {
         if(Objects.isNull(flowNode)){
             throw new FlowNodeException("结束节点配置错误");
         }
+        CallInfo callInfo = fsCallCacheService.getCallInfo(flowData.getCallId());
+        if (Objects.isNull(callInfo)){
+            throw new FlowNodeException("callInfo is null");
+        }
+        callInfo.getDetailList().forEach(detail -> {
+            if (Objects.equals(detail.getTransferType(), 2)){
+                detail.setEndTime(DateUtil.current());
+            }
+        });
+        callInfo.setDetailList(callInfo.getDetailList());
+        callInfo.setFlowDataContext(flowData);
+        fsCallCacheService.saveCallInfo(callInfo);
         String properties = flowNode.getProperties();
         if(StringUtils.isNotBlank(properties)){
             FlowEndNodeProperties endNodeProperties = JSONObject.parseObject(properties, FlowEndNodeProperties.class);

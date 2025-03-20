@@ -7,6 +7,7 @@ import com.och.esl.service.IFlowNoticeService;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.statemachine.data.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,8 @@ import org.springframework.stereotype.Component;
  * @author danmo
  * @date 2024-12-26
  */
-@Component
+@Slf4j
+@Component("FlowSatisfactionHandler")
 public class FlowSatisfactionHandler extends AbstractIFlowNodeHandler {
 
 
@@ -26,6 +28,7 @@ public class FlowSatisfactionHandler extends AbstractIFlowNodeHandler {
 
     @Override
     public void execute(FlowDataContext flowData) {
-
+        log.info("满意度节点处理 flowData：{}", flowData);
+        iFlowNoticeService.notice(2, "next", flowData);
     }
 }

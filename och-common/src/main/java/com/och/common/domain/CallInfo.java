@@ -1,7 +1,9 @@
 package com.och.common.domain;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.och.common.constant.FlowDataContext;
 import com.och.common.enums.ProcessEnum;
+import com.och.common.enums.RouteTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -198,9 +200,9 @@ public class CallInfo {
     private ProcessEnum process;
 
     /**
-     * 下一个节点ID
+     * 流程数据
      */
-    private Long nextNodeId;
+    private FlowDataContext flowDataContext;
 
     public void setChannelInfoMap(String uniqueId, ChannelInfo channelInfo) {
         if (CollectionUtil.isEmpty(channelMap)) {

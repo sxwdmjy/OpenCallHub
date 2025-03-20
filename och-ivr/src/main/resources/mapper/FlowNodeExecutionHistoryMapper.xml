@@ -5,7 +5,7 @@
     <resultMap type="com.och.ivr.domain.entity.FlowNodeExecutionHistory" id="FlowNodeExecutionHistoryMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="instanceId" column="instance_id" jdbcType="BIGINT"/>
-        <result property="nodeId" column="node_id" jdbcType="BIGINT"/>
+        <result property="nodeId" column="node_id" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
         <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
