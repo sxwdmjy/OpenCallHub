@@ -57,7 +57,7 @@ public class FlowAgentRouteHandler {
             throw new FlowNodeException("路由节点未查询到呼叫信息");
         }
         String agentId = properties.getRouteValue();
-        SipAgentVo sipAgent = iSipAgentService.getDetail(Long.valueOf(agentId));
+        SipAgentVo sipAgent = iSipAgentService.getInfoByAgent(agentId);
         if(Objects.isNull(sipAgent)){
             log.error("转坐席未查询到坐席信息 callId:{}  callerNumber:{} calleeNumber:{},agentId:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCallee(),agentId);
             fsClient.hangupCall(address,callInfo.getCallId(),flowData.getUniqueId());
@@ -112,6 +112,6 @@ public class FlowAgentRouteHandler {
         callInfo.addDetailList(detail);
         fsCallCacheService.saveCallInfo(callInfo);
         fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
-        iFlowNoticeService.notice(2, "next", flowData);
+        //iFlowNoticeService.notice(2, "next", flowData);
     }
 }

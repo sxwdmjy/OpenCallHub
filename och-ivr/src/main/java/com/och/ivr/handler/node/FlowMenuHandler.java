@@ -81,6 +81,6 @@ public class FlowMenuHandler extends AbstractIFlowNodeHandler {
         fsClient.playAndGetDigits(flowData.getAddress(), flowData.getUniqueId(), 1, 1, flowMenuNodeProperties.getMaxRetries(),
                 flowMenuNodeProperties.getTimeout(), "#",
                 fileName, errorFileName, "MENU_DTMF_RETURN",
-                "\"[\\\\*0-9#]+\"", flowMenuNodeProperties.getTimeout(), null);
+                "[*0-9#]+", flowMenuNodeProperties.getTimeout(), null);
     }
 }

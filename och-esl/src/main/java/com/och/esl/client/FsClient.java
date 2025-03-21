@@ -452,9 +452,6 @@ public class FsClient {
      * @param transfer_on_failure 达到最大尝试次数时将呼叫转接到何处
      */
     public void playAndGetDigits(String adress, String uniqueId, Integer min, Integer max, Integer tries, Integer timeout, String terminators, String file, String invalid_file, String var_name, String regexp, Integer digit_timeout, String transfer_on_failure){
-        SendMsg speech = new SendMsg(uniqueId);
-        speech.addCallCommand(EslConstant.EXECUTE);
-        speech.addExecuteAppName(EslConstant.PLAY_AND_GET_DIGITS);
         StringBuilder builder = new StringBuilder();
         builder.append(min).append(EslConstant.SPACE)
                 .append(max).append(EslConstant.SPACE)
@@ -468,9 +465,7 @@ public class FsClient {
         if(StringUtils.isNotBlank(transfer_on_failure)){
             builder.append(transfer_on_failure);
         }
-        speech.addExecuteAppArg(builder.toString());
-        speech.addGenericLine("async", "true");
-        this.sendMsg(adress, speech);
+        this.sendArgs(adress, uniqueId,EslConstant.PLAY_AND_GET_DIGITS, builder.toString());
     }
 
     /**

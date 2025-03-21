@@ -87,7 +87,7 @@ public class EslEventUtil {
 
     public static final String VARIABLE_CURRENT_APPLICATION_DATA = "variable_current_application_data";
 
-    public static final String VARIABLE_MENU_DTMF_RETURN_INVALID = "variable_MENU_DTMF_RETURN_invalid";
+    public static final String VARIABLE_MENU_DTMF_RETURN = "variable_MENU_DTMF_RETURN";
 
     private EslEventUtil() {
     }
@@ -331,7 +331,7 @@ public class EslEventUtil {
         return event.getEventHeaders().get(VARIABLE_CURRENT_APPLICATION_DATA);
     }
 
-    public static String getMenuDtmfReturnInvalid(EslEvent event) {
-        return event.getEventHeaders().get(VARIABLE_MENU_DTMF_RETURN_INVALID);
+    public static String getMenuDtmfReturn(EslEvent event) {
+        return event.getEventHeaders().get(VARIABLE_MENU_DTMF_RETURN);
     }
 }

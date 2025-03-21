@@ -64,6 +64,6 @@ public class FlowCallOutRouteHandler {
         callInfo.addDetailList(detail);
         fsCallCacheService.saveCallInfo(callInfo);
         fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
-        iFlowNoticeService.notice(2, "next", flowData);
+        //iFlowNoticeService.notice(2, "next", flowData);
     }
 }
