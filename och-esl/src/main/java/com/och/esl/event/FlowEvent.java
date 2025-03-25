@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationEvent;
 public class FlowEvent extends ApplicationEvent {
 
 
-    // 事件类型 1-开始 2-流转 3-结束
+    // 事件类型 1-开始 2-流转 3-结束 4-业务处理
     private final Integer type;
 
     // 事件

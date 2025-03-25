@@ -32,4 +32,9 @@ public class FlowHttpHandler extends  AbstractIFlowNodeHandler{
         log.info("满意度节点处理 flowData：{}", flowData);
         iFlowNoticeService.notice(2, "next", flowData);
     }
+
+    @Override
+    public void businessHandler(String event, FlowDataContext flowData) throws FlowNodeException {
+
+    }
 }

@@ -51,12 +51,6 @@ public class FlowPlaybackHandler extends AbstractIFlowNodeHandler {
         if (Objects.isNull(callInfo)){
             throw new FlowNodeException("callInfo is null");
         }
-        callInfo.getDetailList().forEach(detail -> {
-            if (Objects.equals(detail.getTransferType(), 2)){
-                detail.setInstanceId(flowData.getInstanceId());
-            }
-        });
-        callInfo.setDetailList(callInfo.getDetailList());
         callInfo.setFlowDataContext(flowData);
         fsCallCacheService.saveCallInfo(callInfo);
         String properties = flowNode.getProperties();
@@ -95,6 +89,11 @@ public class FlowPlaybackHandler extends AbstractIFlowNodeHandler {
                 fsClient.playFile(flowData.getAddress(), flowData.getUniqueId(), fileName.toString());
             }
         }
+
+    }
+
+    @Override
+    public void businessHandler(String event, FlowDataContext flowData) throws FlowNodeException {
 
     }
 }

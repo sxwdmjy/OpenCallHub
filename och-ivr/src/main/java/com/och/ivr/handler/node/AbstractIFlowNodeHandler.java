@@ -62,6 +62,8 @@ public abstract class AbstractIFlowNodeHandler implements IFlowNodeHandler {
 
     public abstract void execute(FlowDataContext flowData) throws FlowNodeException;
 
+    public abstract void businessHandler(String event, FlowDataContext flowData) throws FlowNodeException;
+
 
     protected FlowNodeVo getFlowNode(Long flowId, String nodeId) {
         return redisService.getCacheMapValue(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowId), nodeId);

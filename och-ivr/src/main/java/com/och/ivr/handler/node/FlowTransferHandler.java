@@ -65,4 +65,9 @@ public class FlowTransferHandler extends AbstractIFlowNodeHandler{
             default -> throw new FlowNodeException("转接节点配置错误");
         }
     }
+
+    @Override
+    public void businessHandler(String event, FlowDataContext flowData) throws FlowNodeException {
+
+    }
 }

@@ -2,6 +2,7 @@ package com.och.ivr.handler.node;
 
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.FlowDataContext;
+import com.och.common.exception.FlowNodeException;
 import com.och.esl.client.FsClient;
 import com.och.esl.service.IFlowNoticeService;
 import com.och.esl.service.IFsCallCacheService;
@@ -30,5 +31,10 @@ public class FlowSatisfactionHandler extends AbstractIFlowNodeHandler {
     public void execute(FlowDataContext flowData) {
         log.info("满意度节点处理 flowData：{}", flowData);
         iFlowNoticeService.notice(2, "next", flowData);
+    }
+
+    @Override
+    public void businessHandler(String event, FlowDataContext flowData) throws FlowNodeException {
+
     }
 }

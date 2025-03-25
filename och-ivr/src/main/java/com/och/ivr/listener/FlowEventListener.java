@@ -6,12 +6,16 @@ import com.alibaba.fastjson.TypeReference;
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.CacheConstants;
 import com.och.common.constant.FlowDataContext;
+import com.och.common.enums.FlowNodeTypeEnum;
+import com.och.common.utils.SpringUtils;
 import com.och.common.utils.StringUtils;
 import com.och.esl.event.FlowEvent;
 import com.och.ivr.domain.entity.FlowInstances;
 import com.och.ivr.domain.vo.FlowEdgeVo;
 import com.och.ivr.domain.vo.FlowInfoVo;
 import com.och.ivr.domain.vo.FlowNodeVo;
+import com.och.ivr.handler.node.AbstractIFlowNodeHandler;
+import com.och.ivr.properties.FlowNodeProperties;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.ivr.service.IFlowInstancesService;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +48,7 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
             case 1 -> startStateMachine(event);
             case 2 -> transferStateMachine(event);
             case 3 -> endStateMachine(event);
+            case 4 -> flowBusinessHandler(event);
             default -> log.info("未知事件类型 event:{}", event);
         }
     }
@@ -197,6 +202,22 @@ public class FlowEventListener implements ApplicationListener<FlowEvent> {
         } catch (Exception e) {
             log.error("创建状态机异常 id:{},error:{}", info.getId(), e.getMessage(), e);
             return null;
+        }
+    }
+
+    public void flowBusinessHandler(FlowEvent event){
+        FlowDataContext flowData = event.getData();
+        String currentNodeId = flowData.getCurrentNodeId();
+        FlowNodeVo currentFlowNode = redisService.getCacheMapValue(StringUtils.format(CacheConstants.CALL_IVR_FLOW_INFO_NODE_KEY, flowData.getFlowId()), currentNodeId);
+        if (Objects.isNull(currentFlowNode)) {
+            log.info("未找到当前节点flowData:{}, id:{}", JSON.toJSONString(flowData), currentNodeId);
+            return;
+        }
+        FlowNodeProperties flowNodeProperties = JSONObject.parseObject(currentFlowNode.getProperties(), FlowNodeProperties.class);
+        String handler = FlowNodeTypeEnum.getHandler(flowNodeProperties.getBusinessType());
+        if(StringUtils.isNotBlank(handler)){
+            AbstractIFlowNodeHandler nodeHandler = SpringUtils.getBean(handler, AbstractIFlowNodeHandler.class);
+            nodeHandler.businessHandler(event.getEvent(), flowData);
         }
     }
 

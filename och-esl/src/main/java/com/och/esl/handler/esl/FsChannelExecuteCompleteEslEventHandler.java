@@ -72,15 +72,7 @@ public class FsChannelExecuteCompleteEslEventHandler extends AbstractFsEslEventH
 
             case "play_and_get_digits":
                 String menuDtmfReturn = EslEventUtil.getMenuDtmfReturn(event);
-                if (StringUtils.isNotBlank(menuDtmfReturn)) {
-                    String currentNodeId = callInfo.getFlowDataContext().getCurrentNodeId();
-                    if (CollectionUtil.isNotEmpty(callInfo.getDetailList())){
-                        CallInfoDetail callInfoDetail = callInfo.getDetailList().get(0);
-                        if (callInfoDetail.getTransferType() == 2) {
-                            iFlowNoticeService.notice(2,"next_" + menuDtmfReturn, callInfo.getFlowDataContext());
-                        }
-                    }
-                }
+                iFlowNoticeService.notice(4,menuDtmfReturn, callInfo.getFlowDataContext());
                 break;
             case "break":
                 break;
