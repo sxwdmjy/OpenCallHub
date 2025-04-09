@@ -62,7 +62,6 @@ public abstract class AbstractIFlowNodeHandler implements IFlowNodeHandler {
 
     public abstract void execute(FlowDataContext flowData) throws FlowNodeException;
 
-    public abstract void businessHandler(String event, FlowDataContext flowData) throws FlowNodeException;
 
 
     protected FlowNodeVo getFlowNode(Long flowId, String nodeId) {

@@ -32,8 +32,4 @@ public class FlowReceiveHandler extends AbstractIFlowNodeHandler {
 
     }
 
-    @Override
-    public void businessHandler(String event, FlowDataContext flowData) throws FlowNodeException {
-
-    }
 }

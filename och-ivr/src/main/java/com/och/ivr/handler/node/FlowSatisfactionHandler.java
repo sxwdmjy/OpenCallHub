@@ -33,8 +33,4 @@ public class FlowSatisfactionHandler extends AbstractIFlowNodeHandler {
         iFlowNoticeService.notice(2, "next", flowData);
     }
 
-    @Override
-    public void businessHandler(String event, FlowDataContext flowData) throws FlowNodeException {
-
-    }
 }

@@ -54,6 +54,10 @@
             <version>0.0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.dtflys.forest</groupId>
+            <artifactId>forest-spring-boot3-starter</artifactId>
+        </dependency>
     </dependencies>
 
 

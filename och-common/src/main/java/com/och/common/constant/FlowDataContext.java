@@ -57,4 +57,9 @@ public class FlowDataContext {
      * 语音合成音色
      */
     private String ttsVoice;
+
+    /**
+     * http请求结果
+     */
+    private String httpResult;
 }
