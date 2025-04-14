@@ -20,6 +20,7 @@ public class ChannelInfo {
      * 呼叫唯一ID
      */
     private Long callId;
+
     /**
      * 呼叫通道ID
      */
