@@ -230,7 +230,7 @@ public class CallRecord extends BaseEntity implements Serializable {
         this.setHangupDir(callInfo.getHangupDir());
         this.setHangupCauseCode(callInfo.getHangupCause());
         this.setFilePath(callInfo.getRecord());
-        this.setRingingPath(callInfo.getRecord());
+        //this.setRingingPath(callInfo.getRecord());
         //this.setCallState(callInfo.getProcess().getCode());
     }
 }

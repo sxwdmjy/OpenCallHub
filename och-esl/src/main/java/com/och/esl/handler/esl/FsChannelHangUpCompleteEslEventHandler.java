@@ -8,6 +8,7 @@ import com.och.common.constant.EslEventNames;
 import com.och.common.domain.CallInfo;
 import com.och.common.domain.ChannelInfo;
 import com.och.common.enums.AgentStateEnum;
+import com.och.common.enums.FsHangupCauseEnum;
 import com.och.common.enums.SipAgentStatusEnum;
 import com.och.esl.factory.AbstractFsEslEventHandler;
 import com.och.esl.utils.EslEventUtil;
@@ -52,7 +53,23 @@ public class FsChannelHangUpCompleteEslEventHandler extends AbstractFsEslEventHa
         channelInfo.setSipStatus(EslEventUtil.getSipTermStatus(event));
         channelInfo.setChannelName(EslEventUtil.getChannelName(event));
         channelInfo.setEndTime(event.getEventDateTimestamp() / 1000);
-
+        // 设置挂机方向
+        if(Objects.isNull(callInfo.getHangupDir())){
+            if(callInfo.getDirection() == 1 && channelInfo.getType() == 1){
+                callInfo.setHangupDir(2);
+            }else if(callInfo.getDirection() == 1 && channelInfo.getType() == 2){
+                callInfo.setHangupDir(1);
+            }else if(callInfo.getDirection() == 2 && channelInfo.getType() == 1){
+                callInfo.setHangupDir(1);
+            }else if(callInfo.getDirection() == 2 && channelInfo.getType() == 2){
+                callInfo.setHangupDir(2);
+            }
+            String hangupCause = EslEventUtil.getHangupCause(event);
+            FsHangupCauseEnum causeEnum = FsHangupCauseEnum.getByValue(hangupCause);
+            if(Objects.nonNull(causeEnum)){
+                callInfo.setHangupCause(causeEnum.getCode());
+            }
+        }
         callInfo.getChannelMap().forEach((key, value) -> fsClient.hangupCall(address, callInfo.getCallId(), key));
 
         //最后一个挂机
