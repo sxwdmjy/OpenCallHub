@@ -3,7 +3,7 @@
 <mapper namespace="com.och.system.mapper.CallSkillMapper">
 
     <resultMap type="com.och.system.domain.entity.CallSkill" id="CallSkillMap">
-        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="BIGINT"/>
         <result property="groupId" column="group_id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="priority" column="priority" jdbcType="INTEGER"/>
@@ -16,6 +16,8 @@
         <result property="queueLength" column="queue_length" jdbcType="INTEGER"/>
         <result property="queueVoice" column="queue_voice" jdbcType="INTEGER"/>
         <result property="agentVoice" column="agent_voice" jdbcType="INTEGER"/>
+        <result property="callerPhonePool" column="caller_phone_pool" jdbcType="BIGINT"/>
+        <result property="calleePhonePool" column="callee_phone_pool" jdbcType="BIGINT"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
@@ -24,7 +26,7 @@
     </resultMap>
 
     <resultMap type="com.och.system.domain.vo.skill.CallSkillVo" id="CallSkillDetailMap">
-        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="id" column="id" jdbcType="BIGINT"/>
         <result property="groupId" column="group_id" jdbcType="INTEGER"/>
         <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
@@ -38,6 +40,8 @@
         <result property="queueLength" column="queue_length" jdbcType="INTEGER"/>
         <result property="queueVoice" column="queue_voice" jdbcType="INTEGER"/>
         <result property="agentVoice" column="agent_voice" jdbcType="INTEGER"/>
+        <result property="callerPhonePool" column="caller_phone_pool" jdbcType="BIGINT"/>
+        <result property="calleePhonePool" column="callee_phone_pool" jdbcType="BIGINT"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>

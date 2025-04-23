@@ -23,6 +23,8 @@ import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.domain.vo.route.CallRouteVo;
 import com.och.system.domain.vo.skill.CallSkillAgentRelVo;
 import com.och.system.domain.vo.skill.CallSkillVo;
+import com.och.system.service.ICallDisplayPoolService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
  * @author danmo
  * @date 2023-11-10 17:20
  **/
+@RequiredArgsConstructor
 @EslRouteName(RouteTypeEnum.SKILL_GROUP)
 @Component
 @Slf4j
@@ -51,6 +54,8 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
      * 定时线程组
      */
     private static ScheduledExecutorService fsAcdThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("fs-acd-pool-%d"));
+
+    private final ICallDisplayPoolService iCallDisplayPoolService;
 
 
     @Override
@@ -74,6 +79,13 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
         detail.setTransferId(callInfo.getSkillId());
         callInfo.addDetailList(detail);
 
+        if(Objects.nonNull(callSkill.getCallerPhonePool())){
+            callInfo.setCallerDisplay(getNumberPoolNumber(callSkill.getCallerPhonePool()));
+        }
+
+        if(Objects.nonNull(callSkill.getCalleePhonePool())){
+            callInfo.setCallerDisplay(getNumberPoolNumber(callSkill.getCalleePhonePool()));
+        }
 
         List<CallSkillAgentRelVo> agentList = callSkill.getAgentList();
         if (CollectionUtil.isEmpty(agentList)) {
@@ -218,7 +230,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
                 return;
             }
             long current = DateUtil.current();
-            callSkillList.sort(Comparator.comparing(CallSkillVo::getPriority));
+            callSkillList.sort(Comparator.comparing(CallSkillVo::getPriority, Comparator.reverseOrder()));
             for (CallSkillVo skill : callSkillList) {
                 PriorityQueue<CallQueue> callQueues = callQueueMap.get(skill.getId());
                 Iterator<CallQueue> iterator = callQueues.iterator();
@@ -408,4 +420,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
         }
         return freeAgentList.get(left).getLevel();
     }
+
+
+
 }

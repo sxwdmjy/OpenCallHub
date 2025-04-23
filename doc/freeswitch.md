@@ -96,6 +96,7 @@ fs:
  <X-PRE-PROCESS cmd="set" data="external_rtp_ip=外网IP"/>
  <X-PRE-PROCESS cmd="set" data="external_sip_ip=外网IP"/> 
  <X-PRE-PROCESS cmd="set" data="external_auth_calls=true"/> 
+ 
 ```
 6. 使用kamailio或者openSips作为SIP网关，请在FS网关管理中配置SIP网关
 7. #### 启动freeswitch

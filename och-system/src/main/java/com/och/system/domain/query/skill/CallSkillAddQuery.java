@@ -1,5 +1,6 @@
 package com.och.system.domain.query.skill;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.och.system.domain.entity.CallSkillAgentRel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -114,6 +115,12 @@ public class CallSkillAddQuery {
      */
     @Schema(description = "转坐席音")
     private String agentVoiceValue;
+
+    @Schema(description = "主叫号码池")
+    private Long callerPhonePool;
+
+    @Schema(description = "被叫号码池")
+    private Long calleePhonePool;
 
 
     @Schema(description = "坐席列表", requiredMode = Schema.RequiredMode.REQUIRED)

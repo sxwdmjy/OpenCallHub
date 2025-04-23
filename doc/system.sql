@@ -302,13 +302,15 @@ CREATE TABLE `call_skill` (
                               `queue_length` int(11) DEFAULT NULL COMMENT '最大排队人数',
                               `queue_voice` bigint(20) DEFAULT NULL COMMENT '排队音',
                               `agent_voice` bigint(20) DEFAULT NULL COMMENT '转坐席音',
+                              `caller_phone_pool` bigint(20) DEFAULT NULL COMMENT '主叫号码池',
+                              `callee_phone_pool` bigint(20) DEFAULT NULL COMMENT '被叫号码池',
                               `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
                               `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                               `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
                               `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能表'
 
 
 -- openCallHub.call_skill_agent_rel definition
@@ -789,4 +791,11 @@ INSERT INTO sys_menu (menu_name,parent_id,order_num,`path`,component,is_frame,me
 INSERT INTO sys_menu (menu_name,parent_id,order_num,`path`,component,is_frame,menu_type,visible,status,perms,icon,remark,create_by,create_time,update_by,update_time,del_flag) VALUES
                                                                                                                                                                                    ('坐席通话中',300,9,'#',NULL,1,'F',0,0,'system:agent:check:calling','','坐席通话中按钮',1,'2024-07-15 10:43:17.0',NULL,NULL,0),
                                                                                                                                                                                    ('清空日志',103,3,'#',NULL,1,'F',0,0,'system:log:empty','','清空日志按钮',1,'2024-07-15 10:43:17.0',NULL,NULL,0),
-                                                                                                                                                                                   ('IVR管理',3,9,'/IVRManagement','',1,'C',0,0,'','#','',1,'2025-01-14 14:12:41.0',1,'2025-01-14 14:12:41.0',0);
+                                                                                                                                                                          ('IVR管理',3,9,'/IVRManagement','',1,'C',0,0,'','#','',1,'2025-01-14 14:12:41.0',1,'2025-01-14 14:12:41.0',0);
+
+INSERT INTO version(id, table_name, table_version)VALUES(1, 'ko_location', 9);
+INSERT INTO version(id, table_name, table_version)VALUES(2, 'ko_subscriber', 6);
+INSERT INTO version(id, table_name, table_version)VALUES(3, 'version', 1);
+INSERT INTO version(id, table_name, table_version)VALUES(4, 'ko_dispatcher', 2);
+INSERT INTO version(id, table_name, table_version)VALUES(5, 'aliases', 3);
+INSERT INTO version(id, table_name, table_version)VALUES(7, 'ko_address', 6);

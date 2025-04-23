@@ -22,7 +22,7 @@ import java.util.List;
 
 @Tag(name = "号码路由管理")
 @RestController
-@RequestMapping("call/v1/rout")
+@RequestMapping("call/v1/route")
 public class CallRouteController extends BaseController {
 
     @Autowired

@@ -129,6 +129,19 @@ public class CallSkill extends BaseEntity implements Serializable {
     @TableField("agent_voice")
     private Long agentVoice;
 
+    /**
+     * 主叫号码池
+     */
+    @Schema(description = "主叫号码池")
+    @TableField("caller_phone_pool")
+    private Long callerPhonePool;
+
+    /**
+     * 被叫号码池
+     */
+    @Schema(description = "被叫号码池")
+    @TableField("callee_phone_pool")
+    private Long calleePhonePool;
 
 
     public void setQuery2Entity(CallSkillAddQuery query) {
@@ -144,6 +157,8 @@ public class CallSkill extends BaseEntity implements Serializable {
         this.queueLength= query.getQueueLength();
         this.queueVoice= query.getQueueVoice();
         this.agentVoice= query.getAgentVoice();
+        this.callerPhonePool= query.getCallerPhonePool();
+        this.calleePhonePool= query.getCalleePhonePool();
     }
 }
 

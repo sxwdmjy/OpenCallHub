@@ -56,4 +56,6 @@ public class CacheConstants {
 
     public static final String ALI_TTS_TOKEN_KEY = "ali_tts_token";
 
+    public static final String CALL_DISPLAY_POLLING_KEY = "fs:display:pool:polling:";
+
 }

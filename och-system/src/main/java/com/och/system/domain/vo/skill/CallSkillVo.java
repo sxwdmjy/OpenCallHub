@@ -102,6 +102,11 @@ public class CallSkillVo extends BaseVo {
     @Schema(description = "转坐席音")
     private Long agentVoice;
 
+    @Schema(description = "主叫号码池")
+    private Long callerPhonePool;
+
+    @Schema(description = "被叫号码池")
+    private Long calleePhonePool;
 
 
     @Schema(description = "坐席列表")
