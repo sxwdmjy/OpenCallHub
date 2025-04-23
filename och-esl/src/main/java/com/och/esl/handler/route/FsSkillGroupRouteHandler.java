@@ -14,7 +14,9 @@ import com.och.common.enums.RouteTypeEnum;
 import com.och.common.enums.SipAgentStatusEnum;
 import com.och.common.thread.ThreadFactoryImpl;
 import com.och.common.utils.StringUtils;
+import com.och.esl.factory.FsEslRouteFactory;
 import com.och.esl.queue.CallQueue;
+import com.och.esl.service.IFlowNoticeService;
 import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.query.fssip.FsSipGatewayQuery;
 import com.och.system.domain.query.skill.CallSkillQuery;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -55,8 +58,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
      */
     private static ScheduledExecutorService fsAcdThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("fs-acd-pool-%d"));
 
-    private final ICallDisplayPoolService iCallDisplayPoolService;
-
+    private final FsEslRouteFactory routeFactory;
 
     @Override
     public void handler(String address, CallInfo callInfo, String uniqueId, String skillId) {
@@ -180,7 +182,12 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
             fsClient.playFile(address,uniqueId,"agentbusy.wav");
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
         } else if (skill.getOverflowType() == 1) {
-            //todo 转IVR
+            //转IVR
+            FsAbstractRouteHandler routeHandler = routeFactory.factory(6);
+            if(Objects.nonNull(routeHandler)){
+                routeHandler.handler(address, callInfo,uniqueId,skill.getOverflowValue());
+            }
+
         }
         saveCallInfo(callInfo);
     }
