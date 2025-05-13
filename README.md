@@ -1,7 +1,7 @@
 # openCallHub
 
 #### [github地址](https://github.com/sxwdmjy/openCallHub)
-#### [使用文档](http://59.110.143.217/doc/)
+#### [使用文档](https://opencallhub.com/doc/)
 
 #### 在线收集需求中。。。。。。。当前mrcp模块已经集成sip和mrcpV2协议，意在方便对接各大厂商的语音服务，待完善，有能力者可提交PR共同完善
 
@@ -67,7 +67,7 @@ mvn clean install
 java -jar och-api-0.0.1.jar
 ```
 ### 3. 基础测试
-#### [演示地址](http://59.110.143.217/) `账号admin/12345678`
+#### [演示地址](https://opencallhub.com) `账号admin/12345678`
 * 软话机登录1000账号和1001账号，然后1000号发起呼叫，接听1001号，挂断。 如需体验联系作者
 
 ## 五、开发计划与贡献方向
