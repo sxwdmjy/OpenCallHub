@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.och.common.constant.EslConstant;
 import com.och.common.domain.CallInfo;
+import com.och.common.enums.DirectionEnum;
 import com.och.common.enums.EslEventFormat;
 import com.och.common.enums.GatewayTypeEnum;
 import com.och.common.thread.ThreadFactoryImpl;
@@ -338,7 +339,7 @@ public class FsClient {
         }
 
         CallInfo callInfo = fsCallCacheService.getCallInfo(callId);
-        if(Objects.nonNull(callInfo) && Objects.equals(1,callInfo.getDirection())){
+        if(Objects.nonNull(callInfo) && Objects.equals(DirectionEnum.INBOUND.getType(),callInfo.getDirection())){
             builder.append(",").append("media_webrtc=true");
         }
 
