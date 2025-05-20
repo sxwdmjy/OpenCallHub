@@ -20,6 +20,7 @@ import org.freeswitch.esl.client.transport.event.EslEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -82,7 +83,6 @@ public class FsChannelHangUpCompleteEslEventHandler extends AbstractFsEslEventHa
 
             ifsCallCacheService.removeCallInfo(callInfo.getCallId());
         }
-
         callInfo.setChannelInfoMap(uniqueId, channelInfo);
         ifsCallCacheService.saveCallInfo(callInfo);
 

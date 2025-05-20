@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.och.common.base.BaseEntity;
 import com.och.common.domain.CallInfo;
+import com.och.common.enums.FsHangupCauseEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -214,24 +215,28 @@ public class CallRecord extends BaseEntity implements Serializable {
         if(Objects.nonNull(callInfo.getCallTime())){
             this.setCallStartTime(new Date(callInfo.getCallTime()));
         }
-        if(Objects.nonNull(callInfo.getEndTime())){
-            this.setCallEndTime(new Date(callInfo.getEndTime()));
-        }
+        this.setCallEndTime(new Date());
 
         this.setDirection(callInfo.getDirection());
         this.setAnswerFlag(callInfo.getAnswerCount());
         if (Objects.nonNull(callInfo.getAnswerTime())) {
             this.setAnswerTime(new Date(callInfo.getAnswerTime()));
         }
-        if (Objects.nonNull(callInfo.getRecordStartTime())) {
+      /*  if (Objects.nonNull(callInfo.getRecordStartTime())) {
             this.setRingingTime(new Date(callInfo.getRecordStartTime()));
-        }
+        }*/
 
         this.setHangupDir(callInfo.getHangupDir());
         this.setHangupCauseCode(callInfo.getHangupCause());
         this.setFilePath(callInfo.getRecord());
+        FsHangupCauseEnum causeEnum = FsHangupCauseEnum.getByCode(callInfo.getHangupCause());
+        if(Objects.nonNull(causeEnum) && Objects.equals("正常挂机",causeEnum.getDesc())){
+            this.setCallState(1);
+        }else {
+            this.setCallState(2);
+        }
         //this.setRingingPath(callInfo.getRecord());
-        //this.setCallState(callInfo.getProcess().getCode());
+
     }
 }
 

@@ -76,7 +76,7 @@ public class FsAgentRouteHandler extends FsAbstractRouteHandler {
         query.setGatewayType(0);
         List<FsSipGateway> gatewayList = iFsSipGatewayService.getList(query);
         if(CollectionUtil.isNotEmpty(gatewayList)){
-            fsClient.makeCall(address,callInfo.getCallId(), calleeNumber,callInfo.getCaller(),otherUniqueId,callInfo.getCalleeTimeOut(), gatewayList.get(0));
+            fsClient.makeCall(address,callInfo.getCallId(), calleeNumber,callInfo.getCalleeDisplay(),otherUniqueId,callInfo.getCalleeTimeOut(), gatewayList.get(0));
         }else {
             log.error("转坐席未查询到非外线网关 callId:{}  callerNumber:{} calleeNumber:{},agentId:{}", callInfo.getCallId(), callInfo.getCaller(), callInfo.getCallee(),agentId);
             fsClient.hangupCall(address,callInfo.getCallId(),uniqueId);
