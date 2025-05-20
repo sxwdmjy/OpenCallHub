@@ -13,6 +13,7 @@ import com.och.common.enums.ProcessEnum;
 import com.och.common.enums.RouteTypeEnum;
 import com.och.common.enums.SipAgentStatusEnum;
 import com.och.common.thread.ThreadFactoryImpl;
+import com.och.common.utils.SpringUtils;
 import com.och.common.utils.StringUtils;
 import com.och.esl.factory.FsEslRouteFactory;
 import com.och.esl.queue.CallQueue;
@@ -57,8 +58,6 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
      * 定时线程组
      */
     private static ScheduledExecutorService fsAcdThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("fs-acd-pool-%d"));
-
-    private final FsEslRouteFactory routeFactory;
 
     @Override
     public void handler(String address, CallInfo callInfo, String uniqueId, String skillId) {
@@ -183,11 +182,8 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
             fsClient.hangupCall(address, callInfo.getCallId(), uniqueId);
         } else if (skill.getOverflowType() == 1) {
             //转IVR
-            FsAbstractRouteHandler routeHandler = routeFactory.factory(6);
-            if(Objects.nonNull(routeHandler)){
-                routeHandler.handler(address, callInfo,uniqueId,skill.getOverflowValue());
-            }
-
+            FsIvrRouteHandler fsIvrRouteHandler = SpringUtils.getBean(FsIvrRouteHandler.class);
+            fsIvrRouteHandler.handler(address, callInfo, uniqueId, skill.getOverflowValue());
         }
         saveCallInfo(callInfo);
     }
