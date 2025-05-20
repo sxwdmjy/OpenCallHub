@@ -3,11 +3,13 @@ package com.och.esl.client;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.och.common.constant.EslConstant;
+import com.och.common.domain.CallInfo;
 import com.och.common.enums.EslEventFormat;
 import com.och.common.enums.GatewayTypeEnum;
 import com.och.common.thread.ThreadFactoryImpl;
 import com.och.esl.FsEslMsg;
 import com.och.esl.propeties.FsClientProperties;
+import com.och.esl.service.IFsCallCacheService;
 import com.och.esl.service.IFsEslEventService;
 import com.och.system.domain.entity.FsConfig;
 import com.och.system.domain.entity.FsSipGateway;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -61,6 +64,9 @@ public class FsClient {
 
     @Autowired
     private IFsEslEventService ILfsEslEventService;
+
+    @Autowired
+    protected IFsCallCacheService fsCallCacheService;
 
     public FsClient(IFsConfigService iFsConfigService, FsClientProperties clientProperties) {
         this.iFsConfigService = iFsConfigService;
@@ -330,14 +336,22 @@ public class FsClient {
         if (timeOut != null) {
             builder.append(",").append("originate_timeout=").append(timeOut);
         }
+
+        CallInfo callInfo = fsCallCacheService.getCallInfo(callId);
+        if(Objects.nonNull(callInfo) && Objects.equals(1,callInfo.getDirection())){
+            builder.append(",").append("media_webrtc=true");
+        }
+
         builder.append("}")
                 .append(EslConstant.SOFIA + "/")
-                .append("gateway")
+                .append(GatewayTypeEnum.EXTERNAL.getDesc())
+                //.append("gateway")
                 //.append(GatewayTypeEnum.getByType(lfsCallRouteRelVo.getGatewayType()).getDesc())
                 .append("/")
-                .append(callRoute.getName())
-                .append("/")
-                .append(called)
+                //.append(callRoute.getName())
+                .append(destination)
+                //.append("/")
+                //.append(called)
                 .append(EslConstant.PARK);
         sendAsyncMsg(address, EslConstant.ORIGINATE, builder.toString());
     }

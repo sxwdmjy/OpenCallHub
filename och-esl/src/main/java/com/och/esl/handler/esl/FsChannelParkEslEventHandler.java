@@ -52,11 +52,11 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         CallInfo callInfo = ifsCallCacheService.getCallInfoByUniqueId(uniqueId);
 
         if (callInfo == null && INBOUND.name().equals(EslEventUtil.getCallDirection(event).toUpperCase())) {
-            if(StringUtils.containsAnyIgnoreCase(EslEventUtil.getVariableSipUserAgent(event), "FreeSWITCH")){
-                inboundCall(address,event);
+            if(StringUtils.containsAnyIgnoreCase(EslEventUtil.getVariableSipUserAgent(event), "JsSIP")){
+                outboundCall(address,event);
                 return;
             }else {
-                outboundCall(address,event);
+                inboundCall(address,event);
                 return;
             }
         }
