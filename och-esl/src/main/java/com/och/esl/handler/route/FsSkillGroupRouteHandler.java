@@ -334,7 +334,7 @@ public class FsSkillGroupRouteHandler extends FsAbstractRouteHandler implements 
         callInfo.setAgentName(agentInfo.getName());
         callInfo.setCallee(agentInfo.getAgentNumber());
         //构建主叫通道
-        ChannelInfo otherChannelInfo = ChannelInfo.builder().callId(callInfo.getCallId()).uniqueId(otherUniqueId).cdrType(2).type(2)
+        ChannelInfo otherChannelInfo = ChannelInfo.builder().callId(callInfo.getCallId()).uniqueId(otherUniqueId).cdrType(2).type(2).directionType(2)
                 .agentId(agentInfo.getId()).agentNumber(agentInfo.getAgentNumber()).agentName(agentInfo.getName())
                 .callTime(DateUtil.current()).otherUniqueId(uniqueId)
                 .called(agentNumber).caller(callInfo.getCaller()).display(callInfo.getCallerDisplay()).build();

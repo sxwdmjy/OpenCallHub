@@ -49,6 +49,10 @@ public class ChannelInfo {
      * 1-坐席 2-客户
      */
     private Integer type;
+    /**
+     * 呼叫方向类型 1-主叫 2-被叫
+     */
+    private Integer directionType;
 
     /**
      * 1-呼入,2-外呼,3-内呼,4-转接,5-咨询,6-监听,7-强插,8-耳语

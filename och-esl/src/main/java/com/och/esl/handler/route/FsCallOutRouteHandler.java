@@ -27,7 +27,7 @@ public class FsCallOutRouteHandler extends FsAbstractRouteHandler {
         String otherUniqueId = RandomUtil.randomNumbers(32);
 
         //构建被叫通道
-        ChannelInfo otherChannelInfo = ChannelInfo.builder().callId(callInfo.getCallId()).uniqueId(otherUniqueId).cdrType(2).type(3)
+        ChannelInfo otherChannelInfo = ChannelInfo.builder().callId(callInfo.getCallId()).uniqueId(otherUniqueId).cdrType(2).type(2).directionType(2)
                 .callTime(DateUtil.current()).otherUniqueId(uniqueId)
                 .called(callInfo.getCallee()).caller(callInfo.getCaller()).display(callInfo.getCallerDisplay()).build();
         callInfo.addUniqueIdList(otherUniqueId);

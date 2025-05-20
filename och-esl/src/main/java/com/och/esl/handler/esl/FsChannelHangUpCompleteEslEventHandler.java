@@ -55,13 +55,10 @@ public class FsChannelHangUpCompleteEslEventHandler extends AbstractFsEslEventHa
         channelInfo.setEndTime(event.getEventDateTimestamp() / 1000);
         // 设置挂机方向
         if(Objects.isNull(callInfo.getHangupDir())){
-            if(callInfo.getDirection() == 1 && channelInfo.getType() == 1){
-                callInfo.setHangupDir(2);
-            }else if(callInfo.getDirection() == 1 && channelInfo.getType() == 2){
+            if(Objects.equals(1,channelInfo.getDirectionType())){
                 callInfo.setHangupDir(1);
-            }else if(callInfo.getDirection() == 2 && channelInfo.getType() == 1){
-                callInfo.setHangupDir(1);
-            }else if(callInfo.getDirection() == 2 && channelInfo.getType() == 2){
+            }
+            if(Objects.equals(2,channelInfo.getDirectionType())){
                 callInfo.setHangupDir(2);
             }
             String hangupCause = EslEventUtil.getHangupCause(event);

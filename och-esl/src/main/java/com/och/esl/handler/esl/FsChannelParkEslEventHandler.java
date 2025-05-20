@@ -114,7 +114,7 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
                 .callTime(DateUtil.current()).callerDisplay(callerNumber).routeType(2).build();
         callInfo.addUniqueIdList(uniqueId);
         //构建主叫通道
-        ChannelInfo channelInfo = ChannelInfo.builder().callId(callId).uniqueId(uniqueId).cdrType(1).type(2).callTime(DateUtil.current())
+        ChannelInfo channelInfo = ChannelInfo.builder().callId(callId).uniqueId(uniqueId).cdrType(1).type(2).directionType(1).callTime(DateUtil.current())
                 .caller(callerNumber).called(calleeNumber).display(calleeNumber).build();
         callInfo.setChannelInfoMap(uniqueId,channelInfo);
 
@@ -167,7 +167,7 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
 
 
         //构建主叫通道
-        ChannelInfo channelInfo = ChannelInfo.builder().callId(callId).uniqueId(uniqueId).cdrType(2).type(1)
+        ChannelInfo channelInfo = ChannelInfo.builder().callId(callId).uniqueId(uniqueId).cdrType(2).type(1).directionType(1)
                 .agentId(sipAgent.getId()).agentNumber(sipAgent.getAgentNumber()).agentName(sipAgent.getName())
                 .callTime(DateUtil.current())
                 .caller(callInfo.getCallee()).called(callInfo.getCaller()).display(callInfo.getCalleeDisplay()).build();

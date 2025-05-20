@@ -57,7 +57,7 @@ public class FsAgentRouteHandler extends FsAbstractRouteHandler {
         callInfo.setAgentNumber(sipAgent.getAgentNumber());
 
         //构建被叫通道
-        ChannelInfo otherChannelInfo = ChannelInfo.builder().callId(callInfo.getCallId()).uniqueId(otherUniqueId).cdrType(1).type(1)
+        ChannelInfo otherChannelInfo = ChannelInfo.builder().callId(callInfo.getCallId()).uniqueId(otherUniqueId).cdrType(1).type(1).directionType(2)
                 .agentId(sipAgent.getId()).agentNumber(sipAgent.getAgentNumber()).agentName(sipAgent.getName())
                 .callTime(DateUtil.current()).otherUniqueId(uniqueId)
                 .called(calleeNumber).caller(callInfo.getCaller()).display(callInfo.getCallerDisplay()).build();

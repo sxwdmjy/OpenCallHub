@@ -29,7 +29,7 @@ public class FsSipRouteHandler extends FsAbstractRouteHandler {
         callInfo.setCallee(destinationArr[0]);
         String gatewayAddress = destinationArr[1];
         //构建被叫通道
-        ChannelInfo otherChannelInfo = ChannelInfo.builder().callId(callInfo.getCallId()).uniqueId(otherUniqueId).cdrType(2).type(3)
+        ChannelInfo otherChannelInfo = ChannelInfo.builder().callId(callInfo.getCallId()).uniqueId(otherUniqueId).cdrType(2).type(2).directionType(2)
                 .callTime(DateUtil.current()).otherUniqueId(uniqueId)
                 .called(callInfo.getCallee()).caller(callInfo.getCaller()).display(callInfo.getCallerDisplay()).build();
         callInfo.addUniqueIdList(otherUniqueId);
