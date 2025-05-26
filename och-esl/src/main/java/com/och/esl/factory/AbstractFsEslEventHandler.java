@@ -6,6 +6,7 @@ import com.och.esl.client.FsClient;
 import com.och.esl.service.IFsCallCacheService;
 import com.och.system.service.ICallDisplayService;
 import com.och.system.service.ICallRecordService;
+import com.och.system.service.IPhoneLocationService;
 import com.och.system.service.ISipAgentService;
 import lombok.extern.slf4j.Slf4j;
 import org.freeswitch.esl.client.transport.event.EslEvent;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractFsEslEventHandler implements FsEslEventHandler {
 
-    public final String SIP_USER_AGENT = "FreeSWITCH";
+    public final String SIP_USER_AGENT = "JsSIP";
 
     @Autowired
     protected IFsCallCacheService ifsCallCacheService;
@@ -44,6 +45,8 @@ public abstract class AbstractFsEslEventHandler implements FsEslEventHandler {
 
     @Autowired
     protected ICallRecordService iCallRecordService;
+    @Autowired
+    protected IPhoneLocationService iPhoneLocationService;
 
 
     @Override

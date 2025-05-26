@@ -52,7 +52,7 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         CallInfo callInfo = ifsCallCacheService.getCallInfoByUniqueId(uniqueId);
 
         if (callInfo == null && INBOUND.name().equals(EslEventUtil.getCallDirection(event).toUpperCase())) {
-            if(StringUtils.containsAnyIgnoreCase(EslEventUtil.getVariableSipUserAgent(event), "JsSIP")){
+            if(StringUtils.containsAnyIgnoreCase(EslEventUtil.getVariableSipUserAgent(event), SIP_USER_AGENT)){
                 outboundCall(address,event);
                 return;
             }else {
@@ -107,11 +107,11 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         String calleeNumber = EslEventUtil.getCallerDestinationNumber(event);
         String sipContactUri = EslEventUtil.getSipContactUri(event);
         log.info("park >>>>>>>inbound callId:{}, caller:{}, called:{}, uniqueId:{}, sipContactUri:{}", callId,callerNumber, calleeNumber, uniqueId, sipContactUri);
-
+        String location = iPhoneLocationService.getLocation(callerNumber);
         //构建呼叫总线
         CallInfo callInfo = CallInfo.builder().callId(callId)
                 .caller(callerNumber).calleeDisplay(calleeNumber).direction(INBOUND.getType())
-                .callTime(DateUtil.current()).callerDisplay(callerNumber).routeType(2).build();
+                .callTime(DateUtil.current()).callerDisplay(callerNumber).numberLocation(location).routeType(2).build();
         callInfo.addUniqueIdList(uniqueId);
         //构建主叫通道
         ChannelInfo channelInfo = ChannelInfo.builder().callId(callId).uniqueId(uniqueId).cdrType(1).type(2).directionType(1).callTime(DateUtil.current())
@@ -143,10 +143,11 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
             fsClient.hangupCall(address,callId,uniqueId);
             return;
         }
+        String location = iPhoneLocationService.getLocation(callerNumber);
         //构建呼叫总线
         CallInfo callInfo = CallInfo.builder().callId(callId)
                 .agentId(sipAgent.getId()).agentNumber(sipAgent.getAgentNumber()).agentName(sipAgent.getName())
-                .caller(callerNumber).callee(calleeNumber).direction(OUTBOUND.getType())
+                .caller(callerNumber).callee(calleeNumber).numberLocation(location).direction(OUTBOUND.getType())
                 .callTime(DateUtil.current()).build();
         callInfo.addUniqueIdList(uniqueId);
         callInfo.setProcess(ProcessEnum.CALL_ROUTE);
