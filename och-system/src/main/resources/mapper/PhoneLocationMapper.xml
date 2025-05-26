@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.system.mapper.PhoneLocationMapper">
+
+    <resultMap type="com.och.system.domain.entity.PhoneLocation" id="PhoneLocationMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="pref" column="pref" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="province" column="province" jdbcType="VARCHAR"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
+        <result property="isp" column="isp" jdbcType="VARCHAR"/>
+        <result property="ispType" column="isp_type" jdbcType="INTEGER"/>
+        <result property="postCode" column="post_code" jdbcType="VARCHAR"/>
+        <result property="cityCode" column="city_code" jdbcType="VARCHAR"/>
+        <result property="areaCode" column="area_code" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+  <sql id="selectPhoneLocationInfoVo">
+     
+   </sql>
+
+</mapper>
+

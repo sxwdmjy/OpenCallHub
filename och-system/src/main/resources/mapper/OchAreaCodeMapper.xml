@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.system.mapper.OchAreaCodeMapper">
+
+    <resultMap type="com.och.system.domain.entity.OchAreaCode" id="OchAreaCodeMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="provincename" column="provinceName" jdbcType="VARCHAR"/>
+        <result property="cityname" column="cityName" jdbcType="VARCHAR"/>
+        <result property="provinceadcode" column="provinceAdcode" jdbcType="INTEGER"/>
+        <result property="provincecenter" column="provinceCenter" jdbcType="VARCHAR"/>
+        <result property="citycode" column="cityCode" jdbcType="VARCHAR"/>
+        <result property="cityadcode" column="cityAdcode" jdbcType="INTEGER"/>
+        <result property="citycenter" column="cityCenter" jdbcType="VARCHAR"/>
+        <result property="districts" column="districts" jdbcType="VARCHAR"/>
+        <result property="isocode" column="isoCode" jdbcType="VARCHAR"/>
+    </resultMap>
+
+  <sql id="selectOchAreaCodeInfoVo">
+     
+   </sql>
+
+</mapper>
+
