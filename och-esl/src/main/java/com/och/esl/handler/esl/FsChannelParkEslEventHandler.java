@@ -90,7 +90,7 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
                 }
             }
         }
-
+        log.info("ChannelParkEslEventHandler after callId:{}, caller:{}, called:{}, uniqueId:{}", callInfo.getCallId(),callInfo.getCaller(), callInfo.getCallee(), uniqueId);
         callInfo.setChannelInfoMap(uniqueId,channelInfo);
         ifsCallCacheService.saveCallInfo(callInfo);
 

@@ -365,8 +365,6 @@ public class FlowSkillGroupRouteHandler implements InitializingBean, DisposableB
         fsCallCacheService.saveCallInfo(callInfo);
         fsCallCacheService.saveCallRel(otherUniqueId,callInfo.getCallId());
 
-        //设置坐席通话中
-        iSipAgentService.updateStatus(agentInfo.getId(), SipAgentStatusEnum.TALKING.getCode());
 
         fsClient.makeCall(address,callInfo.getCallId(), callInfo.getCallee(),callInfo.getCallerDisplay(),otherUniqueId,callInfo.getCalleeTimeOut(), gatewayList.get(0));
 

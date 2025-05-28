@@ -57,15 +57,15 @@ public class JwtUtils {
     }
 
     public static String getUserName(String token) {
-       return decodeToken(token).get(SecurityConstants.USER_NAME).asString();
+       return verifyToken(token).get(SecurityConstants.USER_NAME).asString();
     }
 
     public static Long getUserId(String token) {
-        return decodeToken(token).get(SecurityConstants.USER_ID).asLong();
+        return verifyToken(token).get(SecurityConstants.USER_ID).asLong();
     }
 
     public static String getLoginUserInfo(String token) {
-        return decodeToken(token).get(SecurityConstants.LOGIN_USER).asString();
+        return verifyToken(token).get(SecurityConstants.LOGIN_USER).asString();
     }
 
     /**

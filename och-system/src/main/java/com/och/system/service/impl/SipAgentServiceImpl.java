@@ -1,16 +1,20 @@
 package com.och.system.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageInfo;
 import com.och.common.base.BaseServiceImpl;
+import com.och.common.config.redis.RedisService;
+import com.och.common.constant.CacheConstants;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.system.domain.entity.SipAgent;
 import com.och.system.domain.query.agent.SipAgentAddQuery;
 import com.och.system.domain.query.agent.SipAgentQuery;
+import com.och.system.domain.vo.agent.SipAgentStatusVo;
 import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.mapper.SipAgentMapper;
 import com.och.system.service.ISipAgentService;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -24,8 +28,11 @@ import java.util.stream.Collectors;
  * @author danmo
  * @date 2023-09-26 11:08:58
  */
+@AllArgsConstructor
 @Service
 public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgent> implements ISipAgentService {
+
+    private final RedisService redisService;
 
     @Override
     public void add(SipAgentAddQuery query) {
@@ -108,6 +115,28 @@ public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgen
         agent.setId(id);
         agent.setStatus(status);
         return updateById(agent);
+    }
+
+    @Override
+    public void updateOnlineStatus(Long id, Integer onlineStatus, Long timestamp) {
+        SipAgent agent = new SipAgent();
+        agent.setId(id);
+        agent.setOnlineStatus(onlineStatus);
+        if(updateById(agent)){
+            Boolean hasKey = redisService.getCacheMapHasKey(CacheConstants.AGENT_CURRENT_STATUS_KEY, String.valueOf(id));
+            if(!hasKey){
+                SipAgentVo detail = getDetail(id);
+                SipAgentStatusVo agentStatus = new SipAgentStatusVo();
+                BeanUtils.copyProperties(detail, agentStatus);
+                agentStatus.setStatusTime(timestamp);
+                redisService.setCacheMapValue(CacheConstants.AGENT_CURRENT_STATUS_KEY,String.valueOf(id),agentStatus);
+            }else {
+                SipAgentStatusVo agentStatus = redisService.getCacheMapValue(CacheConstants.AGENT_CURRENT_STATUS_KEY, String.valueOf(id));
+                agentStatus.setOnlineStatus(onlineStatus);
+                agentStatus.setStatusTime(timestamp);
+                redisService.setCacheMapValue(CacheConstants.AGENT_CURRENT_STATUS_KEY,String.valueOf(id),agentStatus);
+            }
+        }
     }
 
 }

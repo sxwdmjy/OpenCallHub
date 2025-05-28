@@ -94,46 +94,6 @@ public class SipAgentController extends BaseController {
         return ResResult.success(lfsSipAgentVo);
     }
 
-    @Log(title = "坐席签入", businessType = BusinessTypeEnum.UPDATE)
-    @PreAuthorize("@authz.hasPerm('system:agent:check:in')")
-    @Operation(summary = "坐席签入", method = "POST")
-    @PostMapping("/check/in/{id}")
-    public ResResult checkIn(@PathVariable("id") Long id, @RequestBody SipAgentQuery query) {
-        query.setId(id);
-        iSipAgentService.updateStatus(id, SipAgentStatusEnum.READY.getCode());
-        return ResResult.success();
-    }
-
-    @Log(title = "坐席签出", businessType = BusinessTypeEnum.UPDATE)
-    @PreAuthorize("@authz.hasPerm('system:agent:check:out')")
-    @Operation(summary = "坐席签出", method = "POST")
-    @PostMapping("/check/out/{id}")
-    public ResResult checkOut(@PathVariable("id") Long id, @RequestBody SipAgentQuery query) {
-        query.setId(id);
-        iSipAgentService.updateStatus(id, SipAgentStatusEnum.OFF_ON.getCode());
-        return ResResult.success();
-    }
-
-    @Log(title = "坐席忙碌", businessType = BusinessTypeEnum.UPDATE)
-    @PreAuthorize("@authz.hasPerm('system:agent:check:busy')")
-    @Operation(summary = "坐席忙碌", method = "POST")
-    @PostMapping("/check/busy/{id}")
-    public ResResult checkBusy(@PathVariable("id") Long id, @RequestBody SipAgentQuery query) {
-        query.setId(id);
-        iSipAgentService.updateStatus(id, SipAgentStatusEnum.NOT_READY.getCode());
-        return ResResult.success();
-    }
-
-    @Log(title = "坐席通话中", businessType = BusinessTypeEnum.UPDATE)
-    @PreAuthorize("@authz.hasPerm('system:agent:check:calling')")
-    @Operation(summary = "坐席通话中", method = "POST")
-    @PostMapping("/check/calling/{id}")
-    public ResResult checkCalling(@PathVariable("id") Long id, @RequestBody SipAgentQuery query) {
-        query.setId(id);
-        iSipAgentService.updateStatus(id, SipAgentStatusEnum.TALKING.getCode());
-        return ResResult.success();
-    }
-
 
     @Operation(summary = "坐席状态变更", method = "POST")
     @PostMapping("/update/status/{id}")

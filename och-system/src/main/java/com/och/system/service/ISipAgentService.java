@@ -32,4 +32,6 @@ public interface ISipAgentService extends IBaseService<SipAgent> {
     SipAgentVo getInfoByAgent(String agentNum);
 
     Boolean updateStatus(Long id, Integer status);
+
+    void updateOnlineStatus(Long id, Integer onlineStatus, Long timestamp);
 }

@@ -96,23 +96,14 @@ public class FsChannelHangUpCompleteEslEventHandler extends AbstractFsEslEventHa
         Boolean isAgent = redisService.getCacheMapHasKey(CacheConstants.AGENT_CURRENT_STATUS_KEY, String.valueOf(callInfo.getAgentId()));
         if (isAgent) {
             SipAgentStatusVo agentStatusVo = redisService.getCacheMapValue(CacheConstants.AGENT_CURRENT_STATUS_KEY, String.valueOf(callInfo.getAgentId()));
-            agentStatusVo.setCallEndTime(callInfo.getEndTime());
+            agentStatusVo.setStatusTime(callInfo.getEndTime());
+            Integer skillAfterTime = callInfo.gainSkillAfterTime();
+            if (Objects.isNull(skillAfterTime)) {
+                skillAfterTime = 1;
+            }
+            agentStatusVo.setCallEndTime(skillAfterTime.longValue());
             agentStatusVo.setStatus(SipAgentStatusEnum.NOT_READY.getCode());
             redisService.setCacheMapValue(CacheConstants.AGENT_CURRENT_STATUS_KEY, String.valueOf(agentStatusVo.getId()), agentStatusVo);
-        }
-
-        Integer skillAfterTime = callInfo.gainSkillAfterTime();
-        if (skillAfterTime != null) {
-            skillAfterTime = 1;
-        }
-        JSONObject agentStatus = new JSONObject();
-        agentStatus.put("status", SipAgentStatusEnum.READY.getCode());
-        agentStatus.put("agentId", callInfo.getAgentId());
-
-        if (true) {
-            log.info("[发送MQ消息-坐席状态变更通知]成功 callId:{}", callInfo.getCallId());
-        } else {
-            log.info("[发送MQ消息-坐席状态变更通知]失败 callId:{}", callInfo.getCallId());
         }
     }
 }

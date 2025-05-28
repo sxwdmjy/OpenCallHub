@@ -48,9 +48,9 @@ public class SipAgent extends BaseEntity implements Serializable {
     private Integer status;
 
     /**
-     * 状态 0-空闲  1-忙碌 2-通话中 3-离线
+     * 在线状态 1-空闲 2-忙碌 3-勿扰 4-离线 5-通话中 6-振铃中 7-话后
      */
-    @Schema(description = "在线状态 0-空闲  1-忙碌 2-通话中 3-离线")
+    @Schema(description = "在线状态 1-空闲 2-忙碌 3-勿扰 4-离线 5-通话中 6-振铃中 7-话后")
     @TableField("online_status")
     private Integer onlineStatus;
 }

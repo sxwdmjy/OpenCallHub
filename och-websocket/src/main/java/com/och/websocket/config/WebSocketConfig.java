@@ -2,7 +2,7 @@ package com.och.websocket.config;
 
 import com.och.common.config.redis.RedisService;
 import com.och.websocket.handler.WebSocketHandler;
-import com.och.websocket.interceptor.OchHandshakeInterceptor;
+import com.och.websocket.interceptor.WsHandshakeInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(webSocketHandler, "ws")
-                .addInterceptors(new OchHandshakeInterceptor(redisService))
+                .addInterceptors(new WsHandshakeInterceptor(redisService))
                 .setAllowedOrigins("*");
     }
 }

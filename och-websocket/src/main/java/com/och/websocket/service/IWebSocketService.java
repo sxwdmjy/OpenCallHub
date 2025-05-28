@@ -1,5 +1,7 @@
 package com.och.websocket.service;
 
+import com.och.websocket.domain.WsMsgPayload;
+
 import java.io.IOException;
 
 /**
@@ -31,6 +33,12 @@ public interface IWebSocketService {
      */
     public void sendPongMsg(String key) throws IOException;
 
+    /**
+     * 发送Ping消息
+     * @param key
+     * @throws IOException
+     */
+    public void sendPingMsg(String key) throws IOException;
 
     /**
      * 发送广播消息

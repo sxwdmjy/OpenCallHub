@@ -58,6 +58,7 @@ public class OchUserDetailsService implements UserDetailsService {
                 .filter(role -> Objects.equals(0, role.getStatus())).map(role -> new OchGrantedAuthority(role.getRoleKey(), role.getMenuList().stream().map(SysMenuVo::getPerms).filter(StringUtils::isNotBlank).collect(Collectors.toList()))).collect(Collectors.toSet());
         loginUserInfo.setAuthorities(authorities);
 
+
         loginUserInfo.setAccountNonExpired(true);
         loginUserInfo.setCredentialsNonExpired(true);
         loginUserInfo.setAccountNonLocked(true);
