@@ -57,7 +57,7 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
             if(eventStrategy == null){
                 log.error("未知的ws事件:{}", wsMsgPayload.getEvent());
             }else {
-                eventStrategy.handle(userId, wsMsgPayload);
+                eventStrategy.handler(userId, wsMsgPayload);
             }
         }
 

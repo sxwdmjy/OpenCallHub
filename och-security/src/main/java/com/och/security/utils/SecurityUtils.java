@@ -1,5 +1,6 @@
 package com.och.security.utils;
 
+import com.alibaba.ttl.TransmittableThreadLocal;
 import com.och.security.authority.LoginUserInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,22 +17,34 @@ import java.util.Objects;
  **/
 public class SecurityUtils extends com.och.common.utils.SecurityUtils {
 
+    private static final ThreadLocal<LoginUserInfo> THREAD_LOCAL = new TransmittableThreadLocal<>();
+
     /**
      * 获取当前用户信息
      *
      * @return LoginUserInfo
      */
     public static LoginUserInfo getCurrentUserInfo() {
-        if (Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
-            return null;
+
+        if(Objects.nonNull(SecurityContextHolder.getContext().getAuthentication())
+                && SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof LoginUserInfo userInfo){
+            return userInfo;
         }
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof LoginUserInfo) {
-            return (LoginUserInfo) principal;
-        } else {
-            return null;
+
+        if(Objects.nonNull(THREAD_LOCAL.get())){
+            return THREAD_LOCAL.get();
         }
+        return null;
     }
+
+    public static void setThreadLocalCurrentUserInfo(LoginUserInfo userInfo) {
+        THREAD_LOCAL.set(userInfo);
+    }
+
+    public static void removeThreadLoCurrentUserInfo() {
+        THREAD_LOCAL.remove();
+    }
+
 
     /**
      * 获取当前用户ID
@@ -39,7 +52,11 @@ public class SecurityUtils extends com.och.common.utils.SecurityUtils {
      * @return Long
      */
     public static Long getUserId() {
-        return getCurrentUserInfo().getUserId();
+        LoginUserInfo userInfo = getCurrentUserInfo();
+        if (Objects.nonNull(userInfo)) {
+            return userInfo.getUserId();
+        }
+        return null;
     }
 
     /**
@@ -48,7 +65,11 @@ public class SecurityUtils extends com.och.common.utils.SecurityUtils {
      * @return String
      */
     public static String getUserName() {
-        return getCurrentUserInfo().getUsername();
+        LoginUserInfo userInfo = getCurrentUserInfo();
+        if (Objects.nonNull(userInfo)) {
+            return userInfo.getUsername();
+        }
+        return null;
     }
 
     /**
@@ -57,7 +78,11 @@ public class SecurityUtils extends com.och.common.utils.SecurityUtils {
      * @return List<Long>
      */
     public static List<Long> getRole() {
-        return getCurrentUserInfo().getRoleIds();
+        LoginUserInfo userInfo = getCurrentUserInfo();
+        if (Objects.nonNull(userInfo)) {
+            return userInfo.getRoleIds();
+        }
+        return null;
     }
 
     /**
@@ -66,7 +91,11 @@ public class SecurityUtils extends com.och.common.utils.SecurityUtils {
      * @return List<Integer>
      */
     public static List<Integer> getDataScope() {
-        return getCurrentUserInfo().getDataScope();
+        LoginUserInfo userInfo = getCurrentUserInfo();
+        if (Objects.nonNull(userInfo)) {
+            return userInfo.getDataScope();
+        }
+        return null;
     }
 
     public static HttpServletRequest getRequest() {
@@ -78,7 +107,11 @@ public class SecurityUtils extends com.och.common.utils.SecurityUtils {
         return (ServletRequestAttributes) attributes;
     }
 
-    public static String  getCorpCode(){
-        return getCurrentUserInfo().getCorpCode();
+    public static String getCorpCode() {
+        LoginUserInfo userInfo = getCurrentUserInfo();
+        if (Objects.nonNull(userInfo)) {
+            return userInfo.getCorpCode();
+        }
+        return null;
     }
 }

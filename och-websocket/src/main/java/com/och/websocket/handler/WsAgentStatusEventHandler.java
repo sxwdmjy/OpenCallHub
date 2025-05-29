@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.och.common.annotation.WsEventName;
 import com.och.system.service.ISipAgentService;
 import com.och.websocket.domain.WsMsgPayload;
+import com.och.websocket.factory.AbstractWsMsgEventStrategy;
 import com.och.websocket.factory.WsMsgEventStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,12 +20,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @AllArgsConstructor
 @Component
-public class WsAgentStatusEventHandler implements WsMsgEventStrategy {
+public class WsAgentStatusEventHandler extends AbstractWsMsgEventStrategy {
 
     private final ISipAgentService iSipAgentService;
 
     @Override
-    public void handle(Long userId, WsMsgPayload payload) {
+    public void doHandler(Long userId, WsMsgPayload payload) {
         log.info("WsAgentStatusEventHandler handle");
         WsAgentStatusData data = JSONObject.parseObject(payload.getData(), WsAgentStatusData.class);
         iSipAgentService.updateOnlineStatus(data.getAgentId(), data.getOnlineStatus(), payload.getTimestamp());

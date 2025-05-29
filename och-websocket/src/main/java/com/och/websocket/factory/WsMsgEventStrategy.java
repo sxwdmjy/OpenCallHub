@@ -9,5 +9,5 @@ import com.och.websocket.domain.WsMsgPayload;
  */
 public interface WsMsgEventStrategy {
 
-    void handle(Long userId, WsMsgPayload payload);
+    void handler(Long userId, WsMsgPayload payload);
 }
