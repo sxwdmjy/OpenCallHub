@@ -90,10 +90,12 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
         this.password = null;
     }
 
+    @Override
     public int hashCode() {
         return this.username.hashCode();
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof User user) {
             return this.username.equals(user.getUsername());
@@ -102,19 +104,17 @@ public class LoginUserInfo implements UserDetails, CredentialsContainer {
         }
     }
 
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.getClass().getName()).append(" [");
-        sb.append("Username=").append(this.username).append(", ");
-        sb.append("Password=[PROTECTED], ");
-        sb.append("RoleIds=").append(getRoleIds().toString()).append(", ");
-        sb.append("DataScope=").append(getDataScope().toString()).append(", ");
-        sb.append("Enabled=").append(this.enabled).append(", ");
-        sb.append("AccountNonExpired=").append(this.accountNonExpired).append(", ");
-        sb.append("CredentialsNonExpired=").append(this.credentialsNonExpired).append(", ");
-        sb.append("AccountNonLocked=").append(this.accountNonLocked).append(", ");
-        sb.append("Granted Authorities=").append(this.authorities).append("]");
-        return sb.toString();
+        return this.getClass().getName() + " [" +
+                "Username=" + this.username + ", " +
+                "RoleIds=" + getRoleIds().toString() + ", " +
+                "DataScope=" + getDataScope().toString() + ", " +
+                "Enabled=" + this.enabled + ", " +
+                "AccountNonExpired=" + this.accountNonExpired + ", " +
+                "CredentialsNonExpired=" + this.credentialsNonExpired + ", " +
+                "AccountNonLocked=" + this.accountNonLocked + ", " +
+                "Granted Authorities=" + this.authorities + "]";
     }
 
 
