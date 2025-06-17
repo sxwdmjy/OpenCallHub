@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractFsEslEventHandler implements FsEslEventHandler {
 
-    public final String SIP_USER_AGENT = "JsSIP";
+    public final String JSSIP_SIP_USER_AGENT = "JsSIP";
 
     @Autowired
     protected IFsCallCacheService ifsCallCacheService;

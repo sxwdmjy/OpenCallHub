@@ -130,6 +130,24 @@ public class CallInfo {
     private Integer hangupCause;
 
     /**
+     * 主叫振铃开始时间
+     */
+    private Long callerRingStartTime;
+    /**
+     * 主叫振铃结束时间
+     */
+    private Long callerRingEndTime;
+
+    /**
+     * 被叫振铃开始时间
+     */
+    private Long calleeRingStartTime;
+    /**
+     * 被叫振铃结束时间
+     */
+    private Long calleeRingEndTime;
+
+    /**
      * 接听时间
      */
     private Long answerTime;

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.och.system.mapper.CallEngineMapper">
 
-    <resultMap type="com.och.system.domain.CallEngine" id="CallEngineMap">
+    <resultMap type="com.och.system.domain.entity.CallEngine" id="CallEngineMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="profile" column="profile" jdbcType="VARCHAR"/>

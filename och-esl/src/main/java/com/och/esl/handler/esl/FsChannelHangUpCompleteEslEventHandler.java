@@ -61,6 +61,7 @@ public class FsChannelHangUpCompleteEslEventHandler extends AbstractFsEslEventHa
             }
             if(Objects.equals(2,channelInfo.getDirectionType())){
                 callInfo.setHangupDir(2);
+
             }
             String hangupCause = EslEventUtil.getHangupCause(event);
             FsHangupCauseEnum causeEnum = FsHangupCauseEnum.getByValue(hangupCause);

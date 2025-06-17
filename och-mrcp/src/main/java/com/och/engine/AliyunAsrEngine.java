@@ -1,6 +1,5 @@
 package com.och.engine;
 
-import cn.hutool.core.util.XmlUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nls.client.AccessToken;
 import com.alibaba.nls.client.protocol.InputFormatEnum;
@@ -15,21 +14,8 @@ import com.och.mrcp.MrcpSession;
 import com.och.redis.RedissonUtil;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -48,12 +34,11 @@ public class AliyunAsrEngine implements AsrEngine {
     }
 
 
-
     @Override
     public void recognize(byte[] audioData) {
-            if (transcriber != null){
-                transcriber.send(audioData);
-            }
+        if (transcriber != null) {
+            transcriber.send(audioData);
+        }
     }
 
 
@@ -61,13 +46,13 @@ public class AliyunAsrEngine implements AsrEngine {
     public void start(MrcpRequest req, MrcpSession mrcpSession) {
         try {
             String appToken = getAccessToken(config);
-            if(Objects.isNull(client)){
-                if(StringUtil.isNullOrEmpty(config.getEndpoint())){
+            if (Objects.isNull(client)) {
+                if (StringUtil.isNullOrEmpty(config.getEndpoint())) {
                     client = new NlsClient(appToken);
-                }else {
+                } else {
                     client = new NlsClient(config.getEndpoint(), appToken);
                 }
-            }else {
+            } else {
                 client.setToken(appToken);
             }
             //创建实例、建立连接。
@@ -97,11 +82,10 @@ public class AliyunAsrEngine implements AsrEngine {
     }
 
 
-
     private String getAccessToken(CloudConfig config) {
         String aliEngineTokenKey = "ali_asr_engine_token";
         Boolean exists = RedissonUtil.isExists(aliEngineTokenKey);
-        if(exists){
+        if (exists) {
             return RedissonUtil.getValue(aliEngineTokenKey);
         }
         AccessToken accessToken = new AccessToken(config.getApiKey(), config.getApiSecret());

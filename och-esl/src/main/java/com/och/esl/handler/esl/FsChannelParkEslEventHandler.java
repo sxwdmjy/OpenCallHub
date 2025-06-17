@@ -52,7 +52,7 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
         CallInfo callInfo = ifsCallCacheService.getCallInfoByUniqueId(uniqueId);
 
         if (callInfo == null && INBOUND.name().equals(EslEventUtil.getCallDirection(event).toUpperCase())) {
-            if(StringUtils.containsAnyIgnoreCase(EslEventUtil.getVariableSipUserAgent(event), SIP_USER_AGENT)){
+            if(StringUtils.containsAnyIgnoreCase(EslEventUtil.getVariableSipUserAgent(event), JSSIP_SIP_USER_AGENT)){
                 outboundCall(address,event);
                 return;
             }else {
@@ -76,6 +76,12 @@ public class FsChannelParkEslEventHandler extends AbstractFsEslEventHandler {
             return;
         }
         channelInfo.setRingStartTime(event.getEventDateTimestamp() / 1000);
+        if(Objects.equals(1,channelInfo.getDirectionType())){
+            callInfo.setCallerRingStartTime(channelInfo.getRingStartTime());
+        }
+        if(Objects.equals(2,channelInfo.getDirectionType())){
+            callInfo.setCalleeRingStartTime(channelInfo.getRingStartTime());
+        }
 
         DirectionEnum directionEnum = DirectionEnum.getByType(callInfo.getDirection());
         if (directionEnum != null){

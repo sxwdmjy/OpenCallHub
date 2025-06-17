@@ -47,8 +47,8 @@ public class FsChannelBridgeEslEventHandler extends AbstractFsEslEventHandler {
             otherChannelInfo.setBridgeTime(event.getEventDateTimestamp() / 1000);
         }
 
-        //fsClient.detectSpeech(address,callInfo.getCallId(),uniqueId);
-        //fsClient.detectSpeech(address,callInfo.getCallId(),otherUniqueId);
+        fsClient.detectSpeech(address,callInfo.getCallId(),uniqueId);
+        fsClient.detectSpeech(address,callInfo.getCallId(),otherUniqueId);
 
         callInfo.setChannelInfoMap(uniqueId,channelInfo);
         callInfo.setChannelInfoMap(otherUniqueId,otherChannelInfo);

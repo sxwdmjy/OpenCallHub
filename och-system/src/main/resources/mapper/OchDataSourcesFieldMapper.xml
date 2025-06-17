@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.system.mapper.OchDataSourcesFieldMapper">
+
+    <resultMap type="com.och.system.domain.entity.OchDataSourcesField" id="OchDataSourcesFieldMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="sourceId" column="source_id" jdbcType="INTEGER"/>
+        <result property="fieldId" column="filed_id" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+  <sql id="selectOchDataSourcesFieldInfo">
+     
+   </sql>
+
+    <select id="listBySourceId" resultType="com.och.system.domain.vo.calltask.FieldInfoVo">
+        select
+            ofi.id,
+            ofi.field_name,
+            ofi.field_type,
+            ofi.required,
+            ofi.field_length,
+            ofi.sys_type
+        from
+        och_data_sources_field odsf
+        left join och_field_info ofi on odsf.field_id = ofi.id and ofi.del_flag = 0
+        <where>
+            <if test="sourceId != null">
+                odsf.source_id = #{sourceId}
+            </if>
+            and odsf.del_flag = 0
+        </where>
+        order by odsf.id asc
+    </select>
+
+</mapper>
+

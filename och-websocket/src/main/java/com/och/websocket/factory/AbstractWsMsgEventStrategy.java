@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author danmo
@@ -25,10 +27,12 @@ public abstract class AbstractWsMsgEventStrategy implements WsMsgEventStrategy{
     @Autowired
     private IWebSocketService webSocketService;
 
+
     @Override
     public void handler(Long userId, WsMsgPayload payload) {
         beforeHandler(userId);
         try {
+            //todo 可以加线程执行
             doHandler(userId, payload);
         } catch (Exception e) {
             log.error("handler error userId:{},payload:{}", userId, payload, e);

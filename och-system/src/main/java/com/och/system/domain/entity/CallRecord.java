@@ -218,13 +218,14 @@ public class CallRecord extends BaseEntity implements Serializable {
         this.setCallEndTime(new Date());
 
         this.setDirection(callInfo.getDirection());
-        this.setAnswerFlag(callInfo.getAnswerCount());
+        this.setAnswerFlag(0);
         if (Objects.nonNull(callInfo.getAnswerTime())) {
             this.setAnswerTime(new Date(callInfo.getAnswerTime()));
         }
-      /*  if (Objects.nonNull(callInfo.getRecordStartTime())) {
-            this.setRingingTime(new Date(callInfo.getRecordStartTime()));
-        }*/
+
+        if (Objects.nonNull(callInfo.getCalleeRingStartTime())) {
+            this.setRingingTime(new Date(callInfo.getCalleeRingStartTime()));
+        }
 
         this.setHangupDir(callInfo.getHangupDir());
         this.setHangupCauseCode(callInfo.getHangupCause());
