@@ -116,7 +116,7 @@ public class OchDataSourceController extends BaseController {
     @Operation(summary = "联系人模板下载", method = "POST")
     @PostMapping("/contact/template/download/{sourceId}")
     public void contactTemplateDownload(@PathVariable("sourceId") Long sourceId, HttpServletResponse response) {
-        ochDataSourcesService.contactTemplateDownload(sourceId,  response);
+        ochDataSourcesService.contactTemplateDownload(sourceId, response);
     }
 
     @Log(title = "数据源联系人模板上传", businessType = BusinessTypeEnum.OTHER)
@@ -125,6 +125,6 @@ public class OchDataSourceController extends BaseController {
     @PostMapping("/contact/template/upload/{sourceId}")
     public ResResult contactTemplateUpload(@PathVariable("sourceId") Long sourceId, @RequestParam("file") MultipartFile file) {
         ochDataSourcesService.contactTemplateUpload(sourceId, file);
-        success();
+        return success();
     }
 }
