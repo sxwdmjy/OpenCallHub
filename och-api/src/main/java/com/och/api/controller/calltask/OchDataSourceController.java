@@ -6,12 +6,12 @@ import com.och.common.annotation.Log;
 import com.och.common.base.BaseController;
 import com.och.common.base.ResResult;
 import com.och.common.enums.BusinessTypeEnum;
-import com.och.system.domain.query.calltask.DataSourceAddQuery;
-import com.och.system.domain.query.calltask.DataSourceContactQuery;
-import com.och.system.domain.query.calltask.DataSourceQuery;
-import com.och.system.domain.vo.calltask.DataSourceVo;
-import com.och.system.domain.vo.calltask.DataSourcesContactVo;
-import com.och.system.service.IOchDataSourcesService;
+import com.och.calltask.domain.query.DataSourceAddQuery;
+import com.och.calltask.domain.query.DataSourceContactQuery;
+import com.och.calltask.domain.query.DataSourceQuery;
+import com.och.calltask.domain.vo.DataSourceVo;
+import com.och.calltask.domain.vo.DataSourcesContactVo;
+import com.och.calltask.service.IOchDataSourcesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -86,7 +86,6 @@ public class OchDataSourceController extends BaseController {
 
     @Log(title = "数据源列表(不分页)", businessType = BusinessTypeEnum.SELECT)
     @Operation(summary = "数据源列表(不分页)", method = "POST")
-    @PreAuthorize("@authz.hasPerm('call:task:source:list')")
     @PostMapping("/list")
     public ResResult<List<DataSourceVo>> list(@RequestBody DataSourceQuery query) {
         List<DataSourceVo> list = ochDataSourcesService.getList(query);
@@ -103,7 +102,6 @@ public class OchDataSourceController extends BaseController {
     }
 
     @Log(title = "数据源联系人列表（不分页）", businessType = BusinessTypeEnum.SELECT)
-    @PreAuthorize("@authz.hasPerm('call:task:source:contact:list')")
     @Operation(summary = "数据源联系人列表（不分页）", method = "POST")
     @PostMapping("/contact/list")
     public ResResult<List<DataSourcesContactVo>> contactList(@RequestBody DataSourceContactQuery query) {

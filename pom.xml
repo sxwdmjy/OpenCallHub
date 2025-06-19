@@ -331,6 +331,7 @@
         <module>och-mrcp</module>
         <module>och-file-client</module>
         <module>och-ai</module>
+        <module>och-call-task</module>
     </modules>
 
     <!--项目本身的jar从指定镜像下载-->

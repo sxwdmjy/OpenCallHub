@@ -44,7 +44,7 @@
 
         <dependency>
             <groupId>com.och</groupId>
-            <artifactId>och-security</artifactId>
+            <artifactId>och-system</artifactId>
             <version>0.0.1</version>
         </dependency>
 

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.calltask.mapper.CallTaskMapper">
+
+    <resultMap type="com.och.calltask.domain.entity.CallTask" id="CallTaskMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="priority" column="priority" jdbcType="INTEGER"/>
+        <result property="startDay" column="start_day" jdbcType="TIMESTAMP"/>
+        <result property="endDay" column="end_day" jdbcType="TIMESTAMP"/>
+        <result property="sTime" column="s_time" jdbcType="VARCHAR"/>
+        <result property="eTime" column="e_time" jdbcType="VARCHAR"/>
+        <result property="workCycle" column="work_cycle" jdbcType="VARCHAR"/>
+        <result property="sourceId" column="source_id" jdbcType="INTEGER"/>
+        <result property="completeType" column="complete_type" jdbcType="INTEGER"/>
+        <result property="phoneMode" column="phone_mode" jdbcType="INTEGER"/>
+        <result property="phonePoolId" column="phone_pool_id" jdbcType="INTEGER"/>
+        <result property="transferType" column="transfer_type" jdbcType="INTEGER"/>
+        <result property="transferValue" column="transfer_value" jdbcType="VARCHAR"/>
+        <result property="roundsConf" column="rounds_conf" jdbcType="VARCHAR"/>
+        <result property="currentRound" column="current_round" jdbcType="INTEGER"/>
+        <result property="recall" column="recall" jdbcType="INTEGER"/>
+        <result property="recallNum" column="recall_num" jdbcType="INTEGER"/>
+        <result property="recallTime" column="recall_time" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+  <sql id="selectCallTaskInfoVo">
+     
+   </sql>
+
+    <select id="getList" resultType="com.och.calltask.domain.vo.CallTaskVo">
+
+    </select>
+
+</mapper>
+

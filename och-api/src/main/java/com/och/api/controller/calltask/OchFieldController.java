@@ -2,14 +2,14 @@ package com.och.api.controller.calltask;
 
 
 import com.github.pagehelper.PageInfo;
+import com.och.calltask.domain.query.FieldAddQuery;
+import com.och.calltask.domain.query.FieldQuery;
+import com.och.calltask.domain.vo.FieldInfoVo;
+import com.och.calltask.service.IOchFieldInfoService;
 import com.och.common.annotation.Log;
 import com.och.common.base.BaseController;
 import com.och.common.base.ResResult;
 import com.och.common.enums.BusinessTypeEnum;
-import com.och.system.domain.query.calltask.FieldAddQuery;
-import com.och.system.domain.query.calltask.FieldQuery;
-import com.och.system.domain.vo.calltask.FieldInfoVo;
-import com.och.system.service.IOchFieldInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +81,6 @@ public class OchFieldController extends BaseController {
     }
 
     @Log(title = "字段列表(不分页)", businessType = BusinessTypeEnum.SELECT)
-    @PreAuthorize("@authz.hasPerm('call:task:field:list')")
     @Operation(summary = "字段列表(不分页)", method = "POST")
     @PostMapping("/list")
     public ResResult<List<FieldInfoVo>> list(@RequestBody FieldQuery query) {
