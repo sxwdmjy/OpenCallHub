@@ -3,6 +3,8 @@
 #### [github地址](https://github.com/sxwdmjy/openCallHub)
 #### [使用文档](https://opencallhub.com/doc/)
 
+<video src="./test.mp4"></video>
+
 #### 在线收集需求中。。。。。。。当前mrcp模块已经集成sip和mrcpV2协议，意在方便对接各大厂商的语音服务，待完善，有能力者可提交PR共同完善
 
 ---
@@ -118,7 +120,7 @@ git push origin feature/your-feature-name
 ## 八、项目维护与支持
 #### 1. 线路需求: 有线路需求可以联系作者
 #### 2. GitHub Issues：提交功能需求或 Bug 反馈。
-#### 3. 微信咨询: 有业务需求定制化开发可以联系作者
+#### 3. 星球咨询: 有业务需求定制化开发可以联系作者，或者加星球咨询
 ![星球](image.png)
 
 ### 捐献作者
