@@ -37,7 +37,74 @@
    </sql>
 
     <select id="getList" resultType="com.och.calltask.domain.vo.CallTaskVo">
-
+        select
+            ct.id,
+            ct.name,
+            ct.type,
+            ct.status,
+            ct.priority,
+            ct.start_day,
+            ct.end_day,
+            ct.s_time,
+            ct.e_time,
+            ct.work_cycle,
+            ct.source_id,
+            ct.complete_type,
+            ct.phone_mode,
+            ct.phone_pool_id,
+            ct.transfer_type,
+            ct.transfer_value,
+            ct.rounds_conf,
+            ct.current_round,
+            ct.recall,
+            ct.recall_num,
+            ct.recall_time,
+            ct.remark,
+            ct.create_by,
+            ct.create_time,
+            ct.update_by,
+            ct.update_time,
+            ct.del_flag,
+            ods.name as source_name,
+            cdp.name as phone_pool_name
+        from call_task ct
+                 left join och_data_source ods on ct.source_id = ods.id
+                 left join call_display_pool cdp on ct.phone_pool_id = cdp.id
+        <where>
+            <if test="id != null">
+                and ct.id = #{id}
+            </if>
+            <if test="idList != null">
+                and ct.id in
+                <foreach item="item" collection="idList" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="name != null">
+                and ct.name like concat('%',#{name},'%')
+            </if>
+            <if test="type != null">
+                and ct.type = #{type}
+            </if>
+            <if test="priority != null">
+                and ct.priority = #{priority}
+            </if>
+            <if test="startDay != null">
+                and ct.start_day &gt;=  #{startDay}
+            </if>
+            <if test="endDay != null">
+                and ct.end_day &lt;= #{endDay}
+            </if>
+            <if test="sourceId != null">
+                and ct.source_id = #{sourceId}
+            </if>
+            <if test="completeType != null">
+                and ct.complete_type = #{completeType}
+            </if>
+            <if test="transferType != null">
+                and ct.transfer_type = #{transferType}
+            </if>
+        </where>
     </select>
 
 </mapper>

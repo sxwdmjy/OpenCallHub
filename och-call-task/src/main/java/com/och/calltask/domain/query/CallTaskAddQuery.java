@@ -54,7 +54,7 @@ public class CallTaskAddQuery {
      */
     @NotNull(message = "任务开始时间不能为空")
     @Schema(description = "任务开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date startDay;
 
 
@@ -63,7 +63,7 @@ public class CallTaskAddQuery {
      */
     @NotNull(message = "任务结束时间不能为空")
     @Schema(description = "任务结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date endDay;
 
 

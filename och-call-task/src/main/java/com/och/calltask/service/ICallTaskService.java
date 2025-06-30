@@ -5,6 +5,7 @@ import com.och.calltask.domain.query.CallTaskQuery;
 import com.och.calltask.domain.vo.CallTaskVo;
 import com.och.common.base.IBaseService;
 import com.och.calltask.domain.entity.CallTask;
+import com.och.common.enums.CallTaskStatusEnum;
 
 import java.util.List;
 
@@ -60,5 +61,32 @@ public interface ICallTaskService extends IBaseService<CallTask> {
      * @return 列表
      */
     List<CallTaskVo> getList(CallTaskQuery query);
+
+    /**
+     * 暂停任务
+     *
+     * @param id 任务ID
+     */
+    void pauseTask(Long id);
+
+    /**
+     * 开始任务
+     *
+     * @param id 任务ID
+     */
+    void startTask(Long id);
+
+    /**
+     * 结束任务
+     * @param id
+     */
+    void endTask(Long id);
+    /**
+     * 修改任务状态
+     * @param id 任务ID
+     * @param statusEnum 任务状态
+     */
+    Boolean updateStatus(Long id, CallTaskStatusEnum statusEnum);
+
 }
 

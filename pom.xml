@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+        <version>3.5.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.och</groupId>
@@ -49,6 +49,7 @@
         <netty.version>4.1.105.Final</netty.version>
         <spring-ai-alibaba.version>1.0.0-M6.1</spring-ai-alibaba.version>
         <easy-excel.version>4.0.3</easy-excel.version>
+        <spring.quartz.version>3.5.3</spring.quartz.version>
     </properties>
 
     <dependencyManagement>
@@ -313,6 +314,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easy-excel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-quartz</artifactId>
+                <version>${spring.quartz.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

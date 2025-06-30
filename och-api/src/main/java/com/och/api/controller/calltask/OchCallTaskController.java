@@ -4,7 +4,6 @@ package com.och.api.controller.calltask;
 import com.github.pagehelper.PageInfo;
 import com.och.calltask.domain.query.CallTaskAddQuery;
 import com.och.calltask.domain.query.CallTaskQuery;
-import com.och.calltask.domain.query.DataSourceAddQuery;
 import com.och.calltask.domain.vo.CallTaskVo;
 import com.och.calltask.service.ICallTaskService;
 import com.och.common.annotation.Log;
@@ -22,6 +21,7 @@ import java.util.List;
 
 /**
  * 呼叫任务管理
+ *
  * @author danmo
  * @date 2025/06/19 09:53
  */
@@ -85,5 +85,33 @@ public class OchCallTaskController extends BaseController {
         List<CallTaskVo> list = callTaskService.getList(query);
         return success(list);
     }
+
+    @Log(title = "开始任务", businessType = BusinessTypeEnum.UPDATE)
+    @PreAuthorize("@authz.hasPerm('call:task:start')")
+    @Operation(summary = "开始任务", method = "POST")
+    @PostMapping("/start/{id}")
+    public ResResult start(@PathVariable("id") Long id) {
+        callTaskService.startTask(id);
+        return success();
+    }
+
+    @Log(title = "暂停任务", businessType = BusinessTypeEnum.UPDATE)
+    @PreAuthorize("@authz.hasPerm('call:task:pause')")
+    @Operation(summary = "暂停任务", method = "POST")
+    @PostMapping("/pause/{id}")
+    public ResResult pause(@PathVariable("id") Long id) {
+        callTaskService.pauseTask(id);
+        return success();
+    }
+
+    @Log(title = "结束任务", businessType = BusinessTypeEnum.UPDATE)
+    @PreAuthorize("@authz.hasPerm('call:task:end')")
+    @Operation(summary = "结束任务", method = "POST")
+    @PostMapping("/end/{id}")
+    public ResResult end(@PathVariable("id") Long id) {
+        callTaskService.endTask(id);
+        return success();
+    }
+
 
 }
