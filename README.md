@@ -1,9 +1,17 @@
 # openCallHub
 
+<div align="center">
+
+[![star](https://gitee.com/sxwdmjy/openCallHub/badge/star.svg?theme=gvp)](https://gitee.com/sxwdmjy/openCallHub/stargazers)
+[![fork](https://gitee.com/sxwdmjy/openCallHub/badge/fork.svg?theme=gvp)](https://gitee.com/sxwdmjy/openCallHub/members)
+[![OpenCallHub](https://img.shields.io/badge/OpenCallHub-V1.0.0-brightgreen)](https://gitee.com/sxwdmjy/openCallHub/tree/v1.0.0.0/)
+[![license](http://img.shields.io/badge/license-GPL%203.0-orange)](ttps://gitee.com/sxwdmjy/openCallHub/blob/master/LICENSE)
+![star](https://gitcode.com/ochb/openCallHub/star/badge.svg)
+
+</div>
+
 #### [github地址](https://github.com/sxwdmjy/openCallHub)
 #### [使用文档](https://opencallhub.com/doc/)
-
-<video src="./test.mp4"></video>
 
 #### 在线收集需求中。。。。。。。当前mrcp模块已经集成sip和mrcpV2协议，意在方便对接各大厂商的语音服务，待完善，有能力者可提交PR共同完善
 
