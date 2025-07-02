@@ -15,6 +15,7 @@
 </div>
 
 #### [github地址](https://github.com/sxwdmjy/openCallHub)
+#### [gitee地址](https://gitee.com/sxwdmjy/openCallHub)
 #### [gitCode地址](https://gitcode.com/ochb/openCallHub)
 #### [使用文档](https://opencallhub.com/doc/)
 
