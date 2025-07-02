@@ -12,6 +12,7 @@ import com.och.common.base.ResResult;
 import com.och.common.enums.BusinessTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -86,6 +87,14 @@ public class CustomerTemplateController extends BaseController {
     public ResResult<List<CustomerTemplateVo>> list(@RequestBody CustomerTemplateQuery query) {
         List<CustomerTemplateVo> list = customerTemplateService.getList(query);
         return success(list);
+    }
+
+    //模板下载
+    @Log(title = "模板下载", businessType = BusinessTypeEnum.EXPORT)
+    @Operation(summary = "模板下载", method = "GET")
+    @GetMapping("/template/download/{id}")
+    public void templateDownload(HttpServletResponse response, @PathVariable("id") Long id) {
+        customerTemplateService.templateDownload(id,response);
     }
 
 }

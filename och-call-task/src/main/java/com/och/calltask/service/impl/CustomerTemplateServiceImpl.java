@@ -1,6 +1,7 @@
 package com.och.calltask.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageInfo;
 import com.och.calltask.domain.entity.CustomerTemplate;
@@ -14,12 +15,18 @@ import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.common.exception.CommonException;
 import com.och.common.utils.StringUtils;
+import com.och.system.handler.CommentWriteHandler;
 import com.och.system.service.ISysUserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -119,6 +126,39 @@ public class CustomerTemplateServiceImpl extends BaseServiceImpl<CustomerTemplat
     @Override
     public List<CustomerTemplateVo> getList(CustomerTemplateQuery query) {
         return this.baseMapper.getList(query);
+    }
+
+    @Override
+    public void templateDownload(Long id, HttpServletResponse response) {
+        CustomerTemplateVo template = getDetail(id);
+        if (Objects.isNull(template)) {
+            throw new CommonException("无效ID");
+        }
+        if(CollectionUtils.isEmpty(template.getFieldList())){
+            throw new CommonException("请添加字段");
+        }
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        String name = URLEncoder.encode(template.getName(), StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + name + ".xlsx");
+        List<String> requiredList = Lists.newArrayList();
+        List<List<String>> titles = template.getFieldList().stream().map(fieldInfo -> {
+            List<String> title = Lists.newArrayList();
+            if (Objects.equals(fieldInfo.getRequired(), 1)) {
+                requiredList.add(fieldInfo.getFieldName());
+            }
+            title.add(fieldInfo.getFieldLabel() + "(" +fieldInfo.getFieldName() + ")");
+            return title;
+        }).toList();
+        try {
+            EasyExcel.write(response.getOutputStream())
+                    .registerWriteHandler(new CommentWriteHandler(requiredList, "请填写必填项"))
+                    .head(titles)
+                    .sheet(template.getName())
+                    .doWrite(Lists.newArrayList());
+        } catch (Exception e) {
+            throw new CommonException("导出失败");
+        }
     }
 
     private Boolean checkName(String name) {

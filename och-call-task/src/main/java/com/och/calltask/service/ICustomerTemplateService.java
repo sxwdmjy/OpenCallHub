@@ -4,10 +4,10 @@ import com.github.pagehelper.PageInfo;
 import com.och.calltask.domain.query.CustomerFieldQuery;
 import com.och.calltask.domain.query.CustomerTemplateAddQuery;
 import com.och.calltask.domain.query.CustomerTemplateQuery;
-import com.och.calltask.domain.vo.CustomerTemplateListVo;
 import com.och.calltask.domain.vo.CustomerTemplateVo;
 import com.och.common.base.IBaseService;
 import com.och.calltask.domain.entity.CustomerTemplate;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -57,5 +57,12 @@ public interface ICustomerTemplateService extends IBaseService<CustomerTemplate>
      * @return 客户模板列表
      */
     List<CustomerTemplateVo> getList(CustomerTemplateQuery query);
+
+    /**
+     * 客户模板下载
+     * @param id 客户模板ID
+     * @param response 响应
+     */
+    void templateDownload(Long id, HttpServletResponse response);
 }
 

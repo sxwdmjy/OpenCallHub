@@ -1,11 +1,11 @@
 package com.och.calltask.service;
 
-import com.github.pagehelper.PageInfo;
 import com.och.calltask.domain.entity.CustomerSeas;
 import com.och.calltask.domain.query.CustomerSeasAddQuery;
 import com.och.calltask.domain.query.CustomerSeasQuery;
 import com.och.calltask.domain.vo.CustomerSeasVo;
 import com.och.common.base.IBaseService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -58,5 +58,12 @@ public interface ICustomerSeasService extends IBaseService<CustomerSeas> {
      * @param query 获取参数
      */
     List<CustomerSeasVo> getList(CustomerSeasQuery query);
+
+    /**
+     * 导入客户
+     * @param templateId 模板ID
+     * @param file 文件
+     */
+    void importCustomer(Long templateId, MultipartFile file);
 }
 

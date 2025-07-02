@@ -3,7 +3,6 @@ package com.och.calltask.service;
 import com.och.calltask.domain.entity.CustomerField;
 import com.och.calltask.domain.query.CustomerFieldAddQuery;
 import com.och.calltask.domain.query.CustomerFieldQuery;
-import com.och.calltask.domain.query.FieldQuery;
 import com.och.calltask.domain.vo.CustomerFieldVo;
 import com.och.common.base.IBaseService;
 

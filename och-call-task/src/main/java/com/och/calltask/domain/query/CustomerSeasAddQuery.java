@@ -26,8 +26,4 @@ public class CustomerSeasAddQuery {
 
     @Schema(description = "客户数据")
     private String customerInfo;
-
-
-    @Schema(description = "来源 0-手动创建 1-文件导入 2-API导入")
-    private Integer source;
 }

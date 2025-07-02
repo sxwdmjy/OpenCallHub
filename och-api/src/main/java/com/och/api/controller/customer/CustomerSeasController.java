@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -86,6 +87,15 @@ public class CustomerSeasController extends BaseController {
     public ResResult<List<CustomerSeasVo>> list(@RequestBody CustomerSeasQuery query) {
         List<CustomerSeasVo> list = customerSeasService.getList(query);
         return success(list);
+    }
+
+    @Log(title = "导入客户", businessType = BusinessTypeEnum.IMPORT)
+    @PreAuthorize("@authz.hasPerm('customer:seas:import')")
+    @Operation(summary = "导入客户", method = "POST")
+    @PostMapping("/import/{templateId}")
+    public ResResult importCustomer(@PathVariable("templateId") Long templateId, @RequestParam("file") MultipartFile file) {
+        customerSeasService.importCustomer(templateId, file);
+        return success();
     }
 
 }
