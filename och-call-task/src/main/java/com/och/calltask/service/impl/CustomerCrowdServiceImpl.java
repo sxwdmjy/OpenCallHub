@@ -1,6 +1,7 @@
 package com.och.calltask.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.calltask.domain.entity.CustomerCrowd;
 import com.och.calltask.domain.query.CustomerCrowdAddQuery;
@@ -15,6 +16,7 @@ import com.och.common.exception.CommonException;
 import com.och.common.utils.StringUtils;
 import com.och.system.service.ISysUserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +45,12 @@ public class CustomerCrowdServiceImpl extends BaseServiceImpl<CustomerCrowdMappe
             throw new CommonException("名称已存在");
         }
         CustomerCrowd customerCrowd = new CustomerCrowd();
-        BeanUtils.copyProperties(query, customerCrowd);
+        customerCrowd.setName(query.getName());
+        customerCrowd.setRemark(query.getRemark());
+        customerCrowd.setSwipe(JSONObject.toJSONString(query.getSwipe()));
+        customerCrowd.setStatus(query.getStatus());
+        customerCrowd.setType(query.getType());
+        customerCrowd.setProgress(1);
         save(customerCrowd);
     }
 
@@ -61,11 +68,8 @@ public class CustomerCrowdServiceImpl extends BaseServiceImpl<CustomerCrowdMappe
         if (StringUtils.isNotBlank(query.getRemark())) {
             crowd.setRemark(query.getRemark());
         }
-        if (StringUtils.isNotBlank(query.getSwipe())) {
-            crowd.setSwipe(query.getSwipe());
-        }
-        if (Objects.nonNull(query.getAddition())) {
-            crowd.setAddition(query.getAddition());
+        if (CollectionUtils.isNotEmpty(query.getSwipe())) {
+            crowd.setSwipe(JSONObject.toJSONString(query.getSwipe()));
         }
         if (Objects.nonNull(query.getStatus())) {
             crowd.setStatus(query.getStatus());

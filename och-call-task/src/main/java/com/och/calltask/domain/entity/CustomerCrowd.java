@@ -40,16 +40,6 @@ public class CustomerCrowd extends BaseEntity implements Serializable {
     @TableField("name")
     private String name;
     
-    
-     
-    /**
-     *  是否允许追加 0-不允许 1-允许 
-     */
-    @Schema(description = "是否允许追加 0-不允许 1-允许")
-    @TableField("addition")
-    private Integer addition;
-    
-    
      
     /**
      *  是否启用 0-否 1-是 

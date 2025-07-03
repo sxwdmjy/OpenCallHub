@@ -5,13 +5,12 @@
     <resultMap type="com.och.calltask.domain.vo.CustomerCrowdVo" id="CustomerCrowdMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="addition" column="addition" jdbcType="INTEGER"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="progress" column="progress" jdbcType="INTEGER"/>
         <result property="reason" column="reason" jdbcType="VARCHAR"/>
         <result property="crowdNum" column="crowd_num" jdbcType="INTEGER"/>
         <result property="type" column="type" jdbcType="INTEGER"/>
-        <result property="swipe" column="swipe" typeHandler="com.och.system.handler.JsonObjectTypeHandler"/>
+        <result property="swipe" column="swipe" typeHandler="com.och.system.handler.ConditionObjectTypeHandler"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
@@ -22,7 +21,6 @@
   <sql id="selectCustomerCrowdInfoVo">
       select id,
              name,
-             addition,
              status,
              type,
              progress,
@@ -49,27 +47,29 @@
         <include refid="selectCustomerCrowdInfoVo"/>
         <where>
             del_flag = 0
-                     <if test="name != null">
-                        and name like concat('%',#{name},'%')
-                    </if>
-                      <if test="status != null">
-                          and status = #{status}
-                      </if>
-                      <if test="progress != null">
-                          and progress = #{progress}
-                      </if>
-                      <if test="type != null">
-                          and type = #{type}
-                      </if>
-                      <if test="addition != null">
-                          and addition = #{addition}
-                      </if>
-                      <if test="beginTime != null">
-                          and create_time &gt;= #{createTime}
-                      </if>
-                      <if test="endTime != null">
-                          and create_time &lt;= #{endTime}
-                      </if>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="progress != null and progress.size() > 0 ">
+                and progress in
+                <foreach item="item" collection="progress" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="beginTime != null">
+                and create_time &gt;= #{createTime}
+            </if>
+            <if test="endTime != null">
+                and create_time &lt;= #{endTime}
+            </if>
         </where>
     </select>
 

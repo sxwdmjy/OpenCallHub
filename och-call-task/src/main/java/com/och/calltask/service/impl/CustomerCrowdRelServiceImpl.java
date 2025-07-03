@@ -6,6 +6,8 @@ import com.och.calltask.domain.entity.CustomerCrowdRel;
 import com.och.calltask.service.ICustomerCrowdRelService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 人群客户关联表(CustomerCrowdRel)表服务实现类
  *
@@ -15,5 +17,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerCrowdRelServiceImpl extends BaseServiceImpl<CustomerCrowdRelMapper, CustomerCrowdRel> implements ICustomerCrowdRelService {
 
+    @Override
+    public void batchUpsert(List<CustomerCrowdRel> relList) {
+        this.baseMapper.batchUpsert(relList);
+    }
 }
 

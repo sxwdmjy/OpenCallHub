@@ -31,4 +31,7 @@ public class CustomerCrowdQuery extends BaseQuery {
 
     @Schema(description = "更新方式 1-手动 2-自动")
     private Integer type;
+
+    @Schema(description = "进度 1-待计算 2-计算中 3-计算完成 4-计算失败")
+    private List<Integer> progress;
 }

@@ -28,7 +28,7 @@
         <hutool.version>5.8.21</hutool.version>
         <forest.version>1.6.4</forest.version>
         <easyexcel.version>3.1.1</easyexcel.version>
-        <transmittable-thread-local.version>2.12.2</transmittable-thread-local.version>
+        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <jedis.version>3.8.0</jedis.version>
         <jackon-dataformat.version>2.17.2</jackon-dataformat.version>
         <lombok.version>1.18.32</lombok.version>

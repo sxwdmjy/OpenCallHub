@@ -2,12 +2,11 @@ package com.och.calltask.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.och.calltask.domain.entity.OchFieldInfo;
+import com.och.calltask.domain.entity.CustomerField;
 import com.och.calltask.domain.query.CustomerFieldAddQuery;
 import com.och.calltask.domain.query.CustomerFieldQuery;
 import com.och.calltask.domain.vo.CustomerFieldVo;
 import com.och.calltask.mapper.CustomerFieldMapper;
-import com.och.calltask.domain.entity.CustomerField;
 import com.och.calltask.service.ICustomerFieldService;
 import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
@@ -15,7 +14,6 @@ import com.och.common.enums.DeleteStatusEnum;
 import com.och.common.exception.CommonException;
 import com.och.common.utils.StringUtils;
 import com.och.system.service.ISysUserService;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -41,7 +39,7 @@ public class CustomerFieldServiceImpl extends BaseServiceImpl<CustomerFieldMappe
     @Override
     public void add(CustomerFieldAddQuery query) {
         Boolean checkFieldName = checkFieldName(query.getFieldName());
-        if(checkFieldName){
+        if (checkFieldName) {
             throw new CommonException("字段名称已存在");
         }
         CustomerField customerField = new CustomerField();
@@ -50,31 +48,30 @@ public class CustomerFieldServiceImpl extends BaseServiceImpl<CustomerFieldMappe
     }
 
 
-
     @Override
     public void edit(CustomerFieldAddQuery query) {
         CustomerField field = getById(query.getId());
-        if(Objects.isNull(field)){
+        if (Objects.isNull(field)) {
             throw new CommonException("无效ID");
         }
-        if(!StringUtils.equals(field.getFieldName(), query.getFieldName()) && checkFieldName(query.getFieldName())){
+        if (!StringUtils.equals(field.getFieldName(), query.getFieldName()) && checkFieldName(query.getFieldName())) {
             throw new CommonException("字段名称已存在");
-        }else if (StringUtils.isNotBlank(query.getFieldName())){
+        } else if (StringUtils.isNotBlank(query.getFieldName())) {
             field.setFieldName(query.getFieldName());
         }
-        if(StringUtils.isNotBlank(query.getFieldLabel())){
+        if (StringUtils.isNotBlank(query.getFieldLabel())) {
             field.setFieldLabel(query.getFieldLabel());
         }
-        if(Objects.nonNull(query.getFieldType())){
+        if (Objects.nonNull(query.getFieldType())) {
             field.setFieldType(query.getFieldType());
         }
-        if(Objects.nonNull(query.getRequired())){
+        if (Objects.nonNull(query.getRequired())) {
             field.setRequired(query.getRequired());
         }
-        if(StringUtils.isNotBlank(query.getOptions())){
+        if (StringUtils.isNotBlank(query.getOptions())) {
             field.setOptions(query.getOptions());
         }
-        if(Objects.nonNull(query.getStatus())){
+        if (Objects.nonNull(query.getStatus())) {
             field.setStatus(query.getStatus());
         }
         updateById(field);
@@ -83,7 +80,7 @@ public class CustomerFieldServiceImpl extends BaseServiceImpl<CustomerFieldMappe
     @Override
     public CustomerFieldVo getDetail(Long id) {
         CustomerField field = getById(id);
-        if(Objects.isNull(field)){
+        if (Objects.isNull(field)) {
             throw new CommonException("无效ID");
         }
         CustomerFieldVo fieldVo = new CustomerFieldVo();

@@ -17,5 +17,19 @@
      
    </sql>
 
+    <insert id="batchUpsert">
+        INSERT INTO customer_crowd_rel (
+        crowd_id,
+        customer_id,
+        create_time,
+        update_time
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.crowdId}, #{item.customerId}, NOW(), NOW())
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        update_time = NOW()
+    </insert>
+
 </mapper>
 

@@ -6,9 +6,9 @@ import com.och.calltask.service.ICallTaskService;
 import com.och.common.enums.CallTaskStatusEnum;
 import com.och.common.enums.TaskTypeEnum;
 import com.och.common.utils.StringUtils;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
@@ -27,6 +27,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 @Component
+@DisallowConcurrentExecution
 public class PredictiveDialerJob extends QuartzJobBean {
 
     private final ICallTaskService callTaskService;

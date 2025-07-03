@@ -56,7 +56,7 @@ public class FsClient {
 
     private Map<String, Client> fsClientMap = new ConcurrentHashMap<>();
 
-    private ScheduledExecutorService checkFsThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("check-fs-pool-%d"));
+    private ScheduledExecutorService checkFsThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("check-fs-pool-"));
 
 
     private final FsClientProperties clientProperties;

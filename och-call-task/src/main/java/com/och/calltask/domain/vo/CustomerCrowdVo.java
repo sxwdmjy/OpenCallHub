@@ -1,11 +1,13 @@
 package com.och.calltask.domain.vo;
 
 
-import com.alibaba.fastjson2.JSONObject;
+import com.och.common.domain.ConditionInfo;
 import com.och.system.domain.vo.BaseVo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 /**
  * @author danmo
@@ -23,9 +25,6 @@ public class CustomerCrowdVo extends BaseVo {
     @Schema(description = "人群名称")
     private String name;
 
-    @Schema(description = "是否允许追加 0-不允许 1-允许")
-    private Integer addition;
-
     @Schema(description = "是否启用 0-禁用 1-启用")
     private Integer status;
 
@@ -33,7 +32,7 @@ public class CustomerCrowdVo extends BaseVo {
     private Integer type;
 
     @Schema(description = "策略条件")
-    private JSONObject swipe;
+    private List<ConditionInfo> swipe;
 
     @Schema(description = "备注")
     private String remark;

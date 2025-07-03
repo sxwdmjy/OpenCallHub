@@ -68,7 +68,6 @@ public class SecurityConfig {
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 添加身份验证
-                // TODO 添加身份验证1
                 .authenticationProvider(authenticationProvider())
                 // 添加JWT过滤器
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -80,12 +79,9 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
     public AuthenticationProvider authenticationProvider() {
         // 创建一个用户认证提供者
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(new BCryptPasswordEncoder());
-        // 设置用户相信信息，可以从数据库中读取、或者缓存、或者配置文件
-        authProvider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         // 设置加密机制，若想要尝试对用户进行身份验证，我们需要知道使用的是什么编码
         return authProvider;
