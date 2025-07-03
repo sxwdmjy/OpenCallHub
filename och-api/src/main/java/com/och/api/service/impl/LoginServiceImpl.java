@@ -51,8 +51,6 @@ public class LoginServiceImpl implements ILoginService {
 
     @Override
     public LoginUserVo login(LoginQuery query) {
-        HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
-        HttpSession httpSession = request.getSession();
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 query.getUsername(),
                 query.getPassword()
@@ -67,8 +65,6 @@ public class LoginServiceImpl implements ILoginService {
                 .withClaim(SecurityConstants.TIME,DateUtil.current())
                 .sign(Algorithm.HMAC512(TokenConstants.SECRET));
         redisService.setCacheObject(ACCESS_TOKEN + loginUserInfo.getUserId(), jwtToken, EXPIRE_TIME, TimeUnit.MINUTES);
-        httpSession.removeAttribute("ImageX");
-        httpSession.removeAttribute("ImageY");
         // 将token返回响应
         return LoginUserVo.builder()
                 .accessToken(jwtToken)

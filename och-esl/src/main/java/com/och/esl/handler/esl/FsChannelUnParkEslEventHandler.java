@@ -41,6 +41,12 @@ public class FsChannelUnParkEslEventHandler extends AbstractFsEslEventHandler {
             return;
         }
         channelInfo.setRingEndTime(event.getEventDateTimestamp()/1000);
+        if(Objects.equals(1,channelInfo.getDirectionType())){
+            callInfo.setCallerRingEndTime(channelInfo.getRingEndTime());
+        }
+        if(Objects.equals(2,channelInfo.getDirectionType())){
+            callInfo.setCalleeRingEndTime(channelInfo.getRingEndTime());
+        }
         callInfo.setChannelInfoMap(uniqueId,channelInfo);
         ifsCallCacheService.saveCallInfo(callInfo);
     }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.calltask.mapper.CustomerTemplateFieldRelMapper">
+
+    <resultMap type="com.och.calltask.domain.entity.CustomerTemplateFieldRel" id="CustomerTemplateFieldRelMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="templateId" column="template_id" jdbcType="INTEGER"/>
+        <result property="fieldId" column="field_id" jdbcType="INTEGER"/>
+        <result property="hidden" column="hidden" jdbcType="INTEGER"/>
+        <result property="sort" column="sort" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+  <sql id="selectCustomerTemplateFieldRelInfoVo">
+     
+   </sql>
+
+</mapper>
+

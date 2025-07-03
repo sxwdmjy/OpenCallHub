@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.calltask.mapper.CustomerTemplateMapper">
+
+    <resultMap type="com.och.calltask.domain.entity.CustomerTemplate" id="CustomerTemplateMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="CustomerTemplateVoMap" type="com.och.calltask.domain.vo.CustomerTemplateVo">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="fieldList" ofType="com.och.calltask.domain.vo.CustomerTemplateFieldRelVo">
+            <result property="id" column="rel_id" jdbcType="BIGINT"/>
+            <result property="fieldId" column="field_id" jdbcType="BIGINT"/>
+            <result property="fieldLabel" column="field_label" jdbcType="VARCHAR"/>
+            <result property="fieldName" column="field_name" jdbcType="VARCHAR"/>
+            <result property="fieldType" column="field_type" jdbcType="INTEGER"/>
+            <result property="hidden" column="hidden" jdbcType="INTEGER"/>
+            <result property="sort" column="sort" jdbcType="INTEGER"/>
+            <result property="required" column="required" jdbcType="INTEGER"/>
+            <result property="options" column="options" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="getDetail" resultMap="CustomerTemplateVoMap">
+        select ct.id,
+               ct.name,
+               ct.status,
+               ct.create_by,
+               ct.create_time,
+               ct.update_by,
+               ct.update_time,
+               ct.del_flag,
+               ctfr.id as rel_id,
+               ctfr.field_id,
+               ctfr.hidden,
+               ctfr.sort,
+               cf.field_label as field_label,
+               cf.field_name as field_name,
+               cf.field_type,
+               cf.options,
+               cf.required
+        from customer_template ct
+                 left join customer_template_field_rel ctfr on ct.id = ctfr.template_id and ctfr.del_flag = 0
+                 left join customer_field cf on ctfr.field_id = cf.id and cf.del_flag = 0
+        <where>
+            ct.id = #{id}
+        </where>
+    </select>
+
+    <select id="getIdsByQuery" resultType="java.lang.Long">
+        select ct.id
+        from customer_template ct
+        left join customer_template_field_rel ctfr on ct.id = ctfr.template_id and ctfr.del_flag = 0
+        left join customer_field cf on ctfr.field_id = cf.id and cf.del_flag = 0
+        <where>
+            <if test="templateIds != null and templateIds.size() > 0">
+                and ct.id in
+                <foreach item="item" collection="templateIds" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="templateName != null and templateName != ''">
+                and ct.name like concat('%',#{templateName},'%')
+            </if>
+            <if test="status != null">
+                and ct.status = #{status}
+            </if>
+            <if test="beginTime != null">
+                and ct.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and ct.create_time &lt;= #{endTime}
+            </if>
+            and ct.del_flag = 0
+        </where>
+        group by ct.id
+    </select>
+
+    <select id="getList" resultMap="CustomerTemplateVoMap">
+        select ct.id,
+        ct.name,
+        ct.status,
+        ct.create_by,
+        ct.create_time,
+        ct.update_by,
+        ct.update_time,
+        ct.del_flag,
+        ctfr.id as rel_id,
+        ctfr.field_id,
+        ctfr.hidden,
+        ctfr.sort,
+        cf.field_label as field_label,
+        cf.field_name as field_name,
+        cf.field_type,
+        cf.options,
+        cf.required
+        from customer_template ct
+        left join customer_template_field_rel ctfr on ct.id = ctfr.template_id and ctfr.del_flag = 0
+        left join customer_field cf on ctfr.field_id = cf.id and cf.del_flag = 0
+        <where>
+            <if test="templateIds != null and templateIds.size() > 0">
+                and ct.id in
+                <foreach item="item" collection="templateIds" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="templateName != null and templateName != ''">
+                and ct.name like concat('%',#{templateName},'%')
+            </if>
+            <if test="status != null">
+                and ct.status = #{status}
+            </if>
+            <if test="beginTime != null">
+                and ct.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and ct.create_time &lt;= #{endTime}
+            </if>
+            and ct.del_flag = 0
+        </where>
+    </select>
+
+
+</mapper>
+
