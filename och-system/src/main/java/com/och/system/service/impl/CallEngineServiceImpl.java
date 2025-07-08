@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
-import com.och.system.domain.CallEngine;
+import com.och.system.domain.entity.CallEngine;
 import com.och.system.domain.query.engine.CallEngineAddQuery;
 import com.och.system.domain.query.engine.CallEngineQuery;
 import com.och.system.mapper.CallEngineMapper;

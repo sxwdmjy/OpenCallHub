@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.calltask.mapper.CallTaskAssignmentMapper">
+
+    <resultMap type="com.och.calltask.domain.CallTaskAssignment" id="CallTaskAssignmentMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="taskId" column="task_id" jdbcType="INTEGER"/>
+        <result property="customerId" column="customer_id" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="agentId" column="agent_id" jdbcType="INTEGER"/>
+        <result property="assignment" column="assignment" jdbcType="TIMESTAMP"/>
+        <result property="callStatus" column="call_status" jdbcType="INTEGER"/>
+        <result property="completedTime" column="completed_time" jdbcType="TIMESTAMP"/>
+        <result property="attemptCount" column="attempt_count" jdbcType="INTEGER"/>
+        <result property="scheduledTime" column="scheduled_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+  <sql id="selectCallTaskAssignmentInfoVo">
+     
+   </sql>
+
+</mapper>
+

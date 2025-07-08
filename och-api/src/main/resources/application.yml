@@ -56,7 +56,42 @@ spring:
 #        acknowledge-mode: manual
 #        retry:
 #          enabled: true
+  ai:
+    dashscope:
+      api-key: 23
+    chat:
+      model: qwq-plus
 
+    deepseek:
+      api-key: 123
+      base-url: "https://api.deepseek.com"
+      chat:
+        options:
+          model: deepseek-chat
+      embedding:
+        enabled: false
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: och-clusteredScheduler
+            instanceId: AUTO
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadNamePrefix: Quartz-
+          jobStore:
+            class: org.springframework.scheduling.quartz.LocalDataSourceJobStore
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            useProperties: false
+            clusterCheckinInterval: 1000
 
 swagger:
   title: 呼叫中心系统
@@ -110,6 +145,16 @@ system:
         secretKey: 123
       tts:
         appKey: 123
+
+# 文件服务端口配置
+file-server:
+  port: 9527
+  bossThreads: 1
+  workerThreads: 4
+  heartbeat:
+    maxLostAttempts: 3
+    checkInterval: 5000
+
 
 # 滑块验证码配置
 captcha:

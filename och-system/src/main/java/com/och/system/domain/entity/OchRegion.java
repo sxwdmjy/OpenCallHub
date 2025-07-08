@@ -1,6 +1,7 @@
 package com.och.system.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -26,7 +27,7 @@ public class OchRegion implements Serializable {
      * 行政代码
      */
     @Schema(description = "行政代码")
-    @TableField("region_id")
+    @TableId("region_id")
     private String regionId;
 
 

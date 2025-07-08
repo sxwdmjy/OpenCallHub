@@ -68,6 +68,12 @@
             <if test="userName != null and userName != ''">
                 and lu.user_name like concat('%',#{userName},'%')
             </if>
+            <if test="status != null">
+                and sa.status = #{status}
+            </if>
+            <if test="onlineStatus != null">
+                and sa.online_status = #{onlineStatus}
+            </if>
             and sa.del_flag = 0
         </where>
     </select>

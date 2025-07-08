@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.och.common.annotation.EslEventName;
 import com.och.common.constant.EslEventNames;
 import com.och.common.domain.CallInfo;
+import com.och.common.domain.DetectedSpeech;
 import com.och.esl.factory.AbstractFsEslEventHandler;
 import com.och.esl.utils.EslEventUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -48,14 +49,14 @@ public class FsDetectedSpeechEslEventHandler extends AbstractFsEslEventHandler {
             }
             resultStr.append(new String(array, StandardCharsets.UTF_8));
         }
-        /*LfsDetectedSpeech speech = XmlUtil.xmlToBean(XmlUtil.parseXml(resultStr.toString()).getFirstChild(), LfsDetectedSpeech.class);
+        DetectedSpeech speech = XmlUtil.xmlToBean(XmlUtil.parseXml(resultStr.toString()).getFirstChild(), DetectedSpeech.class);
         log.info("----------speech:{}",JSONObject.toJSONString(speech));
         fsClient.detectSpeechResume(address,callInfo.getCallId(),uniqueId);
 
         if(Objects.nonNull(speech.getInterpretation().getInstance())){
-            LfsDetectedSpeech.Instance instance = speech.getInterpretation().getInstance();
+            DetectedSpeech.Instance instance = speech.getInterpretation().getInstance();
             String content = instance.getResult();
-
-        }*/
+            log.info("======================:{}", content);
+        }
     }
 }
