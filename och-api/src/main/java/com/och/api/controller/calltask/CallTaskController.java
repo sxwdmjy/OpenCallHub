@@ -28,7 +28,7 @@ import java.util.List;
 @Tag(name = "呼叫任务管理")
 @RestController
 @RequestMapping("/call/task/v1")
-public class OchCallTaskController extends BaseController {
+public class CallTaskController extends BaseController {
 
     @Autowired
     private ICallTaskService callTaskService;

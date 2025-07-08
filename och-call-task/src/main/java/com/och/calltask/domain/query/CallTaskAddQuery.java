@@ -2,12 +2,14 @@ package com.och.calltask.domain.query;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.och.system.domain.vo.agent.SipSimpleAgent;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 新增任务入参
@@ -42,6 +44,7 @@ public class CallTaskAddQuery {
     @Schema(description = "任务类型(0-预测 1-预览)")
     private Integer type;
 
+
     /**
      * 任务优先级
      */
@@ -61,7 +64,6 @@ public class CallTaskAddQuery {
     /**
      * 任务结束时间
      */
-    @NotNull(message = "任务结束时间不能为空")
     @Schema(description = "任务结束时间")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date endDay;
@@ -92,27 +94,46 @@ public class CallTaskAddQuery {
 
 
     /**
-     * 数据源ID
+     * 人群ID
      */
-    @NotNull(message = "数据源ID不能为空")
-    @Schema(description = "数据源ID")
-    private Long sourceId;
+    @NotNull(message = "人群ID不能为空")
+    @Schema(description = "人群ID")
+    private Long crowdId;
+
+
+    /**
+     * 分配方式 1-轮流 2-空闲
+     */
+    @Schema(description = "分配方式 1-轮流 2-空闲")
+    private Integer assignmentType;
+
+
+    /**
+     * 是否有限分配: 1-否 2-是
+     */
+    @Schema(description = "是否有限分配: 1-否 2-是")
+    private Integer isPriority = 1;
+
+
+    /**
+     * 接待个数限制
+     */
+    @Schema(description = "接待个数限制")
+    private Integer receiveLimit;
+
+
+    /**
+     * 执行坐席列表（为空全部坐席）
+     */
+    @Schema(description = "执行坐席列表（为空全部坐席）")
+    private List<SipSimpleAgent> agentList;
 
 
     /**
      * 自动完成类型(0-是 1-否)
      */
-    @NotNull(message = "自动完成类型不能为空")
     @Schema(description = "自动完成类型(0-是 1-否)")
     private Integer completeType;
-
-
-    /**
-     * 号码模式(0-轮询)
-     */
-    @NotNull(message = "号码模式不能为空")
-    @Schema(description = "号码模式(0-轮询)")
-    private Integer phoneMode;
 
 
     /**
@@ -126,7 +147,6 @@ public class CallTaskAddQuery {
     /**
      * 转接类型(0-技能组 1-ivr 3-机器人)
      */
-    @NotNull(message = "转接类型不能为空")
     @Schema(description = "转接类型(0-技能组 1-ivr 3-机器人)")
     private Integer transferType;
 
@@ -134,17 +154,8 @@ public class CallTaskAddQuery {
     /**
      * 转接类型值
      */
-    @NotBlank(message = "转接类型值不能为空")
     @Schema(description = "转接类型值")
     private String transferValue;
-
-
-    /**
-     * 轮次配置
-     */
-    @NotBlank(message = "轮次配置不能为空")
-    @Schema(description = "轮次配置")
-    private String roundsConf;
 
 
     /**
@@ -164,7 +175,7 @@ public class CallTaskAddQuery {
     /**
      * 重呼间隔时长
      */
-    @Schema(description = "重呼间隔时长（秒）")
+    @Schema(description = "重呼间隔时长")
     private Integer recallTime;
 
 

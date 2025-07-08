@@ -1,7 +1,6 @@
 package com.och.calltask.domain;
 
 
-import com.och.calltask.domain.vo.CustomerCrowdVo;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -14,10 +13,11 @@ import org.springframework.context.ApplicationEvent;
 @Getter
 public class CustomerCrowdEvent extends ApplicationEvent {
 
-    private final CustomerCrowdVo customerCrowd;
+    private final CustomerCrowdEventParam customerCrowd;
 
-    public CustomerCrowdEvent(CustomerCrowdVo customerCrowd) {
-        super(customerCrowd.getId());
+    public CustomerCrowdEvent(CustomerCrowdEventParam customerCrowd) {
+        super(customerCrowd);
         this.customerCrowd = customerCrowd;
     }
+
 }

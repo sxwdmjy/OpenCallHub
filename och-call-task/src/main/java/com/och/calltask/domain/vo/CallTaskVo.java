@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.och.system.domain.vo.BaseVo;
+import com.och.system.domain.vo.agent.SipSimpleAgent;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 呼叫任务返回参数
@@ -103,32 +105,52 @@ public class CallTaskVo extends BaseVo {
     private String workCycle;
 
 
+    /**
+     *  人群ID
+     */
+    @Schema(description = "人群ID")
+    @TableField("crowd_id")
+    private Long crowdId;
+
+    @Schema(description = "人群名称")
+    private String crowdName;
+
 
     /**
-     *  数据源ID
+     *  分配方式 1-轮流 2-空闲
      */
-    @Schema(description = "数据源ID")
-    private Long sourceId;
-
-    @Schema(description = "数据源名称")
-    private String sourceName;
+    @Schema(description = "分配方式 1-轮流 2-空闲")
+    private Integer assignmentType;
 
 
+
+    /**
+     *  是否有限分配: 1-否 2-是
+     */
+    @Schema(description = "是否有限分配: 1-否 2-是")
+    private Integer isPriority;
+
+
+
+    /**
+     *  接待个数限制
+     */
+    @Schema(description = "接待个数限制")
+    private Integer receiveLimit;
+
+
+
+    /**
+     *  执行坐席列表（为空全部坐席）
+     */
+    @Schema(description = "执行坐席列表（为空全部坐席）")
+    private List<SipSimpleAgent> agentList;
 
     /**
      *  自动完成类型(0-是 1-否)
      */
     @Schema(description = "自动完成类型(0-是 1-否)")
     private Integer completeType;
-
-
-
-    /**
-     *  号码模式(0-轮询)
-     */
-    @Schema(description = "号码模式(0-轮询)")
-    private Integer phoneMode;
-
 
 
     /**
@@ -149,7 +171,6 @@ public class CallTaskVo extends BaseVo {
     private Integer transferType;
 
 
-
     /**
      *  转接类型值
      */
@@ -159,22 +180,6 @@ public class CallTaskVo extends BaseVo {
 
     @Schema(description = "转接类型值名称")
     private String transferValueName;
-
-
-    /**
-     *  轮次配置
-     */
-    @Schema(description = "轮次配置")
-    private String roundsConf;
-
-
-
-    /**
-     *  当前轮次
-     */
-    @Schema(description = "当前轮次")
-    private Integer currentRound;
-
 
 
     /**

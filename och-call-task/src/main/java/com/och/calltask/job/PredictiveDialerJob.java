@@ -42,11 +42,19 @@ public class PredictiveDialerJob extends QuartzJobBean {
         try {
             CallTask callTask = callTaskService.getById(taskId);
             if (Objects.isNull(callTask)) {
-                log.warn("任务不存在,任务ID：{}", taskId);
+                log.info("任务不存在,任务ID：{}", taskId);
                 return;
             }
             if (CallTaskStatusEnum.NOT_START.getCode().equals(callTask.getStatus())) {
                 callTaskService.updateStatus(Long.valueOf(taskId), CallTaskStatusEnum.PROCESSING);
+            }
+            if (CallTaskStatusEnum.END.getCode().equals(callTask.getStatus())) {
+                log.info("任务已结束,任务ID：{}", taskId);
+                return;
+            }
+            if (CallTaskStatusEnum.PAUSE.getCode().equals(callTask.getStatus())) {
+                log.info("任务已暂停,任务ID：{}", taskId);
+                return;
             }
             String handler = TaskTypeEnum.getHandler(callTask.getType());
             CallTaskHandler callTaskHandler = callTaskHandlerMap.get(handler);

@@ -2,8 +2,10 @@ package com.och.api.controller.customer;
 
 
 import com.github.pagehelper.PageInfo;
+import com.och.calltask.domain.query.CrowdCustomerQuery;
 import com.och.calltask.domain.query.CustomerCrowdAddQuery;
 import com.och.calltask.domain.query.CustomerCrowdQuery;
+import com.och.calltask.domain.vo.CrowdCustomerVo;
 import com.och.calltask.domain.vo.CustomerCrowdVo;
 import com.och.calltask.service.ICustomerCrowdService;
 import com.och.common.annotation.Log;
@@ -86,6 +88,15 @@ public class CustomerCrowdController extends BaseController {
     public ResResult<List<CustomerCrowdVo>> list(@RequestBody CustomerCrowdQuery query) {
         List<CustomerCrowdVo> list = customerCrowdService.getList(query);
         return success(list);
+    }
+
+    @Log(title = "人群客户列表(分页)", businessType = BusinessTypeEnum.SELECT)
+    @PreAuthorize("@authz.hasPerm('customer:crowd:customer:page:list')")
+    @Operation(summary = "人群客户列表(分页)", method = "POST")
+    @PostMapping("/customer/page/list")
+    public ResResult<PageInfo<CrowdCustomerVo>> customerPageList(@RequestBody @Validated CrowdCustomerQuery query) {
+        List<CrowdCustomerVo> list = customerCrowdService.pageCustomerList(query);
+        return success(new PageInfo<>(list));
     }
 
 }

@@ -32,9 +32,6 @@ public class CallTaskQuery extends BaseQuery {
     @Schema(description = "任务类型(0-预测 1-预览)")
     private Integer type;
 
-    @Schema(description = "任务优先级")
-    private Integer priority;
-
     @Schema(description = "任务开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startDay;
@@ -43,13 +40,9 @@ public class CallTaskQuery extends BaseQuery {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date endDay;
 
-    @Schema(description = "数据源ID")
-    private Long sourceId;
+    @Schema(description = "人群ID")
+    private List<Long> crowdId;
 
     @Schema(description = "自动完成类型(0-是 1-否)")
     private Integer completeType;
-
-    @Schema(description = "转接类型(0-技能组 1-ivr 3-机器人)")
-    private Integer transferType;
-
 }

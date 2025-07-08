@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.och.calltask.mapper.CallTaskMapper">
 
-    <resultMap type="com.och.calltask.domain.entity.CallTask" id="CallTaskMap">
+    <resultMap type="com.och.calltask.domain.vo.CallTaskVo" id="CallTaskMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="type" column="type" jdbcType="INTEGER"/>
@@ -13,14 +13,15 @@
         <result property="sTime" column="s_time" jdbcType="VARCHAR"/>
         <result property="eTime" column="e_time" jdbcType="VARCHAR"/>
         <result property="workCycle" column="work_cycle" jdbcType="VARCHAR"/>
-        <result property="sourceId" column="source_id" jdbcType="INTEGER"/>
+        <result property="crowdId" column="crowd_id" jdbcType="INTEGER"/>
+        <result property="assignmentType" column="assignment_type" jdbcType="INTEGER"/>
+        <result property="isPriority" column="is_priority" jdbcType="INTEGER"/>
+        <result property="receiveLimit" column="receive_limit" jdbcType="INTEGER"/>
+<!--        <result property="agentList" column="agent_list" jdbcType="VARCHAR"/>-->
         <result property="completeType" column="complete_type" jdbcType="INTEGER"/>
-        <result property="phoneMode" column="phone_mode" jdbcType="INTEGER"/>
         <result property="phonePoolId" column="phone_pool_id" jdbcType="INTEGER"/>
         <result property="transferType" column="transfer_type" jdbcType="INTEGER"/>
         <result property="transferValue" column="transfer_value" jdbcType="VARCHAR"/>
-        <result property="roundsConf" column="rounds_conf" jdbcType="VARCHAR"/>
-        <result property="currentRound" column="current_round" jdbcType="INTEGER"/>
         <result property="recall" column="recall" jdbcType="INTEGER"/>
         <result property="recallNum" column="recall_num" jdbcType="INTEGER"/>
         <result property="recallTime" column="recall_time" jdbcType="INTEGER"/>
@@ -29,14 +30,13 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
     </resultMap>
 
-  <sql id="selectCallTaskInfoVo">
-     
-   </sql>
+    <sql id="selectCallTaskInfoVo">
 
-    <select id="getList" resultType="com.och.calltask.domain.vo.CallTaskVo">
+    </sql>
+
+    <select id="getList" resultMap="CallTaskMap">
         select
             ct.id,
             ct.name,
@@ -48,14 +48,15 @@
             ct.s_time,
             ct.e_time,
             ct.work_cycle,
-            ct.source_id,
+            ct.crowd_id,
+            ct.assignment_type,
+            ct.is_priority,
+            ct.receive_limit,
+            ct.agent_list,
             ct.complete_type,
-            ct.phone_mode,
             ct.phone_pool_id,
             ct.transfer_type,
             ct.transfer_value,
-            ct.rounds_conf,
-            ct.current_round,
             ct.recall,
             ct.recall_num,
             ct.recall_time,
@@ -65,11 +66,11 @@
             ct.update_by,
             ct.update_time,
             ct.del_flag,
-            ods.name as source_name,
+            cc.name as crowd_name,
             cdp.name as phone_pool_name
         from call_task ct
-                 left join och_data_source ods on ct.source_id = ods.id
-                 left join call_display_pool cdp on ct.phone_pool_id = cdp.id
+        left join customer_crowd cc on ct.crowd_id = cc.id
+        left join call_display_pool cdp on ct.phone_pool_id = cdp.id
         <where>
             <if test="id != null">
                 and ct.id = #{id}
@@ -86,25 +87,21 @@
             <if test="type != null">
                 and ct.type = #{type}
             </if>
-            <if test="priority != null">
-                and ct.priority = #{priority}
-            </if>
             <if test="startDay != null">
-                and ct.start_day &gt;=  #{startDay}
+                and ct.start_day &gt;= #{startDay}
             </if>
             <if test="endDay != null">
                 and ct.end_day &lt;= #{endDay}
             </if>
-            <if test="sourceId != null">
-                and ct.source_id = #{sourceId}
+            <if test="crowdId != null">
+                and ct.crowd_id = #{crowdId}
             </if>
             <if test="completeType != null">
                 and ct.complete_type = #{completeType}
             </if>
-            <if test="transferType != null">
-                and ct.transfer_type = #{transferType}
-            </if>
+            and ct.del_flag = 0
         </where>
+        order by ct.id desc
     </select>
 
 </mapper>

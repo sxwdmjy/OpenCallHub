@@ -5,7 +5,9 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.calltask.domain.entity.CustomerCrowd;
 import com.och.calltask.domain.query.CustomerCrowdAddQuery;
+import com.och.calltask.domain.query.CrowdCustomerQuery;
 import com.och.calltask.domain.query.CustomerCrowdQuery;
+import com.och.calltask.domain.vo.CrowdCustomerVo;
 import com.och.calltask.domain.vo.CustomerCrowdVo;
 import com.och.calltask.mapper.CustomerCrowdMapper;
 import com.och.calltask.service.ICustomerCrowdService;
@@ -17,7 +19,6 @@ import com.och.common.utils.StringUtils;
 import com.och.system.service.ISysUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,6 +123,16 @@ public class CustomerCrowdServiceImpl extends BaseServiceImpl<CustomerCrowdMappe
     @Override
     public List<CustomerCrowdVo> getList(CustomerCrowdQuery query) {
         return this.baseMapper.getList(query);
+    }
+
+    @Override
+    public List<CrowdCustomerVo> pageCustomerList(CrowdCustomerQuery query) {
+        super.startPage(query.getPageIndex(), query.getPageSize());
+        List<CrowdCustomerVo> list = this.baseMapper.pageCustomerList(query);
+        if (CollectionUtil.isEmpty(list)) {
+            sysUserService.decorate(list);
+        }
+        return list;
     }
 
     /**

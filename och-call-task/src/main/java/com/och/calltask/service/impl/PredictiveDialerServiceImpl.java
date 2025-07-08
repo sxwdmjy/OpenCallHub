@@ -35,7 +35,7 @@ public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
 
     @Override
     public void createTask(Long taskId, Date startDay, Date endDay, String sTime, String eTime, String workCycle) {
-        log.info("开始创建预测外呼任务 taskId:{}, startDay:{}, endDay:{}, stime:{}, etime:{}, workCycle:{}", taskId, startDay, endDay, sTime, eTime, workCycle);
+        log.info("开始创建外呼任务 taskId:{}, startDay:{}, endDay:{}, stime:{}, etime:{}, workCycle:{}", taskId, startDay, endDay, sTime, eTime, workCycle);
         try {
             JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
             if (scheduler.checkExists(jobKey)) {
@@ -66,7 +66,7 @@ public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
             DailyTimeIntervalTrigger trigger = triggerBuilder.withSchedule(scheduleBuilder)
                     .build();
             scheduler.scheduleJob(jobDetail, trigger);
-            log.info("成功创建预测外呼任务 taskId:{}", taskId);
+            log.info("成功创建外呼任务 taskId:{}", taskId);
         } catch (Exception e) {
             log.error("创建任务失败 taskId:{}", taskId, e);
             throw new CommonException("创建任务异常");
@@ -75,12 +75,12 @@ public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
 
     @Override
     public void deleteTask(Long taskId) {
-        log.info("开始删除预测外呼任务 taskId:{}", taskId);
+        log.info("开始删除外呼任务 taskId:{}", taskId);
         try {
             JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
             if (scheduler.checkExists(jobKey)) {
                 scheduler.deleteJob(jobKey);
-                log.info("成功删除预测外呼任务 taskId:{}", taskId);
+                log.info("成功删除外呼任务 taskId:{}", taskId);
             } else {
                 log.warn("任务 {} 不存在", taskId);
             }
@@ -92,18 +92,18 @@ public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
 
     @Override
     public void deleteTask(List<Long> ids) {
-        log.info("开始批量删除预测外呼任务 taskIds:{}", ids);
+        log.info("开始批量删除外呼任务 taskIds:{}", ids);
         ids.forEach(this::deleteTask);
     }
 
     @Override
     public void pauseTask(Long taskId) {
-        log.info("开始暂停预测外呼任务 taskId:{}", taskId);
+        log.info("开始暂停外呼任务 taskId:{}", taskId);
         try {
             JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
             if (scheduler.checkExists(jobKey)) {
                 scheduler.pauseJob(jobKey);
-                log.info("成功暂停预测外呼任务 taskId:{}", taskId);
+                log.info("成功暂停外呼任务 taskId:{}", taskId);
             } else {
                 log.info("任务 {} 不存在", taskId);
             }
@@ -115,7 +115,7 @@ public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
 
     @Override
     public void resumeTask(Long taskId) {
-        log.info("开始恢复预测外呼任务 taskId:{}", taskId);
+        log.info("开始恢复外呼任务 taskId:{}", taskId);
         try {
             JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
             if (scheduler.checkExists(jobKey)) {

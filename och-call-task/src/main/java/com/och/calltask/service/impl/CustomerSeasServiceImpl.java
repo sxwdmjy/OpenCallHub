@@ -6,6 +6,8 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.util.ListUtils;
 import com.alibaba.fastjson2.JSON;
+import com.och.calltask.domain.CustomerCrowdEvent;
+import com.och.calltask.domain.CustomerCrowdEventParam;
 import com.och.calltask.domain.entity.CustomerSeas;
 import com.och.calltask.domain.query.CustomerSeasAddQuery;
 import com.och.calltask.domain.query.CustomerSeasQuery;
@@ -26,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,13 +49,19 @@ public class CustomerSeasServiceImpl extends BaseServiceImpl<CustomerSeasMapper,
 
     private final ISysUserService sysUserService;
     private final ICustomerTemplateService customerTemplateService;
+    private final ApplicationContext applicationContext;
 
     @Override
     public void add(CustomerSeasAddQuery query) {
         CustomerSeas customerSeas = new CustomerSeas();
         BeanUtils.copyProperties(query, customerSeas);
         customerSeas.setSource(CustomerSourceEnum.MANUAL.getCode());
-        save(customerSeas);
+        if(save(customerSeas)){
+            CustomerCrowdEventParam param = new CustomerCrowdEventParam();
+            param.setCustomerId(customerSeas.getId());
+            param.setEventType(1);
+            applicationContext.publishEvent(new CustomerCrowdEvent(param));
+        }
     }
 
     @Override
@@ -70,6 +79,7 @@ public class CustomerSeasServiceImpl extends BaseServiceImpl<CustomerSeasMapper,
         return this.baseMapper.getDetail(id);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(CustomerSeasQuery query) {
         List<Long> ids = new LinkedList<>();
@@ -88,7 +98,16 @@ public class CustomerSeasServiceImpl extends BaseServiceImpl<CustomerSeasMapper,
             seas.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
             return seas;
         }).toList();
-        updateBatchById(list);
+        if(updateBatchById(list)){
+            for (Long id : ids) {
+                CustomerCrowdEventParam param = new CustomerCrowdEventParam();
+                param.setCustomerId(id);
+                param.setEventType(2);
+                applicationContext.publishEvent(new CustomerCrowdEvent(param));
+            }
+        }
+
+
     }
 
     @Override
@@ -171,7 +190,14 @@ public class CustomerSeasServiceImpl extends BaseServiceImpl<CustomerSeasMapper,
 
                 private void saveData() {
                     log.info("{}条数据，开始存储数据库！", cachedDataList.size());
-                    saveBatch(cachedDataList);
+                    if(saveBatch(cachedDataList)){
+                        for (CustomerSeas customerSeas : cachedDataList) {
+                            CustomerCrowdEventParam param = new CustomerCrowdEventParam();
+                            param.setCustomerId(customerSeas.getId());
+                            param.setEventType(1);
+                            applicationContext.publishEvent(new CustomerCrowdEvent(param));
+                        }
+                    };
                     log.info("存储数据库成功！");
                 }
             }).sheet().doRead();

@@ -16,14 +16,14 @@ import java.io.Serializable;
  * 外呼任务表(CallTask)表实体类
  *
  * @author danmo
- * @since 2025-06-18 15:53:57
+ * @since 2025-07-08 10:42:38
  */
 @Schema
 @Data
 @SuppressWarnings("serial")
 @TableName("call_task")
 public class CallTask extends BaseEntity implements Serializable {
-  private static final long serialVersionUID = -84826557394494890L;
+  private static final long serialVersionUID = -29835182615264258L;
    
     /**
      *  主键ID
@@ -75,7 +75,7 @@ public class CallTask extends BaseEntity implements Serializable {
      *  任务开始时间 
      */
     @Schema(description = "任务开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @TableField("start_day")
     private Date startDay;
     
@@ -85,7 +85,7 @@ public class CallTask extends BaseEntity implements Serializable {
      *  任务结束时间 
      */
     @Schema(description = "任务结束时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @TableField("end_day")
     private Date endDay;
     
@@ -119,11 +119,47 @@ public class CallTask extends BaseEntity implements Serializable {
     
      
     /**
-     *  数据源ID 
+     *  人群ID 
      */
-    @Schema(description = "数据源ID")
-    @TableField("source_id")
-    private Long sourceId;
+    @Schema(description = "人群ID")
+    @TableField("crowd_id")
+    private Long crowdId;
+    
+    
+     
+    /**
+     *  分配方式 1-轮流 2-空闲 
+     */
+    @Schema(description = "分配方式 1-轮流 2-空闲")
+    @TableField("assignment_type")
+    private Integer assignmentType;
+    
+    
+     
+    /**
+     *  是否有限分配: 1-否 2-是 
+     */
+    @Schema(description = "是否有限分配: 1-否 2-是")
+    @TableField("is_priority")
+    private Integer isPriority;
+    
+    
+     
+    /**
+     *  接待个数限制 
+     */
+    @Schema(description = "接待个数限制")
+    @TableField("receive_limit")
+    private Integer receiveLimit;
+    
+    
+     
+    /**
+     *  执行坐席列表（为空全部坐席） 
+     */
+    @Schema(description = "执行坐席列表（为空全部坐席）")
+    @TableField("agent_list")
+    private String agentList;
     
     
      
@@ -133,15 +169,6 @@ public class CallTask extends BaseEntity implements Serializable {
     @Schema(description = "自动完成类型(0-是 1-否)")
     @TableField("complete_type")
     private Integer completeType;
-    
-    
-     
-    /**
-     *  号码模式(0-轮询) 
-     */
-    @Schema(description = "号码模式(0-轮询)")
-    @TableField("phone_mode")
-    private Integer phoneMode;
     
     
      
@@ -169,24 +196,6 @@ public class CallTask extends BaseEntity implements Serializable {
     @Schema(description = "转接类型值")
     @TableField("transfer_value")
     private String transferValue;
-    
-    
-     
-    /**
-     *  轮次配置 
-     */
-    @Schema(description = "轮次配置")
-    @TableField("rounds_conf")
-    private String roundsConf;
-    
-    
-     
-    /**
-     *  当前轮次 
-     */
-    @Schema(description = "当前轮次")
-    @TableField("current_round")
-    private Integer currentRound;
     
     
      

@@ -1,7 +1,9 @@
 package com.och.calltask.service;
 
 import com.och.calltask.domain.query.CustomerCrowdAddQuery;
+import com.och.calltask.domain.query.CrowdCustomerQuery;
 import com.och.calltask.domain.query.CustomerCrowdQuery;
+import com.och.calltask.domain.vo.CrowdCustomerVo;
 import com.och.calltask.domain.vo.CustomerCrowdVo;
 import com.och.common.base.IBaseService;
 import com.och.calltask.domain.entity.CustomerCrowd;
@@ -60,5 +62,13 @@ public interface ICustomerCrowdService extends IBaseService<CustomerCrowd> {
      * @return 客户人群列表
      */
     List<CustomerCrowdVo> getList(CustomerCrowdQuery query);
+
+    /**
+     * 获取客户人群客户列表(分页)
+     *
+     * @param query 获取参数
+     * @return 客户人群客户列表
+     */
+    List<CrowdCustomerVo> pageCustomerList(CrowdCustomerQuery query);
 }
 
