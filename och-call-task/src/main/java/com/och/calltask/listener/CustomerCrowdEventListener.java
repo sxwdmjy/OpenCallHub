@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.och.calltask.domain.CustomerCrowdEvent;
 import com.och.calltask.domain.CustomerCrowdEventParam;
+import com.och.calltask.domain.entity.CallTask;
 import com.och.calltask.domain.entity.CustomerCrowd;
 import com.och.calltask.domain.entity.CustomerCrowdRel;
 import com.och.calltask.domain.entity.CustomerSeas;
 import com.och.calltask.domain.query.CustomerCrowdQuery;
 import com.och.calltask.domain.vo.CustomerCrowdVo;
 import com.och.calltask.domain.vo.CustomerSeasVo;
+import com.och.calltask.service.ICallTaskService;
 import com.och.calltask.service.ICustomerCrowdRelService;
 import com.och.calltask.service.ICustomerCrowdService;
 import com.och.calltask.service.ICustomerSeasService;
@@ -27,10 +29,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 客户群事件监听器
@@ -47,6 +46,7 @@ public class CustomerCrowdEventListener implements ApplicationListener<CustomerC
     private final ICustomerCrowdService iCustomerCrowdService;
     private final ICustomerSeasService iCustomerSeasService;
     private final ICustomerCrowdRelService iCustomerCrowdRelService;
+    private final ICallTaskService iCallTaskService;
     private static final String CUSTOMER_INFO_FIELD = "customer_info";
 
     @Override
@@ -386,7 +386,7 @@ public class CustomerCrowdEventListener implements ApplicationListener<CustomerC
                 })
                 .toList();
 
-        iCustomerCrowdRelService.batchUpsert(rels);
+        iCustomerCrowdRelService.batchUpsert(Collections.singletonList(crowdId),rels);
     }
 
     private void processAndSave(List<Long> crowdIds, Long customerId) {
@@ -401,8 +401,9 @@ public class CustomerCrowdEventListener implements ApplicationListener<CustomerC
                     return rel;
                 })
                 .toList();
-        iCustomerCrowdRelService.batchUpsert(rels);
+        iCustomerCrowdRelService.batchUpsert(crowdIds,rels);
     }
+
 
 
 

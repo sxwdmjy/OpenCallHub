@@ -106,17 +106,6 @@ public class CallTaskVo extends BaseVo {
 
 
     /**
-     *  人群ID
-     */
-    @Schema(description = "人群ID")
-    @TableField("crowd_id")
-    private Long crowdId;
-
-    @Schema(description = "人群名称")
-    private String crowdName;
-
-
-    /**
      *  分配方式 1-轮流 2-空闲
      */
     @Schema(description = "分配方式 1-轮流 2-空闲")

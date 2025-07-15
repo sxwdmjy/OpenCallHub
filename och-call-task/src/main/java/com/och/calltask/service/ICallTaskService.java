@@ -1,11 +1,15 @@
 package com.och.calltask.service;
 
 import com.och.calltask.domain.query.CallTaskAddQuery;
+import com.och.calltask.domain.query.CallTaskContactImportQuery;
+import com.och.calltask.domain.query.CallTaskContactQuery;
 import com.och.calltask.domain.query.CallTaskQuery;
+import com.och.calltask.domain.vo.CallTaskContactVo;
 import com.och.calltask.domain.vo.CallTaskVo;
 import com.och.common.base.IBaseService;
 import com.och.calltask.domain.entity.CallTask;
 import com.och.common.enums.CallTaskStatusEnum;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,5 +41,16 @@ public interface ICallTaskService extends IBaseService<CallTask> {
     void endTask(Long id);
 
     Boolean updateStatus(Long id, CallTaskStatusEnum callTaskStatusEnum);
+
+    List<CallTaskContactVo> getTaskContactPageList(CallTaskContactQuery query);
+    List<CallTaskContactVo> getTaskContactList(CallTaskContactQuery query);
+
+    /**
+     * 导入任务联系人
+     *
+     * @param query 查询参数
+     * @param file  文件
+     */
+    void importTaskContact(CallTaskContactImportQuery query, MultipartFile file);
 }
 

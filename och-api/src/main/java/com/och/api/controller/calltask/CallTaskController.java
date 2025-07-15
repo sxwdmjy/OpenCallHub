@@ -3,7 +3,10 @@ package com.och.api.controller.calltask;
 
 import com.github.pagehelper.PageInfo;
 import com.och.calltask.domain.query.CallTaskAddQuery;
+import com.och.calltask.domain.query.CallTaskContactImportQuery;
+import com.och.calltask.domain.query.CallTaskContactQuery;
 import com.och.calltask.domain.query.CallTaskQuery;
+import com.och.calltask.domain.vo.CallTaskContactVo;
 import com.och.calltask.domain.vo.CallTaskVo;
 import com.och.calltask.service.ICallTaskService;
 import com.och.common.annotation.Log;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -110,6 +114,24 @@ public class CallTaskController extends BaseController {
     @PostMapping("/end/{id}")
     public ResResult end(@PathVariable("id") Long id) {
         callTaskService.endTask(id);
+        return success();
+    }
+
+    @Log(title = "任务联系人列表", businessType = BusinessTypeEnum.SELECT)
+    @PreAuthorize("@authz.hasPerm('call:task:contact:list')")
+    @Operation(summary = "任务联系人列表(分页)", method = "POST")
+    @PostMapping("/task/customer/list")
+    public ResResult<PageInfo<CallTaskContactVo>> taskContactList(@RequestBody CallTaskContactQuery query) {
+        List<CallTaskContactVo> list = callTaskService.getTaskContactPageList(query);
+        return success(new PageInfo<>(list));
+    }
+
+    @Log(title = "导入任务联系人", businessType = BusinessTypeEnum.IMPORT)
+    @PreAuthorize("@authz.hasPerm('call:task:contact:import')")
+    @Operation(summary = "导入任务联系人", method = "POST")
+    @PostMapping("/task/customer/import")
+    public ResResult importTaskContact(@RequestBody CallTaskContactImportQuery query, @RequestParam("file") MultipartFile file) {
+        callTaskService.importTaskContact(query,file);
         return success();
     }
 

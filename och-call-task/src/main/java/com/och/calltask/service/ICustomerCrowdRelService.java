@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface ICustomerCrowdRelService extends IBaseService<CustomerCrowdRel> {
 
-    void batchUpsert(List<CustomerCrowdRel> relList);
+    void batchUpsert(List<Long> crowdIds, List<CustomerCrowdRel> relList);
+
 }
 

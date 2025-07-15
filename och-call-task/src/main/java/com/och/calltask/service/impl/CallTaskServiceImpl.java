@@ -1,12 +1,25 @@
 package com.och.calltask.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
+import com.alibaba.excel.util.ListUtils;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.och.calltask.domain.CallTaskContactImportEvent;
+import com.och.calltask.domain.CustomerCrowdEvent;
+import com.och.calltask.domain.CustomerCrowdEventParam;
+import com.och.calltask.domain.entity.CustomerSeas;
 import com.och.calltask.domain.query.CallTaskAddQuery;
+import com.och.calltask.domain.query.CallTaskContactImportQuery;
+import com.och.calltask.domain.query.CallTaskContactQuery;
 import com.och.calltask.domain.query.CallTaskQuery;
+import com.och.calltask.domain.vo.CallTaskContactVo;
 import com.och.calltask.domain.vo.CallTaskVo;
+import com.och.calltask.service.ICustomerCrowdService;
 import com.och.calltask.service.IPredictiveDialerService;
 import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
@@ -14,8 +27,11 @@ import com.och.calltask.mapper.CallTaskMapper;
 import com.och.calltask.domain.entity.CallTask;
 import com.och.calltask.service.ICallTaskService;
 import com.och.common.enums.CallTaskStatusEnum;
+import com.och.common.enums.CustomerSourceEnum;
 import com.och.common.enums.DeleteStatusEnum;
+import com.och.common.enums.FieldTypeEnum;
 import com.och.common.exception.CommonException;
+import com.och.common.utils.StringUtils;
 import com.och.ivr.service.IFlowInfoService;
 import com.och.system.domain.entity.CallDisplayPool;
 import com.och.system.domain.entity.CallSkill;
@@ -23,15 +39,15 @@ import com.och.system.domain.vo.agent.SipSimpleAgent;
 import com.och.system.service.ICallDisplayPoolService;
 import com.och.system.service.ICallSkillService;
 import com.och.system.service.ISysUserService;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 外呼任务表(CallTask)表服务实现类
@@ -39,15 +55,18 @@ import java.util.Objects;
  * @author danmo
  * @since 2025-07-08 10:42:38
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CallTaskServiceImpl extends BaseServiceImpl<CallTaskMapper, CallTask> implements ICallTaskService {
 
-    private IPredictiveDialerService predictiveDialerService;
-    private ISysUserService sysUserService;
+    private final IPredictiveDialerService predictiveDialerService;
+    private final ISysUserService sysUserService;
     private final ICallDisplayPoolService callDisplayPoolService;
     private final ICallSkillService callSkillService;
     private final IFlowInfoService flowInfoService;
+    private final ICustomerCrowdService customerCrowdService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -66,7 +85,6 @@ public class CallTaskServiceImpl extends BaseServiceImpl<CallTaskMapper, CallTas
         task.setETime(query.getETime());
         task.setWorkCycle(query.getWorkCycle());
         task.setStatus(CallTaskStatusEnum.NOT_START.getCode());
-        task.setCrowdId(query.getCrowdId());
         if (query.getType().equals(1) && Objects.isNull(query.getAssignmentType())){
             throw new CommonException("预览任务必须指定分配方式");
         }
@@ -92,7 +110,7 @@ public class CallTaskServiceImpl extends BaseServiceImpl<CallTaskMapper, CallTas
         task.setRecallTime(query.getRecallTime());
         task.setRemark(query.getRemark());
         if(save(task)){
-            predictiveDialerService.createTask(task.getId(),query.getStartDay(),query.getEndDay(),query.getSTime(),query.getETime(),query.getWorkCycle());
+            predictiveDialerService.createTask(task.getId(),task.getPriority(),query.getStartDay(),query.getEndDay(),query.getSTime(),query.getETime(),query.getWorkCycle());
         }
     }
 
@@ -121,7 +139,6 @@ public class CallTaskServiceImpl extends BaseServiceImpl<CallTaskMapper, CallTas
         task.setETime(query.getETime());
         task.setWorkCycle(query.getWorkCycle());
         task.setStatus(CallTaskStatusEnum.NOT_START.getCode());
-        task.setCrowdId(query.getCrowdId());
         if (query.getType().equals(1) && Objects.isNull(query.getAssignmentType())){
             throw new CommonException("预览任务必须指定分配方式");
         }
@@ -146,7 +163,7 @@ public class CallTaskServiceImpl extends BaseServiceImpl<CallTaskMapper, CallTas
         task.setRecallTime(query.getRecallTime());
         task.setRemark(query.getRemark());
         if(updateById(task)){
-            predictiveDialerService.createTask(task.getId(),query.getStartDay(),query.getEndDay(),query.getSTime(),query.getETime(),query.getWorkCycle());
+            predictiveDialerService.createTask(task.getId(), task.getPriority(), query.getStartDay(),query.getEndDay(),query.getSTime(),query.getETime(),query.getWorkCycle());
         }
     }
 
@@ -214,7 +231,9 @@ public class CallTaskServiceImpl extends BaseServiceImpl<CallTaskMapper, CallTas
     public List<CallTaskVo> pageList(CallTaskQuery query) {
         startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
         List<CallTaskVo> list = getList(query);
-        sysUserService.decorate(list);
+        if(CollectionUtil.isNotEmpty(list)){
+            sysUserService.decorate(list);
+        }
         return list;
     }
 
@@ -288,6 +307,95 @@ public class CallTaskServiceImpl extends BaseServiceImpl<CallTaskMapper, CallTas
         task.setId(id);
         task.setStatus(callTaskStatusEnum.getCode());
         return updateById(task);
+    }
+
+    @Override
+    public List<CallTaskContactVo> getTaskContactPageList(CallTaskContactQuery query) {
+        super.startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
+        return getTaskContactList(query);
+    }
+
+    @Override
+    public List<CallTaskContactVo> getTaskContactList(CallTaskContactQuery query)
+    {
+        if (Objects.isNull(query.getTaskId())) {
+            throw new CommonException("任务ID不能为空");
+        }
+        return this.baseMapper.getTaskContactList(query);
+    }
+
+
+    @Override
+    public void importTaskContact(CallTaskContactImportQuery query, MultipartFile file) {
+        if (Objects.isNull(query.getTaskId())) {
+            throw new CommonException("任务ID不能为空");
+        }
+        if(Objects.isNull(query.getImportType())){
+            throw new CommonException("导入方式不能为空");
+        }
+        CallTask task = getById(query.getTaskId());
+        if (Objects.isNull(task)) {
+            throw new CommonException("无效任务ID");
+        }
+        if (Objects.equals(task.getStatus(), CallTaskStatusEnum.PROCESSING.getCode())) {
+            throw new CommonException("任务已开始");
+        }
+        if (Objects.equals(task.getStatus(), CallTaskStatusEnum.END.getCode())) {
+            throw new CommonException("任务已结束");
+        }
+        switch (query.getImportType()) {
+            case 0 -> {
+                if (Objects.isNull(query.getCrowdId())) {
+                    throw new CommonException("人群ID不能为空");
+                }
+                List<Long> customerIds = customerCrowdService.getCustomerIdByCrowdId(query.getCrowdId());
+                for (Long customerId : customerIds) {
+                    CallTaskContactImportEvent event = new CallTaskContactImportEvent(customerId, query.getTaskId(), query.getImportType(), query.getCrowdId(),null,null);
+                    applicationEventPublisher.publishEvent(event);
+                }
+            }
+            case 1 -> {
+                if (Objects.isNull(file)) {
+                    throw new CommonException("文件不能为空");
+                }
+                if(Objects.isNull(query.getTemplateId())){
+                    throw new CommonException("模板ID不能为空");
+                }
+                try {
+                    EasyExcel.read(file.getInputStream(), new AnalysisEventListener<Map<Integer, String>>() {
+                        private Map<Integer, String> headMap;
+
+                        @Override
+                        public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
+                            this.headMap = headMap;
+                        }
+
+                        @Override
+                        public void invoke(Map<Integer, String> rowData, AnalysisContext context) {
+                            if (headMap == null) return; // 确保表头已读取
+                            JSONObject rowMap = new JSONObject();
+                            for (Map.Entry<Integer, String> entry : rowData.entrySet()) {
+                                Integer colIndex = entry.getKey();
+                                String headerName = headMap.get(colIndex);
+                                String cellValue = entry.getValue();
+                                rowMap.put(headerName, cellValue);
+                            }
+                            CallTaskContactImportEvent event = new CallTaskContactImportEvent(null, query.getTaskId(), query.getImportType(), null,query.getTemplateId(),rowMap);
+                            applicationEventPublisher.publishEvent(event);
+                        }
+
+                        @Override
+                        public void doAfterAllAnalysed(AnalysisContext context) {
+                            log.info("所有数据解析完成！");
+                        }
+                    }).sheet().doRead();
+                } catch (Exception e) {
+                    throw new CommonException("导入失败");
+                }
+
+            }
+        }
+
     }
 
     private Boolean checkName(String name) {

@@ -5,6 +5,7 @@ import com.och.common.base.IBaseService;
 import com.och.system.domain.entity.SipAgent;
 import com.och.system.domain.query.agent.SipAgentAddQuery;
 import com.och.system.domain.query.agent.SipAgentQuery;
+import com.och.system.domain.vo.agent.SipAgentStatusVo;
 import com.och.system.domain.vo.agent.SipAgentVo;
 
 import java.util.List;
@@ -32,6 +33,8 @@ public interface ISipAgentService extends IBaseService<SipAgent> {
     SipAgentVo getInfoByAgent(String agentNum);
 
     Boolean updateStatus(Long id, Integer status);
+
+    List<SipAgentStatusVo> getAgentStatusList(List<Long> agentIds);
 
     void updateOnlineStatus(Long id, Integer onlineStatus, Long timestamp);
 }

@@ -4,12 +4,14 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.calltask.domain.entity.CustomerCrowd;
+import com.och.calltask.domain.entity.CustomerCrowdRel;
 import com.och.calltask.domain.query.CustomerCrowdAddQuery;
 import com.och.calltask.domain.query.CrowdCustomerQuery;
 import com.och.calltask.domain.query.CustomerCrowdQuery;
 import com.och.calltask.domain.vo.CrowdCustomerVo;
 import com.och.calltask.domain.vo.CustomerCrowdVo;
 import com.och.calltask.mapper.CustomerCrowdMapper;
+import com.och.calltask.service.ICustomerCrowdRelService;
 import com.och.calltask.service.ICustomerCrowdService;
 import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
@@ -22,6 +24,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +41,7 @@ import java.util.stream.Collectors;
 public class CustomerCrowdServiceImpl extends BaseServiceImpl<CustomerCrowdMapper, CustomerCrowd> implements ICustomerCrowdService {
 
     private final ISysUserService sysUserService;
+    private final ICustomerCrowdRelService customerCrowdRelService;
 
     @Override
     public void add(CustomerCrowdAddQuery query) {
@@ -128,11 +132,28 @@ public class CustomerCrowdServiceImpl extends BaseServiceImpl<CustomerCrowdMappe
     @Override
     public List<CrowdCustomerVo> pageCustomerList(CrowdCustomerQuery query) {
         super.startPage(query.getPageIndex(), query.getPageSize());
-        List<CrowdCustomerVo> list = this.baseMapper.pageCustomerList(query);
+        List<CrowdCustomerVo> list = getCustomerList(query);
         if (CollectionUtil.isEmpty(list)) {
             sysUserService.decorate(list);
         }
         return list;
+    }
+
+    @Override
+    public List<CrowdCustomerVo> getCustomerList(CrowdCustomerQuery query) {
+        return this.baseMapper.pageCustomerList(query);
+    }
+
+    @Override
+    public List<Long> getCustomerIdByCrowdId(Long crowdId) {
+        List<CustomerCrowdRel> list = customerCrowdRelService.list(new LambdaQueryWrapper<CustomerCrowdRel>()
+                .eq(CustomerCrowdRel::getCrowdId, crowdId)
+                .eq(BaseEntity::getDelFlag, DeleteStatusEnum.DELETE_NO.getIndex())
+                .orderByDesc(CustomerCrowdRel::getId));
+        if(CollectionUtil.isEmpty(list)){
+            return Collections.emptyList();
+        }
+       return list.stream().map(CustomerCrowdRel::getCustomerId).collect(Collectors.toList());
     }
 
     /**

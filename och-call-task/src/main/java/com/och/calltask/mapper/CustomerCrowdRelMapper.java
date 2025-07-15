@@ -19,5 +19,6 @@ import java.util.List;
 public interface CustomerCrowdRelMapper extends BaseMapper<CustomerCrowdRel> {
 
     void batchUpsert(@Param("relList") List<CustomerCrowdRel> relList);
+
 }
 

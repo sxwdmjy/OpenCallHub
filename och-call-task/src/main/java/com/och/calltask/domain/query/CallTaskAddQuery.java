@@ -94,14 +94,6 @@ public class CallTaskAddQuery {
 
 
     /**
-     * 人群ID
-     */
-    @NotNull(message = "人群ID不能为空")
-    @Schema(description = "人群ID")
-    private Long crowdId;
-
-
-    /**
      * 分配方式 1-轮流 2-空闲
      */
     @Schema(description = "分配方式 1-轮流 2-空闲")

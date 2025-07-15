@@ -34,7 +34,7 @@ public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
     private static final String TRIGGER_NAME = "CALL_TASK_TRIGGER_";
 
     @Override
-    public void createTask(Long taskId, Date startDay, Date endDay, String sTime, String eTime, String workCycle) {
+    public void createTask(Long taskId, Integer priority, Date startDay, Date endDay, String sTime, String eTime, String workCycle) {
         log.info("开始创建外呼任务 taskId:{}, startDay:{}, endDay:{}, stime:{}, etime:{}, workCycle:{}", taskId, startDay, endDay, sTime, eTime, workCycle);
         try {
             JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
@@ -52,7 +52,8 @@ public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
             TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger()
                     .withIdentity(TRIGGER_NAME + taskId, GROUP_NAME)
                     .startAt(parseStartDay(startDay))
-                    .endAt(parseEndDay(endDay));
+                    .endAt(parseEndDay(endDay))
+                    .withPriority(priority);
             int startHour = parseTime(sTime).getHour();
             int startMinute = parseTime(sTime).getMinute();
             int endHour = parseTime(eTime).getHour();

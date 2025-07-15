@@ -13,7 +13,6 @@
         <result property="sTime" column="s_time" jdbcType="VARCHAR"/>
         <result property="eTime" column="e_time" jdbcType="VARCHAR"/>
         <result property="workCycle" column="work_cycle" jdbcType="VARCHAR"/>
-        <result property="crowdId" column="crowd_id" jdbcType="INTEGER"/>
         <result property="assignmentType" column="assignment_type" jdbcType="INTEGER"/>
         <result property="isPriority" column="is_priority" jdbcType="INTEGER"/>
         <result property="receiveLimit" column="receive_limit" jdbcType="INTEGER"/>
@@ -32,44 +31,67 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="CallTaskContactMap" type="com.och.calltask.domain.vo.CallTaskContactVo">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="taskId" column="task_id" jdbcType="BIGINT"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="ext" column="ext" typeHandler="com.och.system.handler.JsonObjectTypeHandler"/>
+        <result property="source" column="source" jdbcType="INTEGER"/>
+        <result property="assignStatus" column="status" jdbcType="INTEGER"/>
+        <result property="crowdId" column="crowd_id" jdbcType="BIGINT"/>
+        <result property="crowdName" column="crowd_name" jdbcType="VARCHAR"/>
+        <result property="templateId" column="template_id" jdbcType="BIGINT"/>
+        <result property="templateName" column="template_name" jdbcType="VARCHAR"/>
+        <result property="agentId" column="agent_id" jdbcType="BIGINT"/>
+        <result property="agentName" column="agent_name" jdbcType="VARCHAR"/>
+        <result property="assignTime" column="assign_time" jdbcType="TIMESTAMP"/>
+        <result property="callStatus" column="call_status" jdbcType="INTEGER"/>
+        <result property="attemptCount" column="attempt_count" jdbcType="INTEGER"/>
+        <result property="scheduledTime" column="scheduled_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
     <sql id="selectCallTaskInfoVo">
 
     </sql>
 
     <select id="getList" resultMap="CallTaskMap">
         select
-            ct.id,
-            ct.name,
-            ct.type,
-            ct.status,
-            ct.priority,
-            ct.start_day,
-            ct.end_day,
-            ct.s_time,
-            ct.e_time,
-            ct.work_cycle,
-            ct.crowd_id,
-            ct.assignment_type,
-            ct.is_priority,
-            ct.receive_limit,
-            ct.agent_list,
-            ct.complete_type,
-            ct.phone_pool_id,
-            ct.transfer_type,
-            ct.transfer_value,
-            ct.recall,
-            ct.recall_num,
-            ct.recall_time,
-            ct.remark,
-            ct.create_by,
-            ct.create_time,
-            ct.update_by,
-            ct.update_time,
-            ct.del_flag,
-            cc.name as crowd_name,
-            cdp.name as phone_pool_name
+        ct.id,
+        ct.name,
+        ct.type,
+        ct.status,
+        ct.priority,
+        ct.start_day,
+        ct.end_day,
+        ct.s_time,
+        ct.e_time,
+        ct.work_cycle,
+        ct.assignment_type,
+        ct.is_priority,
+        ct.receive_limit,
+        ct.agent_list,
+        ct.complete_type,
+        ct.phone_pool_id,
+        ct.transfer_type,
+        ct.transfer_value,
+        ct.recall,
+        ct.recall_num,
+        ct.recall_time,
+        ct.remark,
+        ct.create_by,
+        ct.create_time,
+        ct.update_by,
+        ct.update_time,
+        ct.del_flag,
+        cdp.name as phone_pool_name
         from call_task ct
-        left join customer_crowd cc on ct.crowd_id = cc.id
         left join call_display_pool cdp on ct.phone_pool_id = cdp.id
         <where>
             <if test="id != null">
@@ -93,15 +115,91 @@
             <if test="endDay != null">
                 and ct.end_day &lt;= #{endDay}
             </if>
-            <if test="crowdId != null">
-                and ct.crowd_id = #{crowdId}
-            </if>
             <if test="completeType != null">
                 and ct.complete_type = #{completeType}
+            </if>
+            <if test="beginTime != null">
+                and ct.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and ct.create_time &lt;= #{endTime}
             </if>
             and ct.del_flag = 0
         </where>
         order by ct.id desc
+    </select>
+    <select id="getTaskContactList" resultMap="CallTaskContactMap">
+        select
+        cta.id,
+        cta.task_id,
+        cta.phone,
+        cta.name,
+        cta.sex,
+        cta.ext,
+        cta.source,
+        cta.status,
+        cta.crowd_id,
+        cc.name as crowd_name,
+        cta.template_id,
+        ct.name as template_name,
+        cta.agent_id,
+        sa.name as agent_name,
+        cta.assignment_time,
+        cta.call_status,
+        cta.attempt_count,
+        cta.scheduled_time,
+        cta.remark,
+        cta.create_by,
+        cta.create_time,
+        cta.update_by,
+        cta.update_time
+        from call_task_assignment cta
+        left join customer_crowd cc on cta.crowd_id = cc.id
+        left join customer_template ct on cta.template_id = ct.id
+        left join sip_agent sa on cta.agent_id = sa.id
+        <where>
+            <if test="taskId != null">
+                and cta.task_id = #{taskId}
+            </if>
+            <if test="phone != null and phone != ''">
+                and cta.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="name != null and name != ''">
+                and cta.name like concat('%',#{name},'%')
+            </if>
+            <if test="sex != null">
+                and cta.sex = #{sex}
+            </if>
+            <if test="source != null">
+                and cta.source = #{source}
+            </if>
+            <if test="status != null">
+                and cta.status = #{status}
+            </if>
+            <if test="agentIds != null and agentIds.size() > 0">
+                and cta.agent_id in
+                <foreach item="item" collection="agentIds" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="callStatus != null">
+                and cta.call_status = #{callStatus}
+            </if>
+            <if test="assignStartTime != null">
+                and cta.assignment_time &gt;= #{assignStartTime}
+            </if>
+            <if test="assignEndTime != null">
+                and cta.assignment_time &lt;= #{assignEndTime}
+            </if>
+            <if test="beginTime != null">
+                and cta.create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and cta.create_time &lt;= #{endTime}
+            </if>
+            and cta.del_flag = 0
+        </where>
+        order by cta.id desc
     </select>
 
 </mapper>

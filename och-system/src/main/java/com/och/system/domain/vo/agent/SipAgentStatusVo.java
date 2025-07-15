@@ -23,4 +23,5 @@ public class SipAgentStatusVo extends SipAgentVo {
 
     @Schema(description = "级别",hidden = true)
     private Integer level;
+
 }

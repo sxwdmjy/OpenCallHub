@@ -70,5 +70,20 @@ public interface ICustomerCrowdService extends IBaseService<CustomerCrowd> {
      * @return 客户人群客户列表
      */
     List<CrowdCustomerVo> pageCustomerList(CrowdCustomerQuery query);
+
+    /**
+     * 获取客户人群客户列表(不分页)
+     *
+     * @param query 获取参数
+     * @return 客户人群客户列表
+     */
+    List<CrowdCustomerVo> getCustomerList(CrowdCustomerQuery query);
+
+    /**
+     * 根据客户人群ID获取客户ID列表
+     * @param crowdId
+     * @return
+     */
+    List<Long> getCustomerIdByCrowdId(Long crowdId);
 }
 

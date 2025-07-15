@@ -41,7 +41,7 @@ public class CallTaskQuery extends BaseQuery {
     private Date endDay;
 
     @Schema(description = "人群ID")
-    private List<Long> crowdId;
+    private List<Long> crowdIds;
 
     @Schema(description = "自动完成类型(0-是 1-否)")
     private Integer completeType;
