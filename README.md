@@ -29,7 +29,7 @@
 ### 核心价值
 - **功能覆盖**：支持 SIP 呼叫、IVR 流程、MRCP 语音识别、外呼任务及报表分析。
 - **技术栈**：Java 17 + Spring Boot 3.3.1 + MySQL + Redis + FreeSWITCH + Kamailio + Netty 等技术。
-- **开源目标**：降低企业部署呼叫中心的门槛，鼓励社区共同完善功能。
+- **开源目标**：降低企业部署呼叫中心的门槛，鼓励社区共同完善。
 
 ---
 
@@ -148,3 +148,10 @@ git push origin feature/your-feature-name
 
 - [前端地址](https://gitee.com/zhongjiawei999/waihu-app)
 - [FreeSWITCH 文档](https://developer.signalwire.com/freeswitch/FreeSWITCH-Explained)
+
+
+# 赞助人列表
+| 赞助人  | 赞助金额 | 附言         |
+|------|------|------------|
+| *恒   | 100  | 感谢大佬的无私奉献！ |
+| NO.1 | 200  | 咨询         |
