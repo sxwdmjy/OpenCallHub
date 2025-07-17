@@ -34,6 +34,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResResult handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+        //增加异常信息
         log.error("请求地址'{}',不支持'{}'请求", requestURI, e.getMethod(), e);
         return ResResult.error(e.getMessage());
     }
@@ -45,6 +46,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResResult handleRuntimeException(RuntimeException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+        //增加异常信息
         log.error("请求地址'{}',发生未知异常.", requestURI, e);
         String msg = e.getMessage();
         if (StringUtils.isEmpty(msg)) {
@@ -60,6 +62,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataAccessException.class)
     public ResResult handleDataAccessException(DataAccessException e) {
         log.error("数据库操作异常：{}", e.getMessage(), e);
+        //增加异常信息
         return ResResult.error("数据库操作异常，请联系管理员！");
     }
 
