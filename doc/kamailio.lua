@@ -9,9 +9,15 @@ FLB_NATSIPPING=7
 -- 这个名称固定的，对应原生脚本request_route,收到所有SIP请求都会调用该函数进行处理
 function ksr_request_route()
   ksr_route_reqinit();
+
+  if KSR.pv.get("$rm") ~= "REGISTER" then
+   ksr_reply_route_WS_REPLY();
+  end
+
   -- 初始合法性检查，其实他就是一个一般的Lua函数（function）调用，函数名可以任意
   -- NAT处理
-  ksr_route_natdetect();
+  ksr_route_natdetect(); 
+
   --CANCEL处理
   if KSR.is_CANCEL() then 
     if KSR.tm.t_check_trans()>0 then
@@ -19,6 +25,7 @@ function ksr_request_route()
     end
     return 1;
   end
+
   -- 处理重传
   if not KSR.is_ACK() then
     -- 如果没有对话（仅对于没有To tag的消息）,则继续进行下面的处理
@@ -28,12 +35,16 @@ function ksr_request_route()
     end
     if KSR.tm.t_check_trans()==0 then return 1 end
   end
+
   -- SIP对话内的消息处理
-  ksr_route_withindlg();
+  ksr_route_withindlg(); 
+
   --鉴权
-  ksr_route_auth();
+  ksr_route_auth(); 
+
   -- 去掉原有的Route消息头(如果有的话),并换成我们自己的，以便后于的消息还经过我们
   KSR.hdr.remove("Route");
+
   --如果method是INVITE或SUBSCRIBE
   if KSR.is_method_in("IS") then 
     KSR.rr.record_route();
@@ -89,7 +100,7 @@ function ksr_route_relay()
   --ksr_loadbalance();
 
   if KSR.tm.t_relay() < 0 then 
-     KSR.sl.sl_send_error();
+     KSR.sl.sl_reply_error();
   end
 
   -- 到此就结束了，因此，如果在任意路由快里调用了该函数，对于本消息而言，脚本就终止，就不进行后续的操作了
@@ -98,7 +109,6 @@ end
 
 --对每一个SIP请求执行合法性检查
 function ksr_route_reqinit() 
-  KSR.dbg("=====SIP请求执行合法性检查 IP - " .. KSR.kx.get_method() .. " from - " .. KSR.kx.get_furi() .. " (IP: " .. KSR.kx.get_srcip() .. ":" .. KSR.kx.get_srcport() .. ") \n");
   if not KSR.is_myself_srcip() then
 
     -- 检查是否收到大量SIP消息的洪水攻击，将信任的IP地址放到白名单，以防误伤
@@ -157,32 +167,46 @@ end
 -- 处理SIP对话内的请求
 function ksr_route_withindlg()
   if KSR.siputils.has_totag() < 0 then return 1; end
-
   -- 同一对话内后续的请求应该从Record-Routing 头域中选择下一跳
   if KSR.rr.loose_route() > 0 then
+    -- 处理 alias 参数，重写 Request-URI
+    if KSR.pv.get("$du") == "" then
+      if KSR.nathelper.handle_ruri_alias() < 0 then
+        local ru = KSR.pv.get("$ru")
+        KSR.xlog.xlog("L_ERR", "Bad alias <" .. ru .. ">\n")
+        KSR.sl.send_reply(400, "Bad Request")
+        return 1
+      end
+      KSR.info("Post handle_ruri_alias RURI: " .. tostring(KSR.pv.get("$ru")) .. "\n")
+    end
     ksr_route_dlguri();
+
+
     if KSR.is_BYE() then
       KSR.setflag(FLT_ACC); --记账
       KSR.setflag(FLT_ACCFAILED); --即使呼叫失败也记账
     elseif KSR.is_ACK() then
+         KSR.info("Forwarding ACK via loose_route. DU=" .. tostring(KSR.pv.get("$du")) .. " RURI=" .. tostring(KSR.pv.get("$ru")) .. "\n");
+	 if string.find(KSR.pv.get("$ru"), ";transport=ws") or string.find(KSR.pv.get("$ru"), ";transport=wss") then
+		KSR.info("Target is WebSocket. Attempting to set_forward_no_connect.\n");
+	 end
         ksr_route_natmanage(); -- ACK 需要无状态转发
     elseif KSR.is_NOTIFY() then
       -- 为对话内的NOTIFY增加Record-Route头域，参见RFC 6665
       KSR.rr.record_route();
     end
+
     ksr_route_relay();
     KSR.x.exit();
   end
 
-  if KSR.is_ACK() then
-    if KSR.tm.t_check_trans() > 0 then
+  if KSR.is_ACK() and KSR.tm.t_check_trans() > 0 then
       -- 不是松散路由，却是有状态的ACK，该ACK因该是487后的ACK
       -- 或者是上有服务器返回404时的ACK
       ksr_route_relay();
       KSR.x.exit();
     else
       KSR.x.exit(); -- ACK没有对应的事务，忽略并丢弃
-    end
   end
 
   -- 如果执行到这里，就不归我们管了，返回404错误
@@ -199,19 +223,19 @@ function ksr_route_registrar()
     KSR.setflag(FLB_NATSIPPING); -- 执行SIP NAT pinging, 略
   end
 
+
   -- 将注册消息中的Contact写到location表中（可以是内存也可以是数据库）并返回200 OK 如果保存失败则返回错误
-  if KSR.registrar.save("ko_location", 0) < 0 then
+  if KSR.registrar.save("ko_location",0) < 0 then
     KSR.sl_send_error();
   end
   KSR.x.exit();
 end
 
 --查找并呼叫本地注册用户
-function ksr_route_location()
-  KSR.info("查找并呼叫本地注册用户\n");
+function ksr_route_location() 
   -- 比如两个用户a和b都注册到Kamailio中，则a呼叫b时会查询location表看b有没有注册
   local rc = KSR.registrar.lookup("ko_location");
-  KSR.info("查询本地用户结果 rc:" .. rc  .."\n");
+  
   if rc < 0 then -- 如果找不到则返回值进行出错处理
     KSR.tm.t_newtran();
     if rc==-3 then
@@ -226,12 +250,13 @@ function ksr_route_location()
   if KSR.is_INVITE() then -- 当使用usrloc路由时，也对未呼通的呼叫记账
     KSR.setflag(FLT_ACCMISSED);
   end
-
+  KSR.dbg("RURI before relay: " .. KSR.pv.get("$ru") .. "\n");
   if KSR.is_INVITE() and ksr_freeswitch() < 0 then
     ksr_loadbalance()
   end
 
   -- 如果找到被叫用户的注册地址，则向注册地址转发INVITE消息
+  KSR.dbg("RURI after relay: " .. KSR.pv.get("$ru") .. "\n");
   ksr_route_relay();
   KSR.x.exit();
 end
@@ -243,7 +268,6 @@ function ksr_route_auth() --基于IP地址的认证
   end
 
   if KSR.permissions and not KSR.is_REGISTER() then --检查IP是否在白名单
-    KSR.info("检查IP是否在白名单 IP - " .. KSR.kx.get_srcip().. " 结果： ".. KSR.permissions.allow_source_address(1) ..") \n");
     if KSR.permissions.allow_source_address(1) > 0 then
       return 1;
     end
@@ -276,14 +300,22 @@ function ksr_route_natdetect()
   if not KSR.nathelper then
     return 1;
   end
-  if KSR.nathelper.nat_uac_test(19) > 0 then
+
+  if KSR.nathelper.nat_uac_test(64) > 0  then
+    KSR.info("============来自于WebSocket消息： contact<" .. KSR.pv.gete("$ct") .. ">\n");
+    KSR.force_rport();
+    --KSR.nathelper.fix_nated_contact();
     if KSR.is_REGISTER() then
       KSR.nathelper.fix_nated_register();
-    elseif KSR.siputils.is_first_hop() > 0 then
-      KSR.nathelper.set_contact_alias();
+    elseif KSR.nathelper.add_contact_alias() < 0 then
+       KSR.error("Error aliasing contact<" .. tostring(KSR.pv.gete("$ct")) .. ">\n");
+        KSR.sl.sl_send_reply(400,"Bad Request");
+        KSR.x.exit();
     end
     KSR.setflag(FLT_NATS);
   end
+
+
   return 1;
 end
 
@@ -304,7 +336,7 @@ function ksr_route_natmanage()
     return 1;
   end
 
-  KSR.rtpproxy.rtpproxy_manage("co");
+  --KSR.rtpproxy.rtpproxy_manage("co");
 
   if KSR.siputils.is_request()>0 then
     if KSR.siputils.has_totag()<0 then
@@ -371,6 +403,8 @@ function ksr_failure_manage()
   if KSR.tm.t_is_canceled()>0 then return 1 end
 
   local status_code = KSR.tm.t_get_status_code();
+  KSR.warn("获取错误码" .. status_code .. " 重试... \n");
+
   if KSR.tm.t_check_status("[4-5][0-9][0-9]") 
     or (KSR.tm.t_branch_timeout() and KSR.tm.t_branch_replied() < 0) then
       --获取下一个可用负载
@@ -402,7 +436,13 @@ end
 
 function ksr_xhttp_event(evname)
   -- 打印日志，打印请求IP地址
-  KSR.info("==== http request:" .. evname .. " " .. "Ri:" .. KSR.pv.get("$Ri") .. "\n")
+  if(KSR.hdr.get("Upgrade") == "websocket" and KSR.hdr.get("Connection") == "Upgrade" and  KSR.pv.get("$rm") == "GET") then
+	if KSR.websocket.handle_handshake() == 1 then
+            --握手成功，可在此添加缓存逻辑
+            return
+          end
+ end	
+  
   -- 为了安全，我们要求客户端在http头中传递一个token
   -- 为了简单，我们使用硬编码的1234
   if KSR.hdr.get("Authorization") ~= "Bearer 1234" then 
@@ -487,8 +527,21 @@ function ksr_loadbalance()
       KSR.sl.sl_send_reply(404, "No destination")
       KSR.x.exit();
   end
- KSR.info("转发消息到服务器 " .. KSR.kx.get_srcip() .. ":" .. KSR.kx.get_srcport() .."\n");
+ KSR.info("转发消息到服务器 " .. KSR.kx.get_srcip() .. ":" .. KSR.kx.get_srcport() .. "---RU:".. KSR.pv.get("$ru")  .."\n");
  ksr_route_relay()
 end
 
 
+function ksr_websocket_event(evname)
+	KSR.info("===== websocket module triggered event: " .. evname .. "\n");
+	return 1;
+end
+
+
+function ksr_reply_route_WS_REPLY()
+     KSR.info("===== ksr_reply_route_WS_REPLY event: "  .. "\n");
+    if KSR.nathelper.nat_uac_test(64) > 0 then
+        KSR.nathelper.add_contact_alias()
+   end
+    return 1
+end
