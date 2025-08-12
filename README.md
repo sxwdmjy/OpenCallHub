@@ -157,3 +157,4 @@ git push origin feature/your-feature-name
 | NO.1 | 200  | 咨询         |
 | Mahon | 50  | 天使投资 |
 | 艺    | 36  |  奶茶   | 
+| *峰   | 36  | 美式一杯 | 
