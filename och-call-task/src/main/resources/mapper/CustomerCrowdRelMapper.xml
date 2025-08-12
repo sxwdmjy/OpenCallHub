@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.calltask.mapper.CustomerCrowdRelMapper">
+
+    <resultMap type="com.och.calltask.domain.entity.CustomerCrowdRel" id="CustomerCrowdRelMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="crowdId" column="crowd_id" jdbcType="INTEGER"/>
+        <result property="customerId" column="customer_id" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+  <sql id="selectCustomerCrowdRelInfoVo">
+     
+   </sql>
+
+    <insert id="batchUpsert">
+        INSERT INTO customer_crowd_rel (
+        crowd_id,
+        customer_id,
+        create_time,
+        update_time
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.crowdId}, #{item.customerId}, NOW(), NOW())
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        update_time = NOW()
+    </insert>
+
+
+</mapper>
+

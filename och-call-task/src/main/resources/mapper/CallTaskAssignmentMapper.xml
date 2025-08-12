@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.calltask.mapper.CallTaskAssignmentMapper">
+
+    <resultMap type="com.och.calltask.domain.entity.CallTaskAssignment" id="CallTaskAssignmentMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="taskId" column="task_id" jdbcType="BIGINT"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="ext" column="ext" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="INTEGER"/>
+        <result property="crowdId" column="crowd_id" jdbcType="BIGINT"/>
+        <result property="templateId" column="template_id" jdbcType="BIGINT"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="agentId" column="agent_id" jdbcType="INTEGER"/>
+        <result property="assignmentTime" column="assignment_time" jdbcType="TIMESTAMP"/>
+        <result property="callStatus" column="call_status" jdbcType="INTEGER"/>
+        <result property="attemptCount" column="attempt_count" jdbcType="INTEGER"/>
+        <result property="scheduledTime" column="scheduled_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="BIGINT"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="BIGINT"/>
+    </resultMap>
+
+  <sql id="selectCallTaskAssignmentInfoVo">
+     
+   </sql>
+
+</mapper>
+

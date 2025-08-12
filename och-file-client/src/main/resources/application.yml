@@ -3,4 +3,4 @@ netty:
     host: 127.0.0.1
     port: 9527
   file:
-    path: /record
+    path: /usr/local/freeswitch/sounds

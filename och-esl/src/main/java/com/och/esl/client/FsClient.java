@@ -56,7 +56,7 @@ public class FsClient {
 
     private Map<String, Client> fsClientMap = new ConcurrentHashMap<>();
 
-    private ScheduledExecutorService checkFsThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("check-fs-pool-%d"));
+    private ScheduledExecutorService checkFsThread = new ScheduledThreadPoolExecutor(1, new ThreadFactoryImpl("check-fs-pool-"));
 
 
     private final FsClientProperties clientProperties;
@@ -435,7 +435,7 @@ public class FsClient {
         SendMsg speech = new SendMsg(uniqueId);
         speech.addCallCommand(EslConstant.EXECUTE);
         speech.addExecuteAppName(EslConstant.DETECT_SPEECH);
-        speech.addExecuteAppArg(EslConstant.UNIMRCP + "ali-mrcpserver alimrcp default");
+        speech.addExecuteAppArg(EslConstant.UNIMRCP + "aliyun-mrcpserver alimrcp default");
         this.sendMsg(address, speech);
     }
 

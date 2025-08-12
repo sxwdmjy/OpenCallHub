@@ -16,9 +16,11 @@ import com.och.system.service.ISipAgentService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -62,9 +64,12 @@ public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgen
         if (!Objects.equals(sipAgent.getStatus(), query.getStatus())){
             sipAgent.setStatus(query.getStatus());
         }
-        updateById(sipAgent);
+        if(updateById(sipAgent)){
+            redisService.delCacheMapValue(CacheConstants.AGENT_CURRENT_STATUS_KEY, sipAgent.getId().toString());
+        };
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(SipAgentQuery query) {
         List<Long> ids = new LinkedList<>();
@@ -83,7 +88,12 @@ public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgen
             agent.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
             return agent;
         }).collect(Collectors.toList());
-        updateBatchById(list);
+        if(updateBatchById(list)){
+            String[] idArray = ids.stream()
+                    .map(String::valueOf)
+                    .toArray(String[]::new);
+            redisService.delCacheMapValue(CacheConstants.AGENT_CURRENT_STATUS_KEY, idArray);
+        }
     }
 
     @Override
@@ -115,6 +125,17 @@ public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgen
         agent.setId(id);
         agent.setStatus(status);
         return updateById(agent);
+    }
+
+    @Override
+    public List<SipAgentStatusVo> getAgentStatusList(List<Long> agentIds) {
+        Map<String, SipAgentStatusVo> cacheMap = redisService.getCacheMap(CacheConstants.AGENT_CURRENT_STATUS_KEY);
+        if (CollectionUtil.isNotEmpty(cacheMap) && CollectionUtil.isNotEmpty(agentIds)) {
+            return cacheMap.values().stream().filter(agent -> agentIds.contains(agent.getId())).toList();
+        }if(CollectionUtil.isNotEmpty(cacheMap) && CollectionUtil.isEmpty(agentIds)){
+            return cacheMap.values().stream().toList();
+        }
+        return List.of();
     }
 
     @Override

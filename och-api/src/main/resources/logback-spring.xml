@@ -5,7 +5,7 @@
     <property name="app_name" value="och-api"/>
 
     <!-- 日志输出格式 -->
-    <property name="log.pattern" value="%highlight(%d{yyyy-MM-dd HH:mm:ss.SSS}) %yellow([%thread]) %highlight(%-5level) %red(PID:${PID}) %blue(%logger{20}) - %green([%method,%line]) - %highlight(%msg%n)" />
+    <property name="log.pattern" value="%highlight(%d{yyyy-MM-dd HH:mm:ss.SSS}) %yellow([%thread]) [%X{traceId}]  %highlight(%-5level) %red(PID:${PID}) %blue(%logger{20}) - %green([%method,%line]) - %highlight(%msg%n)" />
 
     <!--  邮件 -->
     <!-- SMTP server的地址，必需指定。如网易的SMTP服务器地址是： smtp.163.com -->

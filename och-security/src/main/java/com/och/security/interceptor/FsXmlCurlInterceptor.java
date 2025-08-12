@@ -32,12 +32,12 @@ public class FsXmlCurlInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // auth-scheme: digest
         // @see com.atomscat.freeswitch.xml.config.SecurityConfiguration
-        if (authScheme != null && "digest".equals(authScheme)) {
+        if ("digest".equals(authScheme)) {
             return true;
         }
 
         // auth-scheme: basic, you need delete pom.xml security dependency
-        if (authScheme != null && "basic".equals(authScheme) && request != null) {
+        if ("basic".equals(authScheme)) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null) {
                 return false;

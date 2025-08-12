@@ -1,8 +1,7 @@
 package com.och.system.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.och.common.base.IBaseService;
-import com.och.system.domain.CallEngine;
+import com.och.system.domain.entity.CallEngine;
 import com.och.system.domain.query.engine.CallEngineAddQuery;
 import com.och.system.domain.query.engine.CallEngineQuery;
 
