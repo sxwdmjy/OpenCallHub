@@ -1,61 +1,119 @@
 server:
   port: 4320
   forward-headers-strategy: framework
+  # 添加压缩配置
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
 
 spring:
   application:
     name: och-api
+  # 添加配置元数据支持
+  config:
+    import: optional:classpath:config/application-{profile}.yml
+  
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/openCallHub?useSSL=false&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3306/openCallHub?useSSL=false&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&useServerPrepStmts=true&cachePrepStmts=true
     username: root
     password: 123456
     druid:
+      # 连接池配置
       initialSize: 5
       minIdle: 10
-      maxActive: 15
+      maxActive: 50
       maxWait: 60000
+      # 连接池空闲连接检测
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
       validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 连接池配置
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 监控配置
       filter:
         stat:
           enabled: true
           log-slow-sql: true
+          slow-sql-millis: 1000
         wall:
           config:
             multi-statement-allow: true
+        slf4j:
+          enabled: true
+          statement-log-enabled: false
+          result-set-log-enabled: false
+          connection-log-enabled: false
+          transaction-log-enabled: false
+      # 连接池监控
+      webStatFilter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+      statViewServlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: admin
+        login-password: admin123
+
   data:
     redis:
       host: 127.0.0.1
       port: 6379
-      password:
+      password: 
       timeout: 10s
+      database: 0
+      # 连接池配置
       jedis:
         pool:
-          min-idle: 0
-          max-idle: 8
-          max-active: 8
-          max-wait: -1ms
+          min-idle: 5
+          max-idle: 20
+          max-active: 50
+          max-wait: 3000ms
+          time-between-eviction-runs: 60s
+      # 集群配置（如果需要）
+      # cluster:
+      #   nodes: 127.0.0.1:7001,127.0.0.1:7002,127.0.0.1:7003
+      # 哨兵配置（如果需要）
+      # sentinel:
+      #   master: mymaster
+      #   nodes: 127.0.0.1:26379,127.0.0.1:26380,127.0.0.1:26381
       client-type: jedis
-#  rabbitmq:
-#    host: 127.0.0.1
-#    port: 5672
-#    username: guest
-#    password: guest
-#    virtual-host: /
-#    publisher-confirm-type: SIMPLE
-#    publisher-returns: true
-#    listener:
-#      simple:
-#        acknowledge-mode: manual
-#        default-requeue-rejected: true
-#        retry:
-#          enabled: true
-#          max-attempts: 3
-#      direct:
-#        acknowledge-mode: manual
-#        retry:
-#          enabled: true
+  # 缓存配置
+  cache:
+    type: redis
+    redis:
+      time-to-live: 30m
+      cache-null-values: false
+      use-key-prefix: true
+      key-prefix: "och:"
+  # 其他配置保持不变
+  #  rabbitmq:
+  #    host: 127.0.0.1
+  #    port: 5672
+  #    username: guest
+  #    password: guest
+  #    virtual-host: /
+  #    publisher-confirm-type: SIMPLE
+  #    publisher-returns: true
+  #    listener:
+  #      simple:
+  #        acknowledge-mode: manual
+  #        default-requeue-rejected: true
+  #        retry:
+  #          enabled: true
+  #          max-attempts: 3
+  #      direct:
+  #        acknowledge-mode: manual
+  #        retry:
+  #          enabled: true
   ai:
     dashscope:
       api-key: 23
@@ -93,15 +151,31 @@ spring:
             useProperties: false
             clusterCheckinInterval: 1000
 
-swagger:
-  title: 呼叫中心系统
-  description: 呼叫中心系统文档
-  version: v0.0.1
+# FreeSWITCH配置
+freeswitch:
+  thread-num: 64
+  queue-capacity: 10000
 
+# 线程池配置
+thread-pool:
+  core-pool-size: 10
+  max-pool-size: 50
+  queue-capacity: 1000
+  keep-alive-seconds: 60
+  thread-name-prefix: "och-"
+
+# 日志配置
 logging:
   level:
     com.och: debug
   config: classpath:logback-spring.xml
+
+
+
+swagger:
+  title: 呼叫中心系统
+  description: 呼叫中心系统文档
+  version: v0.0.1
 
 
 springdoc:
