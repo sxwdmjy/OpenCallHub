@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -35,6 +36,7 @@ import java.util.Collections;
 @Configuration
 @EnableWebSecurity// 开启网络安全注解
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig {
 
     // 将自定义JwtAuthenticationFilter注入
@@ -45,13 +47,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .cors((cors) -> cors.configurationSource(apiConfigurationSource()))
+        http.cors((cors) -> cors.configurationSource(apiConfigurationSource()))
                 //禁用csrf(防止跨站请求伪造攻击)
                 .csrf(AbstractHttpConfigurer::disable)
                 // 设置白名单
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/system/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/auth/v1/login",
                                 "/captcha/**",
                                 "/v3/api-docs",

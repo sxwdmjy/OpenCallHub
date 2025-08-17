@@ -1,6 +1,7 @@
 package com.och.security.handler;
 
 import com.och.common.base.ResResult;
+import com.och.common.constant.HttpStatus;
 import com.och.common.enums.ExceptionStatusEnum;
 import com.och.common.exception.CommonException;
 import com.och.common.exception.LoginException;
@@ -90,7 +91,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AccessDeniedException.class)
     public ResResult handleAccessDeniedException(Exception e, HttpServletRequest request) {
-        return ResResult.error(e.getMessage());
+        return ResResult.error(HttpStatus.FORBIDDEN, "没有权限，请联系管理员授权");
     }
 
     @ExceptionHandler(CommonException.class)

@@ -1,9 +1,7 @@
 package com.och.system.domain.query.schedule;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 /**
@@ -32,7 +30,8 @@ public class CallScheduleAddQuery {
      * 优先级 0-10
      */
     @Schema(description = "优先级 0-10",requiredMode = Schema.RequiredMode.REQUIRED)
-    @Size(min = 0, max = 10, message = "优先级最小为0，最大为10")
+    @Min(0)
+    @Max(10)
     private Integer level;
 
 
