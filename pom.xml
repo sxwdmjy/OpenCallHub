@@ -29,7 +29,7 @@
         <forest.version>1.6.4</forest.version>
         <easyexcel.version>3.1.1</easyexcel.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <jedis.version>5.1.0</jedis.version>
+        <jedis.version>6.0.0</jedis.version>
         <jackson.version>2.17.2</jackson.version>
         <lombok.version>1.18.32</lombok.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
