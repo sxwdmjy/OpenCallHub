@@ -162,3 +162,4 @@ git push origin feature/your-feature-name
 | 艺    | 36  |  奶茶   | 
 | *峰   | 36  | 美式一杯 | 
 | 拐弯抹角的小哥哥 | 36 | 请大佬喝杯咖啡 | 
+| *、   | 30  | 喝杯咖啡  |
