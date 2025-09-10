@@ -11,6 +11,7 @@ public enum RouteTypeEnum {
     SKILL_GROUP(4, "技能组"),
     VOICE(5, "放音"),
     IVR(6, "ivr"),
+    PREDICTIVE_DIALING(7, "预测式外呼"),
 
     ;
 
