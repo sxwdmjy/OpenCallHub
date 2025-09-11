@@ -190,6 +190,18 @@ public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
     private Set<Integer> parseWeekDays(String cycle) {
         return Arrays.stream(cycle.split(","))
                 .map(Integer::parseInt)
+                .map(weekDay -> {
+                    return switch (weekDay) {
+                        case 1 -> Calendar.MONDAY;
+                        case 2 -> Calendar.TUESDAY;
+                        case 3 -> Calendar.WEDNESDAY;
+                        case 4 -> Calendar.THURSDAY;
+                        case 5 -> Calendar.FRIDAY;
+                        case 6 -> Calendar.SATURDAY;
+                        case 7 -> Calendar.SUNDAY;
+                        default -> null;
+                    };
+                })
                 .collect(Collectors.toSet());
     }
 }
