@@ -150,16 +150,3 @@ git push origin feature/your-feature-name
 
 - [前端地址](https://gitee.com/zhongjiawei999/waihu-app)
 - [FreeSWITCH 文档](https://developer.signalwire.com/freeswitch/FreeSWITCH-Explained)
-
-
-# 赞助人列表
-| 赞助人  | 赞助金额 | 附言         |
-|------|------|------------|
-| *恒   | 100  | 感谢大佬的无私奉献！ |
-| NO.1 | 200  | 咨询         |
-| Mahon | 50  | 天使投资 |
-| 艺    | 36  |  奶茶   | 
-| *峰   | 36  | 美式一杯 | 
-| 拐弯抹角的小哥哥 | 36 | 请大佬喝杯咖啡 | 
-| *、   | 30  | 喝杯咖啡  |
-| *好   | 50  | 向大佬咨询 |
