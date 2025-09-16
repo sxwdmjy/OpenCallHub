@@ -13,4 +13,9 @@ public enum ProcessEnum {
      * 桥接
      */
     CALL_BRIDGE(),
+
+    /**
+     * 呼叫任务
+     */
+    CALL_TASK(),
 }
