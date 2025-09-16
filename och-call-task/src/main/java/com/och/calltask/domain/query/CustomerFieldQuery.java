@@ -33,4 +33,7 @@ public class CustomerFieldQuery extends BaseQuery {
 
     @Schema(description = "字段类型 0-电话 1-文本 2-数字 3-单选 4-多选 5-电子邮箱 6-日期 7-日期时间 8-时间")
     private Integer fieldType;
+
+    @Schema(description = "是否系统字段 0-系统字段 1-自定义字段")
+    private Integer sysType;
 }

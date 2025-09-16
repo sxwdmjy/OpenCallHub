@@ -62,4 +62,10 @@ public class CustomerFieldVo extends BaseVo {
      */
     @Schema(description = "字段选项")
     private String options;
+
+    /**
+     * 是否系统字段 0-系统字段 1-自定义字段
+     */
+    @Schema(description = "是否系统字段 0-系统字段 1-自定义字段")
+    private Integer sysType;
 }
