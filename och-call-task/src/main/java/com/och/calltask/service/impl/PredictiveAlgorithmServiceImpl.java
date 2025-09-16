@@ -31,11 +31,6 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
 
     // 算法参数
     private static final double BASE_ANSWER_RATE = 0.25;
-    private static final double TIME_FACTOR_WEIGHT = 0.3;
-    private static final double CUSTOMER_VALUE_WEIGHT = 0.4;
-    private static final double AGENT_SKILL_WEIGHT = 0.3;
-    private static final double SEASONAL_FACTOR_WEIGHT = 0.2;
-    private static final double DAY_TYPE_FACTOR_WEIGHT = 0.15;
 
     @Override
     public PredictiveDialingResult calculateOptimalDialCount(Long taskId, int availableAgents, PredictiveDialingMetrics historicalMetrics) {
@@ -166,7 +161,6 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
             CallTaskContactQuery query = new CallTaskContactQuery();
             query.setTaskId(taskId);
             query.setStatus(1); // 已分配
-            
             List<CallTaskContactVo> historicalContacts = callTaskService.getTaskContactList(query);
             
             if (CollectionUtils.isEmpty(historicalContacts)) {

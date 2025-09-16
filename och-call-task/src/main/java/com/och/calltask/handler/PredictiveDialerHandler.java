@@ -1,23 +1,17 @@
 package com.och.calltask.handler;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.och.calltask.domain.entity.CallTask;
+import com.alibaba.fastjson2.JSONObject;
 import com.och.calltask.domain.entity.CallTaskAssignment;
 import com.och.calltask.domain.query.CallTaskContactQuery;
-import com.och.calltask.domain.vo.CallTaskContactVo;
+import com.och.calltask.domain.vo.*;
 import com.och.calltask.service.ICallTaskAssignmentService;
 import com.och.calltask.service.ICallTaskService;
 import com.och.calltask.service.IPredictiveAlgorithmService;
 import com.och.calltask.service.IPredictiveDialingService;
 import com.och.calltask.service.ICallQueueService;
-import com.och.calltask.service.ICallStatusService;
-import com.och.calltask.domain.vo.PredictiveDialingMetrics;
-import com.och.calltask.domain.vo.PredictiveDialingResult;
-import com.och.calltask.domain.vo.PredictiveDialingCallResult;
-import com.och.calltask.domain.vo.CallQueueItem;
-import com.och.calltask.domain.vo.QueuePriority;
-import com.och.common.utils.StringUtils;
+import com.och.system.domain.query.agent.SipAgentQuery;
 import com.och.system.domain.vo.agent.SipAgentStatusVo;
+import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.domain.vo.agent.SipSimpleAgent;
 import com.och.system.service.ISipAgentService;
 import lombok.RequiredArgsConstructor;
@@ -44,15 +38,9 @@ public class PredictiveDialerHandler implements CallTaskHandler {
     private final IPredictiveAlgorithmService predictiveAlgorithmService;
     private final IPredictiveDialingService predictiveDialingService;
     private final ICallQueueService callQueueService;
-    private final ICallStatusService callStatusService;
 
-    // 预测式外呼配置参数
-    private static final int MAX_CONCURRENT_CALLS = 5; // 最大并发外呼数
-    private static final double TARGET_AGENT_UTILIZATION = 0.85; // 目标坐席利用率
-    private static final int DIAL_INTERVAL_SECONDS = 3; // 拨号间隔（秒）
-    private static final double INITIAL_ANSWER_RATE = 0.25; // 初始预测接通率
-    private static final double MIN_ANSWER_RATE = 0.15; // 最小预测接通率
-    private static final double MAX_ANSWER_RATE = 0.45; // 最大预测接通率
+    //拨号间隔（秒）
+    private static final int DIAL_INTERVAL_SECONDS = 3;
 
     @Override
     public void execute(Long taskId) {
@@ -60,7 +48,7 @@ public class PredictiveDialerHandler implements CallTaskHandler {
         
         try {
             // 1. 获取任务基础信息
-            CallTask callTask = callTaskService.getById(taskId);
+            CallTaskVo callTask = callTaskService.getDetail(taskId);
             if (callTask == null) {
                 log.warn("【任务异常】任务不存在, ID: {}", taskId);
                 return;
@@ -105,137 +93,15 @@ public class PredictiveDialerHandler implements CallTaskHandler {
         }
         
         List<SipAgentStatusVo> agentStatusList = sipAgentService.getAgentStatusList(agentIds);
-        
-        // 过滤出空闲状态的坐席
+        // 过滤出空闲状态的坐席 在线且空闲
         return agentStatusList.stream()
-                .filter(agent -> agent.getOnlineStatus() == 1 && agent.getStatus() == 1) // 在线且空闲
+                .filter(agent -> agent.getOnlineStatus() == 1 && agent.getStatus() == 1)
                 .toList();
     }
 
-    /**
-     * 计算预测拨号数量
-     * 基于坐席数量、目标利用率和动态预测接通率计算
-     */
-    private int calculatePredictedDialCount(List<SipAgentStatusVo> availableAgents, CallTask callTask) {
-        int availableAgentCount = availableAgents.size();
-        
-        // 获取动态预测接通率
-        double predictedAnswerRate = getDynamicAnswerRate(callTask.getId());
-        
-        // 计算当前坐席利用率
-        double currentUtilization = calculateCurrentAgentUtilization(callTask.getId(), availableAgents);
-        
-        // 动态调整目标利用率
-        double adjustedTargetUtilization = adjustTargetUtilization(currentUtilization);
-        
-        // 基础计算：目标坐席数 * 调整后目标利用率 / 动态预测接通率
-        double baseDialCount = availableAgentCount * adjustedTargetUtilization / predictedAnswerRate;
-        
-        // 应用任务配置的接待限制
-        Integer receiveLimit = callTask.getReceiveLimit();
-        if (receiveLimit != null && receiveLimit > 0) {
-            baseDialCount = Math.min(baseDialCount, receiveLimit);
-        }
-        
-        // 确保不超过最大并发数
-        int maxCalls = Math.min(MAX_CONCURRENT_CALLS, availableAgentCount);
-        
-        int finalCount = Math.min((int) Math.ceil(baseDialCount), maxCalls);
-        
-        log.info("【预测计算详情】坐席数:{}, 当前利用率:{:.2f}, 调整后目标利用率:{:.2f}, 预测接通率:{:.2f}, 计算拨号数:{}", 
-                availableAgentCount, currentUtilization, adjustedTargetUtilization, predictedAnswerRate, finalCount);
-        
-        return finalCount;
-    }
 
-    /**
-     * 获取动态预测接通率
-     * 基于历史数据动态调整预测接通率
-     */
-    private double getDynamicAnswerRate(Long taskId) {
-        // 获取任务历史接通率数据
-        double historicalAnswerRate = getHistoricalAnswerRate(taskId);
-        
-        // 如果历史数据不足，使用初始预测值
-        if (historicalAnswerRate <= 0) {
-            return INITIAL_ANSWER_RATE;
-        }
-        
-        // 动态调整：结合历史数据和初始预测值
-        double adjustedRate = historicalAnswerRate * 0.7 + INITIAL_ANSWER_RATE * 0.3;
-        
-        // 限制在合理范围内
-        return Math.max(MIN_ANSWER_RATE, Math.min(MAX_ANSWER_RATE, adjustedRate));
-    }
 
-    /**
-     * 获取历史接通率
-     */
-    private double getHistoricalAnswerRate(Long taskId) {
-        try {
-            // 查询任务历史接通数据
-            CallTaskContactQuery query = new CallTaskContactQuery();
-            query.setTaskId(taskId);
-            query.setStatus(1); // 已分配
-            query.setCallStatus(1); // 已拨打
-            
-            List<CallTaskContactVo> dialedContacts = callTaskService.getTaskContactList(query);
-            
-            if (CollectionUtils.isEmpty(dialedContacts)) {
-                return 0.0;
-            }
-            
-            // 计算接通率（这里简化处理，实际应该查询通话记录）
-            // 假设30%的已拨打客户被接通
-            return 0.3;
-            
-        } catch (Exception e) {
-            log.warn("【历史数据获取失败】任务:{} 获取历史接通率失败", taskId, e);
-            return 0.0;
-        }
-    }
 
-    /**
-     * 计算当前坐席利用率
-     */
-    private double calculateCurrentAgentUtilization(Long taskId, List<SipAgentStatusVo> availableAgents) {
-        try {
-            // 查询当前正在处理的客户数量
-            CallTaskContactQuery query = new CallTaskContactQuery();
-            query.setTaskId(taskId);
-            query.setStatus(1); // 已分配
-            query.setCallStatus(0); // 未拨打（正在处理中）
-            
-            List<CallTaskContactVo> processingContacts = callTaskService.getTaskContactList(query);
-            int processingCount = CollectionUtils.isEmpty(processingContacts) ? 0 : processingContacts.size();
-            
-            int totalAgents = availableAgents.size();
-            if (totalAgents == 0) {
-                return 0.0;
-            }
-            
-            return (double) processingCount / totalAgents;
-            
-        } catch (Exception e) {
-            log.warn("【利用率计算失败】任务:{} 计算坐席利用率失败", taskId, e);
-            return 0.0;
-        }
-    }
-
-    /**
-     * 动态调整目标利用率
-     */
-    private double adjustTargetUtilization(double currentUtilization) {
-        if (currentUtilization < TARGET_AGENT_UTILIZATION * 0.5) {
-            // 利用率过低，提高目标利用率
-            return Math.min(TARGET_AGENT_UTILIZATION + 0.1, 0.95);
-        } else if (currentUtilization > TARGET_AGENT_UTILIZATION * 1.2) {
-            // 利用率过高，降低目标利用率
-            return Math.max(TARGET_AGENT_UTILIZATION - 0.1, 0.6);
-        }
-        
-        return TARGET_AGENT_UTILIZATION;
-    }
 
     /**
      * 获取待拨号客户（带优先级）
@@ -300,29 +166,7 @@ public class PredictiveDialerHandler implements CallTaskHandler {
         return selectedContacts;
     }
 
-    /**
-     * 获取待拨号客户
-     * 使用智能选择策略，优先选择高价值客户
-     */
-    private List<CallTaskContactVo> getContactsToDial(Long taskId, int limit) {
-        CallTaskContactQuery query = new CallTaskContactQuery();
-        query.setStatus(0); // 未分配状态
-        query.setTaskId(taskId);
-        query.setCallStatus(0); // 未拨打状态
-        
-        List<CallTaskContactVo> allContacts = callTaskService.getTaskContactList(query);
-        
-        if (CollectionUtils.isEmpty(allContacts)) {
-            return Collections.emptyList();
-        }
-        
-        if (allContacts.size() <= limit) {
-            return allContacts;
-        }
-        
-        // 智能客户选择策略
-        return selectOptimalContacts(allContacts, limit);
-    }
+
 
     /**
      * 智能客户选择策略
@@ -423,8 +267,8 @@ public class PredictiveDialerHandler implements CallTaskHandler {
     /**
      * 使用队列管理执行高级预测式拨号
      */
-    private void executeAdvancedPredictiveDialingWithQueue(List<SipAgentStatusVo> agents, 
-                                                         CallTask callTask,
+    private void executeAdvancedPredictiveDialingWithQueue(List<SipAgentStatusVo> agents,
+                                                           CallTaskVo callTask,
                                                          PredictiveDialingResult predictionResult) {
         
         List<CallTaskAssignment> assignments = new ArrayList<>();
@@ -484,13 +328,9 @@ public class PredictiveDialerHandler implements CallTaskHandler {
                 // 执行拨号
                 try {
                     PredictiveDialingCallResult dialResult = 
-                            predictiveDialingService.executePredictiveCall(assignment);
+                            predictiveDialingService.executePredictiveCall(assignment,callTask);
                     
-                    // 记录呼叫状态
-                    recordCallStatus(callTask.getId(), dialResult.getCallId(), 
-                            selectedAgent.getId(), contact.getId(), "INITIATED", "呼叫已发起");
-                    
-                    log.info("【拨号结果】客户:{} 呼叫ID:{} 状态:{} 消息:{}", 
+                    log.info("【拨号结果】客户:{} 呼叫ID:{} 状态:{} 消息:{}",
                             contact.getId(), dialResult.getCallId(), dialResult.getStatus(), dialResult.getMessage());
                     
                 } catch (Exception e) {
@@ -507,11 +347,11 @@ public class PredictiveDialerHandler implements CallTaskHandler {
                 
                 // 动态调整拨号间隔
                 if (agentIndex > 0) {
-                    int dynamicInterval = predictionResult.getRecommendedDialInterval() != null ? 
+                    int dynamicInterval = predictionResult.getRecommendedDialInterval() != null ?
                             predictionResult.getRecommendedDialInterval() : DIAL_INTERVAL_SECONDS;
-                    Thread.sleep(dynamicInterval * 1000);
+                    Thread.sleep(dynamicInterval * 1000L);
                 }
-                
+
             } catch (Exception e) {
                 log.error("【队列拨号异常】客户拨号失败", e);
                 failureCount++;
@@ -540,189 +380,14 @@ public class PredictiveDialerHandler implements CallTaskHandler {
                 actualSuccessRate, predictionResult);
     }
 
-    /**
-     * 执行高级预测式拨号
-     * 使用AI预测算法和智能优化策略
-     */
-    private void executeAdvancedPredictiveDialing(List<CallTaskContactVo> contacts, 
-                                                List<SipAgentStatusVo> agents, 
-                                                CallTask callTask,
-                                                PredictiveDialingResult predictionResult) {
-        
-        List<CallTaskAssignment> assignments = new ArrayList<>();
-        int agentIndex = 0;
-        long startTime = System.currentTimeMillis();
-        int successCount = 0;
-        int failureCount = 0;
-        
-        log.info("【高级预测拨号】任务:{} 准备拨号 {} 个客户，预期成功率:{:.2f}%", 
-                callTask.getId(), contacts.size(), predictionResult.getPredictedSuccessRate() * 100);
-        
-        for (CallTaskContactVo contact : contacts) {
-            try {
-                // 预测客户接通概率
-                double answerProbability = predictiveAlgorithmService.predictContactAnswerProbability(
-                        contact.getId(), callTask.getId());
-                
-                // 根据预测概率调整拨号策略
-                if (answerProbability < 0.2) {
-                    log.debug("【低概率客户】客户:{} 接通概率:{:.2f}% 跳过", 
-                            contact.getId(), answerProbability * 100);
-                    continue;
-                }
-                
-                // 动态调整拨号间隔（基于预测结果）
-                if (agentIndex > 0) {
-                    int dynamicInterval = predictionResult.getRecommendedDialInterval() != null ? 
-                            predictionResult.getRecommendedDialInterval() : DIAL_INTERVAL_SECONDS;
-                    Thread.sleep(dynamicInterval * 1000);
-                }
-                
-                // 选择最优坐席
-                SipAgentStatusVo selectedAgent = selectOptimalAgent(agents, agentIndex, callTask);
-                if (selectedAgent == null) {
-                    log.warn("【无可用坐席】客户:{} 无可用坐席", contact.getId());
-                    failureCount++;
-                    continue;
-                }
-                
-                // 检查坐席分配限制
-                if (!checkAgentAssignmentLimit(selectedAgent, callTask)) {
-                    log.debug("【坐席限制】坐席:{} 已达到分配限制", selectedAgent.getId());
-                    failureCount++;
-                    continue;
-                }
-                
-                // 创建分配记录
-                CallTaskAssignment assignment = createAssignment(contact, selectedAgent);
-                assignments.add(assignment);
-                successCount++;
-                
-                // 执行真正的拨号
-                try {
-                    PredictiveDialingCallResult dialResult = 
-                            predictiveDialingService.executePredictiveCall(assignment);
-                    
-                    log.info("【拨号结果】客户:{} 呼叫ID:{} 状态:{} 消息:{}", 
-                            contact.getId(), dialResult.getCallId(), dialResult.getStatus(), dialResult.getMessage());
-                    
-                } catch (Exception e) {
-                    log.error("【拨号执行异常】客户:{} 拨号失败", contact.getId(), e);
-                    failureCount++;
-                    continue;
-                }
-                
-                // 记录详细统计
-                recordAdvancedDialingStats(callTask.getId(), contact.getId(), selectedAgent.getId(), 
-                        answerProbability, predictionResult.getConfidence());
-                
-                agentIndex++;
-                
-            } catch (Exception e) {
-                log.error("【高级拨号异常】客户:{} 拨号失败", contact.getId(), e);
-                failureCount++;
-            }
-        }
-        
-        // 批量保存分配记录
-        if (!assignments.isEmpty()) {
-            callTaskAssignmentService.updateBatchById(assignments);
-        }
-        
-        // 高级性能统计
-        long endTime = System.currentTimeMillis();
-        long duration = endTime - startTime;
-        double actualSuccessRate = contacts.size() > 0 ? (double) successCount / contacts.size() : 0.0;
-        double predictionAccuracy = calculatePredictionAccuracy(
-                predictionResult.getPredictedSuccessRate(), actualSuccessRate);
-        
-        log.info("【高级拨号完成】任务:{} 成功:{} 失败:{} 实际成功率:{:.2f}% 预测准确率:{:.2f}% 耗时:{}ms", 
-                callTask.getId(), successCount, failureCount, actualSuccessRate * 100, 
-                predictionAccuracy * 100, duration);
-        
-        // 更新预测模型
-        updatePredictionModelWithResults(callTask.getId(), successCount, failureCount, 
-                actualSuccessRate, predictionResult);
-    }
 
-    /**
-     * 执行预测式拨号
-     * 包含性能监控和自适应调整
-     */
-    private void executePredictiveDialing(List<CallTaskContactVo> contacts, 
-                                        List<SipAgentStatusVo> agents, 
-                                        CallTask callTask) {
-        
-        List<CallTaskAssignment> assignments = new ArrayList<>();
-        int agentIndex = 0;
-        long startTime = System.currentTimeMillis();
-        int successCount = 0;
-        int failureCount = 0;
-        
-        log.info("【开始拨号】任务:{} 准备拨号 {} 个客户，可用坐席 {} 个", 
-                callTask.getId(), contacts.size(), agents.size());
-        
-        for (CallTaskContactVo contact : contacts) {
-            try {
-                // 动态调整拨号间隔
-                if (agentIndex > 0) {
-                    int dynamicInterval = calculateDynamicDialInterval(callTask.getId(), successCount, failureCount);
-                    Thread.sleep(dynamicInterval * 1000);
-                }
-                
-                // 选择最优坐席
-                SipAgentStatusVo selectedAgent = selectOptimalAgent(agents, agentIndex, callTask);
-                if (selectedAgent == null) {
-                    log.warn("【无可用坐席】客户:{} 无可用坐席", contact.getId());
-                    failureCount++;
-                    continue;
-                }
-                
-                // 检查坐席分配限制
-                if (!checkAgentAssignmentLimit(selectedAgent, callTask)) {
-                    log.debug("【坐席限制】坐席:{} 已达到分配限制", selectedAgent.getId());
-                    failureCount++;
-                    continue;
-                }
-                
-                // 创建分配记录
-                CallTaskAssignment assignment = createAssignment(contact, selectedAgent);
-                assignments.add(assignment);
-                successCount++;
-                
-                // 记录拨号统计
-                recordDialingStats(callTask.getId(), contact.getId(), selectedAgent.getId());
-                
-                agentIndex++;
-                
-            } catch (Exception e) {
-                log.error("【拨号异常】客户:{} 拨号失败", contact.getId(), e);
-                failureCount++;
-            }
-        }
-        
-        // 批量保存分配记录
-        if (!assignments.isEmpty()) {
-            callTaskAssignmentService.updateBatchById(assignments);
-        }
-        
-        // 性能统计和日志
-        long endTime = System.currentTimeMillis();
-        long duration = endTime - startTime;
-        double successRate = !contacts.isEmpty() ? (double) successCount / contacts.size() : 0.0;
-        
-        log.info("【拨号完成】任务:{} 成功:{} 失败:{} 成功率:{}% 耗时:{}ms",
-                callTask.getId(), successCount, failureCount, successRate * 100, duration);
-        
-        // 更新任务性能指标
-        updateTaskPerformanceMetrics(callTask.getId(), successCount, failureCount, duration);
-    }
+
 
     /**
      * 选择最优坐席
      * 基于坐席负载、技能匹配等因素选择
      */
-    private SipAgentStatusVo selectOptimalAgent(List<SipAgentStatusVo> agents, int currentIndex, CallTask callTask) {
+    private SipAgentStatusVo selectOptimalAgent(List<SipAgentStatusVo> agents, int currentIndex, CallTaskVo callTask) {
         if (CollectionUtils.isEmpty(agents)) {
             return null;
         }
@@ -745,7 +410,7 @@ public class PredictiveDialerHandler implements CallTaskHandler {
     /**
      * 检查坐席是否过载
      */
-    private boolean isAgentOverloaded(SipAgentStatusVo agent, CallTask callTask) {
+    private boolean isAgentOverloaded(SipAgentStatusVo agent, CallTaskVo callTask) {
         // 简化实现：检查坐席当前分配数量
         try {
             CallTaskContactQuery query = new CallTaskContactQuery();
@@ -766,47 +431,9 @@ public class PredictiveDialerHandler implements CallTaskHandler {
         }
     }
 
-    /**
-     * 计算动态拨号间隔
-     * 根据成功率动态调整拨号间隔
-     */
-    private int calculateDynamicDialInterval(Long taskId, int successCount, int failureCount) {
-        int totalAttempts = successCount + failureCount;
-        if (totalAttempts == 0) {
-            return DIAL_INTERVAL_SECONDS;
-        }
-        
-        double successRate = (double) successCount / totalAttempts;
-        
-        // 根据成功率调整间隔
-        if (successRate > 0.8) {
-            // 成功率高，可以加快拨号
-            return Math.max(1, DIAL_INTERVAL_SECONDS - 1);
-        } else if (successRate < 0.3) {
-            // 成功率低，减慢拨号
-            return DIAL_INTERVAL_SECONDS + 2;
-        }
-        
-        return DIAL_INTERVAL_SECONDS;
-    }
 
-    /**
-     * 记录拨号统计
-     */
-    private void recordDialingStats(Long taskId, Long contactId, Long agentId) {
-        // 这里可以记录详细的拨号统计信息
-        // 例如：拨号时间、坐席ID、客户ID等
-        log.debug("【拨号记录】任务:{} 客户:{} 坐席:{}", taskId, contactId, agentId);
-    }
 
-    /**
-     * 更新任务性能指标
-     */
-    private void updateTaskPerformanceMetrics(Long taskId, int successCount, int failureCount, long duration) {
-        // 这里可以更新任务的性能指标
-        // 例如：总拨号数、成功率、平均拨号时间等
-        log.debug("【性能指标】任务:{} 成功:{} 失败:{} 耗时:{}ms", taskId, successCount, failureCount, duration);
-    }
+
 
     /**
      * 记录高级拨号统计
@@ -858,7 +485,7 @@ public class PredictiveDialerHandler implements CallTaskHandler {
     /**
      * 检查坐席分配限制
      */
-    private boolean checkAgentAssignmentLimit(SipAgentStatusVo agent, CallTask callTask) {
+    private boolean checkAgentAssignmentLimit(SipAgentStatusVo agent, CallTaskVo callTask) {
         // 无限制直接通过
         if (Objects.equals(1, callTask.getIsPriority())) {
             return true;
@@ -894,15 +521,18 @@ public class PredictiveDialerHandler implements CallTaskHandler {
     /**
      * 解析坐席ID列表
      */
-    private List<Long> parseAgentIds(String agentListJson) {
-        if (!StringUtils.isNotBlank(agentListJson)) {
-            return Collections.emptyList();
+    private List<Long> parseAgentIds(List<SipSimpleAgent> agentList) {
+        if (CollectionUtils.isEmpty(agentList)) {
+            SipAgentQuery query = new SipAgentQuery();
+            query.setStatus(0);
+            query.setOnlineStatus(0);
+            List<SipAgentVo> sipAgentList = sipAgentService.getInfoByQuery(query);
+            if(CollectionUtils.isEmpty(sipAgentList)){
+                return Collections.emptyList();
+            }
+            return sipAgentList.parallelStream().map(SipAgentVo::getId).toList();
         }
-        
-        return JSONArray.parseArray(agentListJson, SipSimpleAgent.class)
-                .stream()
-                .map(SipSimpleAgent::getAgentId)
-                .toList();
+       return agentList.parallelStream().map(SipSimpleAgent::getAgentId).toList();
     }
 
     /**
@@ -952,12 +582,25 @@ public class PredictiveDialerHandler implements CallTaskHandler {
      */
     private CallTaskContactVo getContactById(Long contactId) {
         try {
-            // 这里应该根据contactId查询客户信息
-            // 简化实现，返回模拟数据
             CallTaskContactVo contact = new CallTaskContactVo();
-            contact.setId(contactId);
-            contact.setPhone("13800138000");
-            contact.setName("测试客户" + contactId);
+            CallTaskAssignment assignment = callTaskAssignmentService.getById(contactId);
+            if(Objects.isNull(assignment)){
+                log.info("【未获取客户信息】客户ID:{} 获取失败", contactId);
+                return null;
+            }
+            contact.setId(assignment.getId());
+            contact.setName(assignment.getName());
+            contact.setPhone(assignment.getPhone());
+            contact.setSex(assignment.getSex());
+            contact.setExt(JSONObject.parseObject(assignment.getExt()));
+            contact.setSource(assignment.getSource());
+            contact.setCrowdId(assignment.getCrowdId());
+            contact.setTemplateId(assignment.getTemplateId());
+            contact.setCallStatus(assignment.getCallStatus());
+            contact.setAttemptCount(assignment.getAttemptCount());
+            contact.setScheduledTime(assignment.getScheduledTime());
+            contact.setRemark(assignment.getRemark());
+            contact.setAssignStatus(assignment.getStatus());
             return contact;
         } catch (Exception e) {
             log.error("【获取客户信息异常】客户ID:{} 获取失败", contactId, e);
@@ -965,42 +608,4 @@ public class PredictiveDialerHandler implements CallTaskHandler {
         }
     }
 
-    /**
-     * 记录呼叫状态
-     */
-    private void recordCallStatus(Long taskId, Long callId, Long agentId, 
-                                Long contactId, String status, String message) {
-        try {
-            ICallStatusService.CallStatusInfo statusInfo = new ICallStatusService.CallStatusInfo();
-            statusInfo.setCallId(callId);
-            statusInfo.setTaskId(taskId);
-            statusInfo.setAgentId(agentId);
-            statusInfo.setContactId(contactId);
-            statusInfo.setStatus(status);
-            statusInfo.setMessage(message);
-            statusInfo.setStartTime(System.currentTimeMillis());
-            
-            callStatusService.addCallStatus(statusInfo);
-            
-        } catch (Exception e) {
-            log.error("【记录呼叫状态异常】呼叫ID:{} 记录失败", callId, e);
-        }
-    }
-
-    /**
-     * 获取任务呼叫统计信息
-     */
-    public ICallStatusService.CallStatusStatistics getTaskCallStatistics(Long taskId) {
-        return callStatusService.getCallStatistics(taskId);
-    }
-
-    /**
-     * 获取队列统计信息
-     */
-    public Map<String, Object> getQueueStatistics(Long taskId) {
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("queueSize", callQueueService.getQueueSize(taskId));
-        stats.put("queueItems", callQueueService.getQueueItems(taskId));
-        return stats;
-    }
 }
