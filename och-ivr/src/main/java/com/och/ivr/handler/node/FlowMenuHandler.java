@@ -149,7 +149,7 @@ public class FlowMenuHandler extends AbstractIFlowNodeHandler {
                     notFileName, errorFileName, "MENU_DTMF_RETURN",
                     "[*0-9#]+", flowMenuNodeProperties.getTimeout(), null);
         }else {
-            boolean isMatch =flowMenuNodeProperties.getMenuButtons().stream().anyMatch(menuButton -> Objects.equals(menuButton.getButtonValue(),Integer.parseInt(event)));
+            boolean isMatch =flowMenuNodeProperties.getMenuButtons().stream().anyMatch(menuButton -> Objects.equals(menuButton.getButtonValue(),event));
             if(isMatch){
                 iFlowNoticeService.notice(2, "next_"+ event, flowData);
             }else {

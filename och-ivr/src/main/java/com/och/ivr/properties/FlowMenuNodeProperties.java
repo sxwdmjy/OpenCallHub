@@ -84,6 +84,6 @@ public class FlowMenuNodeProperties extends FlowNodeProperties{
         /**
          * 按键值
          */
-        private Integer buttonValue;
+        private String buttonValue;
     }
 }
