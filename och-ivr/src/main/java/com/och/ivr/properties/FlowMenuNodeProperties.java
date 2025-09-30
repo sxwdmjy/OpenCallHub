@@ -15,7 +15,7 @@ public class FlowMenuNodeProperties extends FlowNodeProperties{
     private Boolean interrupt;
 
     /**
-     * 播放类型 0-文件 1-内容
+     * 播放类型 1-文件 2-内容
      */
     private Integer playbackType;
 
@@ -30,7 +30,7 @@ public class FlowMenuNodeProperties extends FlowNodeProperties{
     private String content;
 
     /**
-     * 未按键播放类型 0-文件 1-内容
+     * 未按键播放类型 1-文件 2-内容
      */
     private Integer notPlaybackType;
 
@@ -45,7 +45,7 @@ public class FlowMenuNodeProperties extends FlowNodeProperties{
     private String notContent;
 
     /**
-     * 错按键播放类型 0-文件 1-内容
+     * 错按键播放类型 1-文件 2-内容
      */
     private Integer errorPlaybackType;
 
