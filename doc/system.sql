@@ -1,168 +1,3 @@
--- openCallHub.sys_category definition
-
-CREATE TABLE `sys_category` (
-                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-                                `type` int(11) NOT NULL COMMENT '1-拨号计划',
-                                `name` varchar(50) DEFAULT NULL COMMENT '分类名称',
-                                `parent_id` bigint(100) DEFAULT '0' COMMENT '父分类的id',
-                                `flag` tinyint(4) DEFAULT '0' COMMENT '可删除标识 0 可删除 1 不可删除',
-                                `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
-                                `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
-                                `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-                                `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
-                                PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='分类配置表';
-
-
--- openCallHub.sys_file definition
-
-CREATE TABLE `sys_file` (
-                            `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-                            `cos_id` varchar(64) DEFAULT NULL COMMENT '云存储ID',
-                            `file_name` varchar(128) NOT NULL COMMENT '文件名称',
-                            `file_suffix` varchar(20) NOT NULL COMMENT '文件后缀',
-                            `file_type` tinyint(4) NOT NULL COMMENT '文件类型 1-image 2-voice 3-file',
-                            `file_path` varchar(128) NOT NULL COMMENT '文件地址',
-                            `file_size` varchar(64) NOT NULL COMMENT '文件大小',
-                            `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
-                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
-                            PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文件管理';
-
-
--- openCallHub.sys_menu definition
-
-CREATE TABLE `sys_menu` (
-                            `menu_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
-                            `menu_name` varchar(50) NOT NULL COMMENT '菜单名称',
-                            `parent_id` bigint(20) DEFAULT '0' COMMENT '父菜单ID',
-                            `order_num` int(11) DEFAULT '0' COMMENT '显示顺序',
-                            `path` varchar(200) DEFAULT '' COMMENT '路由地址',
-                            `component` varchar(255) DEFAULT NULL COMMENT '组件路径',
-                            `is_frame` tinyint(4) DEFAULT '1' COMMENT '是否为外链（0是 1否）',
-                            `menu_type` char(1) DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
-                            `visible` tinyint(4) DEFAULT '0' COMMENT '菜单状态（0显示 1隐藏）',
-                            `status` tinyint(4) DEFAULT '0' COMMENT '菜单状态（0正常 1停用）',
-                            `perms` varchar(100) DEFAULT NULL COMMENT '权限标识',
-                            `icon` varchar(100) DEFAULT '#' COMMENT '菜单图标',
-                            `remark` varchar(500) DEFAULT '' COMMENT '备注',
-                            `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
-                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
-                            PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单权限表';
-
-
--- openCallHub.sys_oper_log definition
-
-CREATE TABLE `sys_oper_log` (
-                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '日志主键',
-                                `title` varchar(50) DEFAULT '' COMMENT '模块标题',
-                                `business_type` tinyint(4) DEFAULT '0' COMMENT '业务类型（0=其它,1=新增,2=修改,3=删除,4=查询,5=导出,6=导入 7-登录 8-登出）',
-                                `method` varchar(100) DEFAULT '' COMMENT '方法名称',
-                                `request_method` varchar(10) DEFAULT '' COMMENT '请求方式',
-                                `operator_type` tinyint(4) DEFAULT '0' COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
-                                `oper_name` varchar(50) DEFAULT '' COMMENT '操作人员',
-                                `oper_url` varchar(255) DEFAULT '' COMMENT '请求URL',
-                                `oper_ip` varchar(128) DEFAULT '' COMMENT '主机地址',
-                                `oper_location` varchar(255) DEFAULT '' COMMENT '操作地点',
-                                `oper_param` varchar(2000) DEFAULT '' COMMENT '请求参数',
-                                `json_result` varchar(2000) DEFAULT '' COMMENT '返回参数',
-                                `status` tinyint(4) DEFAULT '0' COMMENT '操作状态（0正常 1异常）',
-                                `error_msg` varchar(2000) DEFAULT '' COMMENT '错误消息',
-                                `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
-                                `cost_time` bigint(20) DEFAULT '0' COMMENT '消耗时间',
-                                `create_by` varchar(255) DEFAULT NULL COMMENT '创建人',
-                                `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                `update_by` varchar(255) DEFAULT NULL COMMENT '更新人',
-                                `update_time` datetime DEFAULT NULL COMMENT '修改时间',
-                                `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0正常 1 删除',
-                                PRIMARY KEY (`id`),
-                                KEY `idx_sys_oper_log_bt` (`business_type`),
-                                KEY `idx_sys_oper_log_ot` (`oper_time`),
-                                KEY `idx_sys_oper_log_s` (`status`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='系统操作日志记录';
-
-
--- openCallHub.sys_role definition
-
-CREATE TABLE `sys_role` (
-                            `role_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
-                            `role_name` varchar(30) NOT NULL COMMENT '角色名称',
-                            `role_key` varchar(100) NOT NULL COMMENT '角色权限字符串',
-                            `role_sort` int(11) NOT NULL COMMENT '显示顺序',
-                            `data_scope` tinyint(4) DEFAULT '1' COMMENT '数据范围（1：全部数据权限 2:本部门及以下数据权限 3：本部门数据权限 4：本人数据权限）',
-                            `status` tinyint(4) DEFAULT '0' COMMENT '角色状态（0正常 1停用）',
-                            `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-                            `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
-                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
-                            PRIMARY KEY (`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='角色信息表';
-
-
--- openCallHub.sys_role_menu definition
-
-CREATE TABLE `sys_role_menu` (
-                                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-                                 `role_id` bigint(20) NOT NULL COMMENT '角色ID',
-                                 `menu_id` bigint(20) NOT NULL COMMENT '菜单ID',
-                                 `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
-                                 `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                 `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
-                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                                 `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
-                                 PRIMARY KEY (`id`),
-                                 KEY `role_menu_id_idx` (`menu_id`,`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='角色菜单关联表';
-
-
--- openCallHub.sys_user definition
-
-CREATE TABLE `sys_user` (
-                            `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-                            `user_name` varchar(50) NOT NULL COMMENT '用户账号',
-                            `nick_name` varchar(50) DEFAULT NULL COMMENT '用户昵称',
-                            `password` varchar(64) DEFAULT NULL COMMENT '密码',
-                            `avatar` varchar(128) DEFAULT NULL COMMENT '用户头像',
-                            `sex` tinyint(4) DEFAULT NULL COMMENT '用户性别（0-未知 1-男 2-女）',
-                            `phone` varchar(32) DEFAULT NULL COMMENT '手机号',
-                            `email` varchar(32) DEFAULT NULL COMMENT '邮箱',
-                            `status` tinyint(4) DEFAULT '1' COMMENT '状态 1-启用 2-禁用',
-                            `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-                            `create_by` bigint(20) DEFAULT '1' COMMENT '创建人',
-                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
-                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
-                            PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';
-
-
--- openCallHub.sys_user_role definition
-
-CREATE TABLE `sys_user_role` (
-                                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-                                 `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-                                 `role_id` bigint(20) NOT NULL COMMENT '角色ID',
-                                 `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
-                                 `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                 `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
-                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-                                 `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
-                                 PRIMARY KEY (`id`),
-                                 KEY `user_role_id_idx` (`user_id`,`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关联表';
-
-
 -- openCallHub.call_display definition
 
 CREATE TABLE `call_display` (
@@ -176,7 +11,7 @@ CREATE TABLE `call_display` (
                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                 `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                                 PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='号码管理';
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COMMENT='号码管理';
 
 
 -- openCallHub.call_display_pool definition
@@ -192,7 +27,7 @@ CREATE TABLE `call_display_pool` (
                                      `tenant_id` int(20) NOT NULL DEFAULT '0' COMMENT '租户ID',
                                      `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                                      PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='号码池管理';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='号码池管理';
 
 
 -- openCallHub.call_display_pool_rel definition
@@ -207,8 +42,59 @@ CREATE TABLE `call_display_pool_rel` (
                                          `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                          `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                                          PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='号码池号码关联表';
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COMMENT='号码池号码关联表';
 
+
+-- openCallHub.call_engine definition
+
+CREATE TABLE `call_engine` (
+                               `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                               `name` varchar(50) NOT NULL COMMENT '名称',
+                               `profile` varchar(128) NOT NULL COMMENT '引擎模块名称',
+                               `type` tinyint(4) NOT NULL COMMENT '引擎类型 1-asr 2-tts',
+                               `providers` tinyint(4) NOT NULL COMMENT '服务商 1-阿里 2-腾讯 3-讯飞',
+                               `timbre` varchar(200) DEFAULT NULL COMMENT '发声音色',
+                               `grammar` varchar(200) DEFAULT NULL COMMENT 'asr语法',
+                               `param` varchar(200) DEFAULT NULL COMMENT '参数',
+                               `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                               `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                               `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                               `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                               PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='AI引擎表';
+
+
+-- openCallHub.call_in_phone definition
+
+CREATE TABLE `call_in_phone` (
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                 `name` varchar(128) NOT NULL COMMENT '名称',
+                                 `phone` varchar(32) NOT NULL COMMENT '呼入号码',
+                                 `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                 `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                                 PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='呼入号码表';
+
+
+-- openCallHub.call_in_phone_rel definition
+
+CREATE TABLE `call_in_phone_rel` (
+                                     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                     `call_in_id` bigint(20) NOT NULL COMMENT '呼入号码ID',
+                                     `schedule_id` bigint(20) NOT NULL COMMENT '日程ID',
+                                     `route_type` tinyint(4) DEFAULT NULL COMMENT '路由类型 1-坐席 2-外呼 3-sip 4-技能组 5-放音 6-ivr',
+                                     `route_value` varchar(50) DEFAULT NULL COMMENT '路由类型值',
+                                     `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                     `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                     `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                     `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                                     PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='呼入号码路由子码表';
 
 
 -- openCallHub.call_record definition
@@ -216,6 +102,8 @@ CREATE TABLE `call_display_pool_rel` (
 CREATE TABLE `call_record` (
                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                `call_id` varchar(64) NOT NULL COMMENT '呼叫唯一ID',
+                               `task_id` bigint(20) DEFAULT NULL COMMENT '任务ID',
+                               `customer_id` bigint(20) DEFAULT NULL COMMENT '客户ID',
                                `caller_number` varchar(32) NOT NULL COMMENT '主叫号码',
                                `caller_display_number` varchar(32) NOT NULL COMMENT '主叫显号',
                                `callee_number` varchar(32) NOT NULL COMMENT '被叫号码',
@@ -229,7 +117,7 @@ CREATE TABLE `call_record` (
                                `call_start_time` datetime DEFAULT NULL COMMENT '呼叫开始时间',
                                `call_end_time` datetime DEFAULT NULL COMMENT '呼叫结束时间',
                                `answer_flag` tinyint(4) NOT NULL COMMENT '应答标识 0-接通 1-坐席未接用户未接 2-坐席接通用户未接通 3-用户接通坐席未接通',
-                               `answer_time` datetime NOT NULL COMMENT '呼叫接通时间',
+                               `answer_time` datetime DEFAULT NULL COMMENT '呼叫接通时间',
                                `ringing_time` datetime DEFAULT NULL COMMENT '振铃时间',
                                `hangup_dir` tinyint(4) DEFAULT NULL COMMENT '挂机方向 1-主叫挂机 2-被叫挂机 3-系统挂机',
                                `hangup_cause_code` tinyint(4) DEFAULT NULL COMMENT '挂机原因 ',
@@ -241,7 +129,7 @@ CREATE TABLE `call_record` (
                                `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                                PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='呼叫记录表';
+) ENGINE=InnoDB AUTO_INCREMENT=257 DEFAULT CHARSET=utf8mb4 COMMENT='呼叫记录表';
 
 
 -- openCallHub.call_route definition
@@ -262,7 +150,7 @@ CREATE TABLE `call_route` (
                               `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='号码路由表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='号码路由表';
 
 
 -- openCallHub.call_schedule definition
@@ -283,7 +171,7 @@ CREATE TABLE `call_schedule` (
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                                  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='日程安排表';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='日程安排表';
 
 
 -- openCallHub.call_skill definition
@@ -310,7 +198,7 @@ CREATE TABLE `call_skill` (
                               `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='技能表';
 
 
 -- openCallHub.call_skill_agent_rel definition
@@ -325,7 +213,182 @@ CREATE TABLE `call_skill_agent_rel` (
                                         `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                                         `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                                         PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能坐席关联表';
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COMMENT='技能坐席关联表';
+
+
+-- openCallHub.call_task definition
+
+CREATE TABLE `call_task` (
+                             `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                             `name` varchar(50) NOT NULL COMMENT '任务名称',
+                             `type` tinyint(4) NOT NULL COMMENT '任务类型(0-预测 1-预览)',
+                             `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '任务状态(0-未开始 1-进行中 2-暂停 3-结束)',
+                             `priority` int(11) DEFAULT '0' COMMENT '任务优先级',
+                             `start_day` datetime NOT NULL COMMENT '任务开始时间',
+                             `end_day` datetime NOT NULL COMMENT '任务结束时间',
+                             `s_time` varchar(50) DEFAULT NULL COMMENT '每天开始时间',
+                             `e_time` varchar(50) DEFAULT NULL COMMENT '每天结束时间',
+                             `work_cycle` varchar(20) NOT NULL COMMENT '周期时间',
+                             `assignment_type` tinyint(4) DEFAULT NULL COMMENT '分配方式 1-轮流 2-空闲',
+                             `is_priority` tinyint(4) DEFAULT NULL COMMENT '是否有限分配: 1-否 2-是',
+                             `receive_limit` int(11) DEFAULT NULL COMMENT '接待个数限制',
+                             `agent_list` json DEFAULT NULL COMMENT '执行坐席列表（为空全部坐席）',
+                             `complete_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '自动完成类型(0-是 1-否)',
+                             `phone_pool_id` bigint(20) NOT NULL COMMENT '外显号码池',
+                             `transfer_type` tinyint(4) NOT NULL COMMENT '转接类型(0-技能组 1-ivr 3-机器人)',
+                             `transfer_value` varchar(120) NOT NULL COMMENT '转接类型值',
+                             `recall` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否重呼(0-是 1-否)',
+                             `recall_num` int(11) DEFAULT NULL COMMENT '重呼次数',
+                             `recall_time` int(11) DEFAULT NULL COMMENT '重呼间隔时长',
+                             `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+                             `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                             `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                             `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                             `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                             `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                             PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='外呼任务表';
+
+
+-- openCallHub.call_task_assignment definition
+
+CREATE TABLE `call_task_assignment` (
+                                        `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                        `task_id` bigint(64) NOT NULL COMMENT '任务ID',
+                                        `phone` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号',
+                                        `name` varchar(50) NOT NULL DEFAULT '' COMMENT '姓名',
+                                        `sex` tinyint(4) NOT NULL DEFAULT '0' COMMENT '性别 0-未知 1-男 2-女',
+                                        `ext` json DEFAULT NULL COMMENT '扩展字段',
+                                        `source` tinyint(4) NOT NULL DEFAULT '0' COMMENT '来源 0-人群导入 1-文件导入 2-API导入',
+                                        `crowd_id` bigint(20) DEFAULT '0' COMMENT '人群ID',
+                                        `template_id` bigint(20) DEFAULT '0' COMMENT '模板ID',
+                                        `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '分配状态 0-未分配 1-已分配',
+                                        `agent_id` bigint(64) DEFAULT '0' COMMENT '坐席ID',
+                                        `assignment_time` datetime DEFAULT NULL COMMENT '分配时间',
+                                        `call_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '拨打状态 0-未拨打 1-已拨打',
+                                        `attempt_count` int(11) DEFAULT NULL COMMENT '拨打次数',
+                                        `scheduled_time` datetime DEFAULT NULL COMMENT '计划呼叫时间(预约回访)',
+                                        `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                                        `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                        `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                        `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                        `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                        `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                                        PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务分配联系人表';
+
+
+-- openCallHub.customer_crowd definition
+
+CREATE TABLE `customer_crowd` (
+                                  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                  `name` varchar(50) NOT NULL COMMENT '人群名称',
+                                  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否启用 0-否 1-是',
+                                  `type` tinyint(4) DEFAULT '1' COMMENT '更新方式 1-手动 2-自动',
+                                  `progress` tinyint(4) DEFAULT NULL COMMENT '进度 1-待计算 2-计算中 3-计算完成 4-计算失败',
+                                  `reason` varchar(200) DEFAULT NULL COMMENT '失败原因',
+                                  `swipe` json NOT NULL COMMENT '策略条件',
+                                  `crowd_num` int(11) DEFAULT '0' COMMENT '人群数量',
+                                  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+                                  `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                  `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                                  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='客户人群管理表';
+
+
+-- openCallHub.customer_crowd_rel definition
+
+CREATE TABLE `customer_crowd_rel` (
+                                      `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                      `crowd_id` bigint(64) NOT NULL COMMENT '人群ID',
+                                      `customer_id` bigint(64) NOT NULL COMMENT '客户ID',
+                                      `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                      `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                      `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                      `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                      `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                                      PRIMARY KEY (`id`),
+                                      KEY `crowd_id_index` (`crowd_id`,`del_flag`),
+                                      KEY `customer_id_index` (`customer_id`,`del_flag`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='人群客户关联表';
+
+
+-- openCallHub.customer_field definition
+
+CREATE TABLE `customer_field` (
+                                  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                  `field_label` varchar(100) NOT NULL COMMENT '字段显示名称',
+                                  `field_name` varchar(100) NOT NULL COMMENT '字段名称',
+                                  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否启用 0-否 1-是',
+                                  `field_type` tinyint(4) NOT NULL COMMENT '字段类型 0-电话 1-文本 2-数字 3-单选 4-多选 5-电子邮箱 6-日期 7-日期时间 8-时间',
+                                  `required` tinyint(4) DEFAULT '0' COMMENT '是否必填 0-非必填 1-必填',
+                                  `options` json DEFAULT NULL COMMENT '字段选项',
+                                  `sys_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否系统字段 0-系统字段 1-自定义字段',
+                                  `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                  `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                                  PRIMARY KEY (`id`),
+                                  UNIQUE KEY `idx_unique_name` (`field_name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='客户字段管理表';
+
+
+-- openCallHub.customer_seas definition
+
+CREATE TABLE `customer_seas` (
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                 `template_id` bigint(20) NOT NULL COMMENT '模板ID',
+                                 `third_id` varchar(64) DEFAULT NULL COMMENT '第三方ID',
+                                 `customer_info` json DEFAULT NULL COMMENT '客户数据',
+                                 `phone` varchar(20) GENERATED ALWAYS AS (json_unquote(json_extract(`customer_info`,'$.phone'))) STORED COMMENT '虚列客户手机号',
+                                 `name` varchar(50) GENERATED ALWAYS AS (json_unquote(json_extract(`customer_info`,'$.customerName'))) STORED COMMENT '虚列客户名称',
+                                 `sex` tinyint(4) GENERATED ALWAYS AS (json_unquote(json_extract(`customer_info`,'$.customerSex'))) STORED COMMENT '虚列客户性别 0-未知 1-男 2-女',
+                                 `source` tinyint(4) NOT NULL DEFAULT '0' COMMENT '来源 0-手动创建 1-文件导入 2-API导入',
+                                 `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                 `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                 `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                 `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                                 PRIMARY KEY (`id`),
+                                 KEY `idx_customer_phone` (`phone`),
+                                 KEY `idx_customer_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='客户公海表';
+
+
+-- openCallHub.customer_template definition
+
+CREATE TABLE `customer_template` (
+                                     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                     `name` varchar(200) NOT NULL COMMENT '模板名称',
+                                     `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否启用 0-否 1-是',
+                                     `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                     `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                     `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                     `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                                     PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='客户模板管理表';
+
+
+-- openCallHub.customer_template_field_rel definition
+
+CREATE TABLE `customer_template_field_rel` (
+                                               `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                               `template_id` bigint(64) NOT NULL COMMENT '模板ID',
+                                               `field_id` bigint(64) NOT NULL COMMENT '字段ID',
+                                               `hidden` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否隐藏 0-否 1-是',
+                                               `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+                                               `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                               `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                               `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                               `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                                               PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='客户模板字段关联表';
 
 
 -- openCallHub.flow_info definition
@@ -343,7 +406,7 @@ CREATE TABLE `flow_info` (
                              `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                              `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                              PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ivr流程信息';
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COMMENT='ivr流程信息';
 
 
 -- openCallHub.flow_instances definition
@@ -355,7 +418,7 @@ CREATE TABLE `flow_instances` (
                                   `status` tinyint(4) DEFAULT '1' COMMENT '流程实例的状态：1-进行中、2-已完成  3-失败',
                                   `start_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '流程开始时间',
                                   `end_time` datetime DEFAULT NULL COMMENT '流程结束时间',
-                                  `current_node_id` bigint(20) DEFAULT NULL COMMENT '当前节点ID',
+                                  `current_node_id` varchar(64) DEFAULT NULL COMMENT '当前节点ID',
                                   `variables` json DEFAULT NULL COMMENT '存储流程实例的变量（例如条件判断、数据传递等）',
                                   `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
                                   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -363,7 +426,7 @@ CREATE TABLE `flow_instances` (
                                   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                                   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                                   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='存储流程实例的基本信息';
+) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8mb4 COMMENT='存储流程实例的基本信息';
 
 
 -- openCallHub.flow_node_execution_history definition
@@ -371,7 +434,7 @@ CREATE TABLE `flow_instances` (
 CREATE TABLE `flow_node_execution_history` (
                                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '节点执行历史记录ID',
                                                `instance_id` bigint(20) NOT NULL COMMENT '流程实例ID',
-                                               `node_id` bigint(20) NOT NULL COMMENT '节点ID',
+                                               `node_id` varchar(64) NOT NULL COMMENT '节点ID',
                                                `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '节点执行状态：1-进入 2-退出 3-跳过 4-失败',
                                                `start_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '节点开始执行时间',
                                                `end_time` datetime DEFAULT NULL COMMENT '节点结束执行时间',
@@ -383,7 +446,7 @@ CREATE TABLE `flow_node_execution_history` (
                                                `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                                                `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                                                PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='记录每次节点执行的历史记录';
+) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=utf8mb4 COMMENT='记录每次节点执行的历史记录';
 
 
 -- openCallHub.fs_acl definition
@@ -402,7 +465,7 @@ CREATE TABLE `fs_acl` (
                           `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                           `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                           PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='fs访问控制表';
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COMMENT='fs访问控制表';
 
 
 -- openCallHub.fs_cdr definition
@@ -460,7 +523,7 @@ CREATE TABLE `fs_config` (
                              `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                              `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                              PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='fs管理配置表';
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COMMENT='fs管理配置表';
 
 
 -- openCallHub.fs_dialplan definition
@@ -480,7 +543,7 @@ CREATE TABLE `fs_dialplan` (
                                `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                                PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='fs拨号计划表';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COMMENT='fs拨号计划表';
 
 
 -- openCallHub.fs_modules definition
@@ -498,7 +561,7 @@ CREATE TABLE `fs_modules` (
                               `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='fs模块管理表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='fs模块管理表';
 
 
 -- openCallHub.fs_sip_gateway definition
@@ -525,7 +588,7 @@ CREATE TABLE `fs_sip_gateway` (
                                   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                   `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                                   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='SIP网关表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='SIP网关表';
 
 
 -- openCallHub.ko_acc definition
@@ -546,7 +609,7 @@ CREATE TABLE `ko_acc` (
                           `dst_user` varchar(64) NOT NULL DEFAULT '',
                           `dst_domain` varchar(128) NOT NULL DEFAULT '',
                           PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='账单记账表';
+) ENGINE=InnoDB AUTO_INCREMENT=2864 DEFAULT CHARSET=utf8mb4 COMMENT='账单记账表';
 
 
 -- openCallHub.ko_address definition
@@ -559,7 +622,7 @@ CREATE TABLE `ko_address` (
                               `port` smallint(5) unsigned NOT NULL DEFAULT '0',
                               `tag` varchar(64) DEFAULT NULL,
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 
 -- openCallHub.ko_dispatcher definition
@@ -579,7 +642,7 @@ CREATE TABLE `ko_dispatcher` (
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                  `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                                  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='KO负载管理表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='KO负载管理表';
 
 
 -- openCallHub.ko_location definition
@@ -610,7 +673,7 @@ CREATE TABLE `ko_location` (
   `partition` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ruid_idx` (`ruid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='kamailio注册信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=593 DEFAULT CHARSET=utf8mb4 COMMENT='kamailio注册信息表';
 
 
 -- openCallHub.ko_subscriber definition
@@ -631,7 +694,64 @@ CREATE TABLE `ko_subscriber` (
                                  PRIMARY KEY (`id`),
                                  UNIQUE KEY `account_idx` (`username`,`domain`),
                                  KEY `username_idx` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户订阅表（SIP 订阅）';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COMMENT='用户订阅表（SIP 订阅）';
+
+
+-- openCallHub.och_area_code definition
+
+CREATE TABLE `och_area_code` (
+                                 `id` int(11) NOT NULL AUTO_INCREMENT,
+                                 `province_name` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '省份名称',
+                                 `city_name` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '城市名称',
+                                 `province_adcode` int(11) DEFAULT NULL COMMENT '省份地域编码',
+                                 `province_center` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '省份中心坐标',
+                                 `city_code` varchar(6) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '城市区号',
+                                 `city_adcode` int(11) DEFAULT NULL COMMENT '城市地域编码',
+                                 `city_center` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '城市中心坐标',
+                                 `districts` text CHARACTER SET utf8mb4 COMMENT '区域映射',
+                                 `iso_code` varchar(20) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '省份国际ISO编码',
+                                 PRIMARY KEY (`id`) USING BTREE,
+                                 KEY `area` (`city_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=638 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPACT COMMENT='基于location_gaode手工整理后的表(用于匹配区号)';
+
+
+-- openCallHub.och_region definition
+
+CREATE TABLE `och_region` (
+                              `region_id` varchar(11) DEFAULT NULL COMMENT '行政代码',
+                              `region_name` varchar(255) DEFAULT NULL COMMENT '名称',
+                              `parent_id` varchar(255) DEFAULT NULL COMMENT '行政代码',
+                              `short_name` varchar(255) DEFAULT NULL,
+                              `level` varchar(255) DEFAULT NULL COMMENT '层级',
+                              `city_code` varchar(255) DEFAULT NULL COMMENT '区号',
+                              `zip_code` varchar(255) DEFAULT NULL COMMENT '邮政编码',
+                              `merger_name` varchar(255) DEFAULT NULL,
+                              `lng` varchar(255) DEFAULT NULL COMMENT '经度',
+                              `lat` varchar(255) DEFAULT NULL COMMENT '纬度',
+                              `pinyin` varchar(255) DEFAULT NULL COMMENT '拼音',
+                              KEY `city_code` (`city_code`) USING BTREE,
+                              KEY `city_name` (`short_name`,`region_name`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+
+-- openCallHub.phone_location definition
+
+CREATE TABLE `phone_location` (
+                                  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                                  `pref` varchar(10) DEFAULT NULL COMMENT '号段前缀',
+                                  `phone` varchar(20) NOT NULL COMMENT '手机号',
+                                  `province` varchar(45) DEFAULT NULL COMMENT '省份',
+                                  `city` varchar(45) DEFAULT NULL COMMENT '城市',
+                                  `isp` varchar(45) DEFAULT NULL COMMENT '运营商类型名称',
+                                  `isp_type` smallint(3) NOT NULL DEFAULT '0' COMMENT '运营商类型 1：移动 2：联通 3：电信 4：广电 5：工信',
+                                  `post_code` varchar(100) DEFAULT NULL COMMENT '邮编',
+                                  `city_code` varchar(10) NOT NULL COMMENT '区号',
+                                  `area_code` varchar(100) DEFAULT NULL COMMENT '行政区划编码',
+                                  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                  PRIMARY KEY (`id`) USING BTREE,
+                                  UNIQUE KEY `phone` (`phone`) USING BTREE,
+                                  KEY `area` (`city_code`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=509949 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='号码归属地表';
 
 
 -- openCallHub.sip_agent definition
@@ -649,9 +769,207 @@ CREATE TABLE `sip_agent` (
                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                              `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
                              PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='坐席管理表';
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COMMENT='坐席管理表';
 
 
+-- openCallHub.sys_category definition
+
+CREATE TABLE `sys_category` (
+                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+                                `type` int(11) NOT NULL COMMENT '1-拨号计划',
+                                `name` varchar(50) DEFAULT NULL COMMENT '分类名称',
+                                `parent_id` bigint(100) DEFAULT '0' COMMENT '父分类的id',
+                                `flag` tinyint(4) DEFAULT '0' COMMENT '可删除标识 0 可删除 1 不可删除',
+                                `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
+                                PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COMMENT='分类配置表';
+
+
+-- openCallHub.sys_dept definition
+
+CREATE TABLE `sys_dept` (
+                            `dept_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '部门ID',
+                            `dept_name` varchar(50) NOT NULL COMMENT '部门名称',
+                            `parent_id` bigint(20) NOT NULL COMMENT '父ID',
+                            `order` int(11) NOT NULL COMMENT '显示顺序',
+                            `status` tinyint(4) DEFAULT '0' COMMENT '部门状态（0正常 1停用）',
+                            `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                            `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                            PRIMARY KEY (`dept_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='部门信息表';
+
+
+-- openCallHub.sys_file definition
+
+CREATE TABLE `sys_file` (
+                            `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                            `cos_id` varchar(64) DEFAULT NULL COMMENT '云存储ID',
+                            `file_name` varchar(128) NOT NULL COMMENT '文件名称',
+                            `file_suffix` varchar(20) NOT NULL COMMENT '文件后缀',
+                            `file_type` tinyint(4) NOT NULL COMMENT '文件类型 1-image 2-voice 3-file',
+                            `file_path` varchar(128) NOT NULL COMMENT '文件地址',
+                            `file_size` varchar(64) DEFAULT NULL COMMENT '文件大小',
+                            `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                            PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COMMENT='文件管理';
+
+
+-- openCallHub.sys_menu definition
+
+CREATE TABLE `sys_menu` (
+                            `menu_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+                            `menu_name` varchar(50) NOT NULL COMMENT '菜单名称',
+                            `parent_id` bigint(20) DEFAULT '0' COMMENT '父菜单ID',
+                            `order_num` int(11) DEFAULT '0' COMMENT '显示顺序',
+                            `path` varchar(200) DEFAULT '' COMMENT '路由地址',
+                            `component` varchar(255) DEFAULT NULL COMMENT '组件路径',
+                            `is_frame` tinyint(4) DEFAULT '1' COMMENT '是否为外链（0是 1否）',
+                            `menu_type` char(1) DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
+                            `visible` tinyint(4) DEFAULT '0' COMMENT '菜单状态（0显示 1隐藏）',
+                            `status` tinyint(4) DEFAULT '0' COMMENT '菜单状态（0正常 1停用）',
+                            `perms` varchar(100) DEFAULT NULL COMMENT '权限标识',
+                            `icon` varchar(100) DEFAULT '#' COMMENT '菜单图标',
+                            `remark` varchar(500) DEFAULT '' COMMENT '备注',
+                            `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                            PRIMARY KEY (`menu_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1092 DEFAULT CHARSET=utf8mb4 COMMENT='菜单权限表';
+
+
+-- openCallHub.sys_oper_log definition
+
+CREATE TABLE `sys_oper_log` (
+                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '日志主键',
+                                `title` varchar(50) DEFAULT '' COMMENT '模块标题',
+                                `business_type` tinyint(4) DEFAULT '0' COMMENT '业务类型（0=其它,1=新增,2=修改,3=删除,4=查询,5=导出,6=导入 7-登录 8-登出）',
+                                `method` varchar(100) DEFAULT '' COMMENT '方法名称',
+                                `request_method` varchar(10) DEFAULT '' COMMENT '请求方式',
+                                `operator_type` tinyint(4) DEFAULT '0' COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
+                                `oper_name` varchar(50) DEFAULT '' COMMENT '操作人员',
+                                `oper_url` varchar(255) DEFAULT '' COMMENT '请求URL',
+                                `oper_ip` varchar(128) DEFAULT '' COMMENT '主机地址',
+                                `oper_location` varchar(255) DEFAULT '' COMMENT '操作地点',
+                                `oper_param` varchar(2000) DEFAULT '' COMMENT '请求参数',
+                                `json_result` varchar(2000) DEFAULT '' COMMENT '返回参数',
+                                `status` tinyint(4) DEFAULT '0' COMMENT '操作状态（0正常 1异常）',
+                                `error_msg` varchar(2000) DEFAULT '' COMMENT '错误消息',
+                                `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
+                                `cost_time` bigint(20) DEFAULT '0' COMMENT '消耗时间',
+                                `create_by` varchar(255) DEFAULT NULL COMMENT '创建人',
+                                `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                `update_by` varchar(255) DEFAULT NULL COMMENT '更新人',
+                                `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0正常 1 删除',
+                                PRIMARY KEY (`id`),
+                                KEY `idx_sys_oper_log_bt` (`business_type`),
+                                KEY `idx_sys_oper_log_ot` (`oper_time`),
+                                KEY `idx_sys_oper_log_s` (`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=77658 DEFAULT CHARSET=utf8mb4 COMMENT='系统操作日志记录';
+
+
+-- openCallHub.sys_role definition
+
+CREATE TABLE `sys_role` (
+                            `role_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+                            `role_name` varchar(30) NOT NULL COMMENT '角色名称',
+                            `role_key` varchar(100) NOT NULL COMMENT '角色权限字符串',
+                            `role_sort` int(11) NOT NULL COMMENT '显示顺序',
+                            `data_scope` tinyint(4) DEFAULT '1' COMMENT '数据范围（1：全部数据权限 2:本部门及以下数据权限 3：本部门数据权限 4：本人数据权限）',
+                            `status` tinyint(4) DEFAULT '0' COMMENT '角色状态（0正常 1停用）',
+                            `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                            `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                            PRIMARY KEY (`role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='角色信息表';
+
+
+-- openCallHub.sys_role_menu definition
+
+CREATE TABLE `sys_role_menu` (
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                 `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+                                 `menu_id` bigint(20) NOT NULL COMMENT '菜单ID',
+                                 `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                 `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                                 PRIMARY KEY (`id`),
+                                 KEY `role_menu_id_idx` (`menu_id`,`role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=272 DEFAULT CHARSET=utf8mb4 COMMENT='角色菜单关联表';
+
+
+-- openCallHub.sys_user definition
+
+CREATE TABLE `sys_user` (
+                            `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+                            `user_name` varchar(50) NOT NULL COMMENT '用户账号',
+                            `nick_name` varchar(50) DEFAULT NULL COMMENT '用户昵称',
+                            `password` varchar(64) DEFAULT NULL COMMENT '密码',
+                            `avatar` varchar(128) DEFAULT NULL COMMENT '用户头像',
+                            `sex` tinyint(4) DEFAULT NULL COMMENT '用户性别（0-未知 1-男 2-女）',
+                            `phone` varchar(32) DEFAULT NULL COMMENT '手机号',
+                            `email` varchar(32) DEFAULT NULL COMMENT '邮箱',
+                            `status` tinyint(4) DEFAULT '1' COMMENT '状态 1-启用 2-禁用',
+                            `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                            `create_by` bigint(20) DEFAULT '1' COMMENT '创建人',
+                            `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                            `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                            `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                            `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                            PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';
+
+
+-- openCallHub.sys_user_dept definition
+
+CREATE TABLE `sys_user_dept` (
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                 `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+                                 `dept_id` bigint(20) NOT NULL COMMENT '部门ID',
+                                 `leader` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否负责人  0-否  1-是删除',
+                                 `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                 `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                                 PRIMARY KEY (`id`),
+                                 KEY `user_dept_id_idx` (`user_id`,`dept_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户部门关联表';
+
+
+-- openCallHub.sys_user_role definition
+
+CREATE TABLE `sys_user_role` (
+                                 `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                 `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+                                 `role_id` bigint(20) NOT NULL COMMENT '角色ID',
+                                 `create_by` bigint(20) DEFAULT NULL COMMENT '创建人',
+                                 `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `update_by` bigint(20) DEFAULT NULL COMMENT '更新人',
+                                 `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+                                 `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 正常 1 删除',
+                                 PRIMARY KEY (`id`),
+                                 KEY `user_role_id_idx` (`user_id`,`role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关联表';
 
 
 -- openCallHub.version definition
@@ -662,7 +980,7 @@ CREATE TABLE `version` (
                            `table_version` int(10) unsigned NOT NULL DEFAULT '0',
                            PRIMARY KEY (`id`),
                            UNIQUE KEY `table_name_idx` (`table_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='kamailio模块版本表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='kamailio模块版本表';
 
 
 -- openCallHub.voice_file definition
@@ -680,7 +998,7 @@ CREATE TABLE `voice_file` (
                               `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='语音文件表';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COMMENT='语音文件表';
 
 
 INSERT INTO sys_user
@@ -792,6 +1110,14 @@ INSERT INTO sys_menu (menu_name,parent_id,order_num,`path`,component,is_frame,me
                                                                                                                                                                                    ('坐席通话中',300,9,'#',NULL,1,'F',0,0,'system:agent:check:calling','','坐席通话中按钮',1,'2024-07-15 10:43:17.0',NULL,NULL,0),
                                                                                                                                                                                    ('清空日志',103,3,'#',NULL,1,'F',0,0,'system:log:empty','','清空日志按钮',1,'2024-07-15 10:43:17.0',NULL,NULL,0),
                                                                                                                                                                           ('IVR管理',3,9,'/IVRManagement','',1,'C',0,0,'','#','',1,'2025-01-14 14:12:41.0',1,'2025-01-14 14:12:41.0',0);
+INSERT INTO sys_menu (menu_name,parent_id,order_num,`path`,component,is_frame,menu_type,visible,status,perms,icon,remark,create_by,create_time,update_by,update_time,del_flag) VALUES
+                                                                                                                                                                                               ('AI引擎管理',3,10,'/aiEngineManagement','',1,'C',0,0,'','#','',1,'2025-03-14 16:03:01',1,'2025-03-14 16:03:01',0),
+                                                                                                                                                                                               ('任务管理',4,1,'/callTaskManagement','',1,'C',0,0,'','#','',1,'2025-03-14 16:03:01',NULL,NULL,0),
+                                                                                                                                                                                               ('客户模板',4,2,'/custoemrTemplateManagement','',1,'C',0,0,'','#','',1,'2025-03-14 16:03:01',NULL,NULL,0),
+                                                                                                                                                                                               ('客户字段',4,3,'/customerFieldManagement','',1,'C',0,0,'','#','',1,'2025-03-14 16:03:01',NULL,NULL,0),
+                                                                                                                                                                                               ('客户公海',4,4,'/customerSeasManagement','',1,'C',0,0,'','#','',1,'2025-03-14 16:03:01',NULL,NULL,0),
+                                                                                                                                                                                               ('客户人群',4,5,'/customerCrowdManagement','',1,'C',0,0,'','#','',1,'2025-03-14 16:03:01',NULL,NULL,0);
+
 
 INSERT INTO version(id, table_name, table_version)VALUES(1, 'ko_location', 9);
 INSERT INTO version(id, table_name, table_version)VALUES(2, 'ko_subscriber', 6);
