@@ -41,7 +41,7 @@ public class CustomerFieldAddQuery {
     /**
      * 是否启用 0-否 1-是
      */
-    @NotBlank(message = "状态不能为空")
+    @NotNull(message = "状态不能为空")
     @Schema(description = "是否启用 0-禁用 1-启用")
     private Integer status;
 

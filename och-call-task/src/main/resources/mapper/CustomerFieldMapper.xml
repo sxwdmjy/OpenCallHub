@@ -58,6 +58,9 @@
             <if test="endTime != null">
                 and create_time &lt;= #{endTime}
             </if>
+            <if test="sysType != null">
+                and sys_type = #{sysType}
+            </if>
             and del_flag = 0
         </where>
     </select>

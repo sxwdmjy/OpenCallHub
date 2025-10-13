@@ -1,6 +1,23 @@
-# openCallHub
+<div align="center">
+
+![logo](logo.png)
+
+</div>
+
+<div align="center">
+
+[![star](https://gitee.com/sxwdmjy/openCallHub/badge/star.svg?theme=gvp)](https://gitee.com/sxwdmjy/openCallHub/stargazers)
+[![fork](https://gitee.com/sxwdmjy/openCallHub/badge/fork.svg?theme=gvp)](https://gitee.com/sxwdmjy/openCallHub/members)
+[![OpenCallHub](https://img.shields.io/badge/OpenCallHub-V1.0.0-brightgreen)](https://gitee.com/sxwdmjy/openCallHub/tree/v1.0.0.0/)
+[![license](http://img.shields.io/badge/license-GPL%203.0-orange)](ttps://gitee.com/sxwdmjy/openCallHub/blob/master/LICENSE)
+![star](https://gitcode.com/ochb/openCallHub/star/badge.svg)
+
+</div>
 
 #### [github地址](https://github.com/sxwdmjy/openCallHub)
+#### [gitee地址](https://gitee.com/sxwdmjy/openCallHub)
+#### [gitCode地址](https://gitcode.com/ochb/openCallHub)
+#### [重构MRCP服务端地址](https://gitee.com/sxwdmjy/och-mrcp)
 #### [使用文档](https://opencallhub.com/doc/)
 
 #### 在线收集需求中。。。。。。。当前mrcp模块已经集成sip和mrcpV2协议，意在方便对接各大厂商的语音服务，待完善，有能力者可提交PR共同完善
@@ -29,6 +46,7 @@
 | **och-common** | 基础功能模块，提供通用功能。                        | 已完成                 |
 | **och-file** | 支持文件上传下载。                             | 已完成                 |
 | **och-security** | 安全模块，提供用户认证和权限控制。     | 已完成                 |
+| **och-ai** | AI大模型对接 | 开发中 |
 
 ---
 
@@ -80,6 +98,7 @@ java -jar och-api-0.0.1.jar
 | **ivr流程**  | 已完成  |
 | **mrcp实现** | 已完成  |
 | **外呼任务**   | 开发中  |
+| **机器人管理** |  开发中 |
 | **电话条集成**  | 已完成  |
 | **报表**     | 未开发  |
 #### 2、 贡献方向
@@ -119,8 +138,7 @@ git push origin feature/your-feature-name
 #### 1. 线路需求: 有线路需求可以联系作者
 #### 2. GitHub Issues：提交功能需求或 Bug 反馈。
 #### 3. 星球咨询: 有业务需求定制化开发可以联系作者，或者加星球咨询
-![星球](image.png)
-
+![微信](image.jpg)
 ### 捐献作者
 作者为兼职做开源,平时还需要工作,如果帮到了您可以请作者吃个盒饭
 

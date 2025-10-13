@@ -42,10 +42,7 @@ public class PreviewOutboundHandler implements CallTaskHandler {
             log.warn("【任务异常】任务不存在, ID: {}", taskId);
             return;
         }
-        if (Objects.isNull(callTask.getCrowdId())) {
-            log.warn("【配置缺失】任务:{} 缺少人群配置", taskId);
-            return;
-        }
+
 
         // 3. 查询待分配客户
         List<CallTaskContactVo> taskContactList = getUnassignedContacts(taskId);

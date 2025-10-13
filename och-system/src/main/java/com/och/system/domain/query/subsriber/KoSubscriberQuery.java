@@ -20,4 +20,7 @@ public class KoSubscriberQuery extends BaseQuery {
 
     @Schema(description = "SIP密码")
     private String password;
+
+    @Schema(description = "状态 0-开启 1-关闭")
+    private Integer status;
 }

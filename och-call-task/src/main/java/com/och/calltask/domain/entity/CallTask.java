@@ -116,17 +116,8 @@ public class CallTask extends BaseEntity implements Serializable {
     @TableField("work_cycle")
     private String workCycle;
     
-    
-     
-    /**
-     *  人群ID 
-     */
-    @Schema(description = "人群ID")
-    @TableField("crowd_id")
-    private Long crowdId;
-    
-    
-     
+
+
     /**
      *  分配方式 1-轮流 2-空闲 
      */

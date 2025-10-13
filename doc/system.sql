@@ -310,7 +310,7 @@ CREATE TABLE `call_skill` (
                               `update_time` datetime DEFAULT NULL COMMENT '修改时间',
                               `del_flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '删除标识 0 有效 1删除',
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能表'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能表';
 
 
 -- openCallHub.call_skill_agent_rel definition

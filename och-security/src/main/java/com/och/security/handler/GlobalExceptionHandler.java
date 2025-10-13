@@ -1,6 +1,7 @@
 package com.och.security.handler;
 
 import com.och.common.base.ResResult;
+import com.och.common.constant.HttpStatus;
 import com.och.common.enums.ExceptionStatusEnum;
 import com.och.common.exception.CommonException;
 import com.och.common.exception.LoginException;
@@ -34,6 +35,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResResult handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+        //增加异常信息
         log.error("请求地址'{}',不支持'{}'请求", requestURI, e.getMethod(), e);
         return ResResult.error(e.getMessage());
     }
@@ -45,6 +47,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResResult handleRuntimeException(RuntimeException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+        //增加异常信息
         log.error("请求地址'{}',发生未知异常.", requestURI, e);
         String msg = e.getMessage();
         if (StringUtils.isEmpty(msg)) {
@@ -60,6 +63,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataAccessException.class)
     public ResResult handleDataAccessException(DataAccessException e) {
         log.error("数据库操作异常：{}", e.getMessage(), e);
+        //增加异常信息
         return ResResult.error("数据库操作异常，请联系管理员！");
     }
 
@@ -87,7 +91,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AccessDeniedException.class)
     public ResResult handleAccessDeniedException(Exception e, HttpServletRequest request) {
-        return ResResult.error(e.getMessage());
+        return ResResult.error(HttpStatus.FORBIDDEN, "没有权限，请联系管理员授权");
     }
 
     @ExceptionHandler(CommonException.class)

@@ -11,6 +11,7 @@ import com.och.common.constant.TokenConstants;
 import com.och.security.authority.LoginUserInfo;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class JwtUtils {
             verify = verifier.verify(token);
         } catch (Exception e) {
             log.error("token解码异常:{}", e.getMessage(), e);
-            return null;
+            return Collections.emptyMap();
         }
         return verify.getClaims();
     }

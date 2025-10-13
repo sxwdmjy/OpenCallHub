@@ -45,6 +45,9 @@
             <if test="username != null and username != ''">
                 username like concat('%',#{username},'%')
             </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
         </where>
     </select>
     <select id="getByUserNameList" resultType="com.och.system.domain.entity.KoSubscriber">

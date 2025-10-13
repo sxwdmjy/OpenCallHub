@@ -38,7 +38,10 @@ public class CallController extends BaseController {
         return success(callId);
     }
 
-
+    /**
+     * 呼叫详情
+     * @return
+     */
     @Operation(description = "呼叫详情", method = "POST")
     @PostMapping("/get/{callId}")
     public ResResult<CallRecordVo> getCallInfo(@PathVariable("callId") Long callId){
