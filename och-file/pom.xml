@@ -46,9 +46,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.och</groupId>
+            <groupId>io.github.sxwdmjy</groupId>
             <artifactId>och-common</artifactId>
-            <version>0.0.1</version>
+            <version>1.0.0</version>
         </dependency>
         <!--tts-->
         <dependency>

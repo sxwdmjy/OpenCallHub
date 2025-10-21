@@ -1,10 +1,12 @@
 package com.och.system.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageInfo;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.system.domain.entity.CallSkill;
+import com.och.system.domain.entity.CallSkillAgentRel;
 import com.och.system.domain.query.skill.CallSkillAddQuery;
 import com.och.system.domain.query.skill.CallSkillQuery;
 import com.och.system.domain.vo.skill.CallSkillVo;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -111,6 +114,16 @@ public class CallSkillServiceImpl extends BaseServiceImpl<CallSkillMapper, CallS
     @Override
     public List<CallSkillVo> getListByIds(CallSkillQuery query) {
         return this.baseMapper.getListByIds(query.getIds());
+    }
+
+    @Override
+    public List<Long> getAgentListBySkillId(Long skillId) {
+        List<CallSkillAgentRel> agentRelList = iCallSkillAgentRelService.list(new LambdaQueryWrapper<CallSkillAgentRel>()
+                .eq(CallSkillAgentRel::getSkillId, skillId)
+                .eq(CallSkillAgentRel::getDelFlag, DeleteStatusEnum.DELETE_NO.getIndex()));
+       return Optional.of(agentRelList).orElse(
+                new LinkedList<>()
+        ).stream().map(CallSkillAgentRel::getAgentId).toList();
     }
 
 

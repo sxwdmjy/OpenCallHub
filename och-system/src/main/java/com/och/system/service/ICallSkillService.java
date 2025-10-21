@@ -30,5 +30,7 @@ public interface ICallSkillService extends IBaseService<CallSkill> {
     List<CallSkillVo> getList(CallSkillQuery query);
 
     List<CallSkillVo> getListByIds(CallSkillQuery query);
+
+    List<Long> getAgentListBySkillId(Long skillId);
 }
 

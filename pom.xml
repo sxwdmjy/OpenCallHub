@@ -334,7 +334,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>och-common</module>
         <module>och-security</module>
         <module>och-system</module>
         <module>och-api</module>

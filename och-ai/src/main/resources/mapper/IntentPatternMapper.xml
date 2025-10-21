@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.och.ai.mapper.IntentPatternMapper">
+
+    <resultMap type="com.och.ai.domain.IntentPattern" id="IntentPatternMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="intentId" column="intent_id" jdbcType="INTEGER"/>
+        <result property="matchType" column="match_type" jdbcType="INTEGER"/>
+        <result property="pattern" column="pattern" jdbcType="VARCHAR"/>
+        <result property="weight" column="weight" jdbcType="FLOAT"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+  <sql id="selectIntentPatternInfoVo">
+     
+   </sql>
+
+</mapper>
+
