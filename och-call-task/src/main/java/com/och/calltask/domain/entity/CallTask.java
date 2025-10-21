@@ -45,9 +45,9 @@ public class CallTask extends BaseEntity implements Serializable {
     
      
     /**
-     *  任务类型(0-预测 1-预览) 
+     *  任务类型(0-预测 1-预览 2-机器人)
      */
-    @Schema(description = "任务类型(0-预测 1-预览)")
+    @Schema(description = "任务类型(0-预测 1-预览 2-机器人)")
     @TableField("type")
     private Integer type;
     

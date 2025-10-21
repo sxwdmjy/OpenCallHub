@@ -32,11 +32,6 @@
             <version>0.0.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.och</groupId>
-            <artifactId>och-ai</artifactId>
-            <version>0.0.1</version>
-        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>

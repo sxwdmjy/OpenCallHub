@@ -28,6 +28,10 @@ public class CallQueueServiceImpl implements ICallQueueService {
     
     // 存储队列项目，便于快速查找和删除
     private final Map<Long, Map<Long, CallQueueItem>> taskQueueItems = new ConcurrentHashMap<>();
+    
+    // 存储队列项ID到任务和联系人ID的映射
+    private final Map<String, Long> queueItemToTaskId = new ConcurrentHashMap<>();
+    private final Map<String, Long> queueItemToContactId = new ConcurrentHashMap<>();
 
     @Override
     public void enqueueCall(Long taskId, Long contactId, QueuePriority priority, 
@@ -37,6 +41,8 @@ public class CallQueueServiceImpl implements ICallQueueService {
         
         // 创建队列项目
         CallQueueItem item = new CallQueueItem();
+        String queueItemId = UUID.randomUUID().toString();
+        item.setQueueItemId(queueItemId);
         item.setTaskId(taskId);
         item.setContactId(contactId);
         item.setPriority(priority);
@@ -44,6 +50,7 @@ public class CallQueueServiceImpl implements ICallQueueService {
         item.setCustomerValue(customerValue);
         item.setEnqueueTime(LocalDateTime.now());
         item.setAttempts(0);
+        item.setStatus("WAITING");
         
         // 获取或创建任务队列
         PriorityBlockingQueue<CallQueueItem> queue = taskQueues.computeIfAbsent(taskId, 
@@ -56,6 +63,10 @@ public class CallQueueServiceImpl implements ICallQueueService {
         // 添加到队列和映射
         queue.offer(item);
         items.put(contactId, item);
+        
+        // 添加ID映射
+        queueItemToTaskId.put(queueItemId, taskId);
+        queueItemToContactId.put(queueItemId, contactId);
         
         log.info("【入队完成】任务:{} 客户:{} 队列大小:{}", taskId, contactId, queue.size());
     }
@@ -75,6 +86,10 @@ public class CallQueueServiceImpl implements ICallQueueService {
                 if (items != null) {
                     items.remove(item.getContactId());
                 }
+                
+                // 从ID映射中移除
+                queueItemToTaskId.remove(item.getQueueItemId());
+                queueItemToContactId.remove(item.getQueueItemId());
                 
                 log.debug("【出队】任务:{} 客户:{} 优先级:{}", 
                         taskId, item.getContactId(), item.getPriority().getDescription());
@@ -106,6 +121,10 @@ public class CallQueueServiceImpl implements ICallQueueService {
             if (queue != null) {
                 queue.remove(item);
             }
+            
+            // 从ID映射中移除
+            queueItemToTaskId.remove(item.getQueueItemId());
+            queueItemToContactId.remove(item.getQueueItemId());
             
             log.info("【移除队列】任务:{} 客户:{} 已从队列移除", taskId, contactId);
         }
@@ -160,9 +179,13 @@ public class CallQueueServiceImpl implements ICallQueueService {
     @Override
     public QueueStatus getQueueStatus(Long taskId) {
         PriorityBlockingQueue<CallQueueItem> queue = taskQueues.get(taskId);
+        Map<Long, CallQueueItem> items = taskQueueItems.get(taskId);
+        
+        QueueStatus status = new QueueStatus();
+        status.setTaskId(taskId);
+        status.setLastUpdateTime(LocalDateTime.now());
+        
         if (queue == null) {
-            QueueStatus status = new QueueStatus();
-            status.setTaskId(taskId);
             status.setTotalItems(0);
             status.setWaitingItems(0);
             status.setProcessingItems(0);
@@ -170,12 +193,9 @@ public class CallQueueServiceImpl implements ICallQueueService {
             status.setCancelledItems(0);
             status.setFailedItems(0);
             status.setQueueState("STOPPED");
-            status.setLastUpdateTime(LocalDateTime.now());
             return status;
         }
         
-        QueueStatus status = new QueueStatus();
-        status.setTaskId(taskId);
         status.setTotalItems(queue.size());
         status.setWaitingItems(queue.size());
         status.setProcessingItems(0);
@@ -183,7 +203,6 @@ public class CallQueueServiceImpl implements ICallQueueService {
         status.setCancelledItems(0);
         status.setFailedItems(0);
         status.setQueueState("ACTIVE");
-        status.setLastUpdateTime(LocalDateTime.now());
         
         return status;
     }
@@ -209,6 +228,11 @@ public class CallQueueServiceImpl implements ICallQueueService {
         
         Map<Long, CallQueueItem> items = taskQueueItems.get(taskId);
         if (items != null) {
+            // 清理ID映射
+            for (CallQueueItem item : items.values()) {
+                queueItemToTaskId.remove(item.getQueueItemId());
+                queueItemToContactId.remove(item.getQueueItemId());
+            }
             items.clear();
         }
         
@@ -218,9 +242,12 @@ public class CallQueueServiceImpl implements ICallQueueService {
     @Override
     public QueueStatistics getQueueStatistics(Long taskId) {
         PriorityBlockingQueue<CallQueueItem> queue = taskQueues.get(taskId);
+        
+        QueueStatistics stats = new QueueStatistics();
+        stats.setTaskId(taskId);
+        stats.setPeakTime(LocalDateTime.now());
+        
         if (queue == null) {
-            QueueStatistics stats = new QueueStatistics();
-            stats.setTaskId(taskId);
             stats.setTotalProcessed(0);
             stats.setSuccessfulCalls(0);
             stats.setFailedCalls(0);
@@ -229,15 +256,12 @@ public class CallQueueServiceImpl implements ICallQueueService {
             stats.setTotalWaitTime(0L);
             stats.setAverageWaitTime(0L);
             stats.setPeakQueueSize(0);
-            stats.setPeakTime(LocalDateTime.now());
             stats.setQueueEfficiency(0.0);
             stats.setPriorityChanges(0);
             stats.setReorders(0);
             return stats;
         }
         
-        QueueStatistics stats = new QueueStatistics();
-        stats.setTaskId(taskId);
         stats.setTotalProcessed(queue.size());
         stats.setSuccessfulCalls(0); // 需要从其他地方获取
         stats.setFailedCalls(0); // 需要从其他地方获取
@@ -246,7 +270,6 @@ public class CallQueueServiceImpl implements ICallQueueService {
         stats.setTotalWaitTime(0L); // 需要计算
         stats.setAverageWaitTime(0L); // 需要计算
         stats.setPeakQueueSize(queue.size());
-        stats.setPeakTime(LocalDateTime.now());
         stats.setQueueEfficiency(0.0); // 需要计算
         stats.setPriorityChanges(0); // 需要统计
         stats.setReorders(0); // 需要统计
@@ -281,14 +304,62 @@ public class CallQueueServiceImpl implements ICallQueueService {
     @Override
     public void updateQueueItemPriority(String queueItemId, QueuePriority newPriority) {
         // 根据queueItemId查找并更新优先级
-        log.info("【更新优先级】队列项:{} 新优先级:{}", queueItemId, newPriority.getDescription());
+        Long taskId = queueItemToTaskId.get(queueItemId);
+        if (taskId == null) {
+            log.warn("【更新优先级失败】未找到队列项:{}", queueItemId);
+            return;
+        }
+        
+        PriorityBlockingQueue<CallQueueItem> queue = taskQueues.get(taskId);
+        if (queue == null) {
+            log.warn("【更新优先级失败】未找到任务队列:{}", taskId);
+            return;
+        }
+        
+        // 查找并更新队列项
+        CallQueueItem targetItem = null;
+        List<CallQueueItem> items = new ArrayList<>();
+        queue.drainTo(items);
+        
+        for (CallQueueItem item : items) {
+            if (queueItemId.equals(item.getQueueItemId())) {
+                item.setPriority(newPriority);
+                targetItem = item;
+            }
+            queue.offer(item);
+        }
+        
+        if (targetItem != null) {
+            log.info("【更新优先级】队列项:{} 新优先级:{}", queueItemId, newPriority.getDescription());
+        } else {
+            log.warn("【更新优先级失败】未找到队列项:{}", queueItemId);
+        }
     }
 
     @Override
     public CallQueueItem getQueueItem(String queueItemId) {
         // 根据queueItemId查找队列项
-        log.debug("【获取队列项】队列项ID:{}", queueItemId);
-        return null; // 需要实现具体逻辑
+        Long taskId = queueItemToTaskId.get(queueItemId);
+        if (taskId == null) {
+            log.debug("【获取队列项】未找到队列项ID:{}", queueItemId);
+            return null;
+        }
+        
+        Map<Long, CallQueueItem> items = taskQueueItems.get(taskId);
+        if (items == null) {
+            log.debug("【获取队列项】未找到任务队列项:{}", taskId);
+            return null;
+        }
+        
+        Long contactId = queueItemToContactId.get(queueItemId);
+        if (contactId == null) {
+            log.debug("【获取队列项】未找到联系人ID:{}", queueItemId);
+            return null;
+        }
+        
+        CallQueueItem item = items.get(contactId);
+        log.debug("【获取队列项】队列项ID:{} {}", queueItemId, item != null ? "找到" : "未找到");
+        return item;
     }
 
     /**
@@ -322,8 +393,17 @@ public class CallQueueServiceImpl implements ICallQueueService {
      * 清理指定任务的所有队列
      */
     public void clearTaskQueue(Long taskId) {
-        taskQueues.remove(taskId);
-        taskQueueItems.remove(taskId);
+        PriorityBlockingQueue<CallQueueItem> queue = taskQueues.remove(taskId);
+        Map<Long, CallQueueItem> items = taskQueueItems.remove(taskId);
+        
+        // 清理ID映射
+        if (items != null) {
+            for (CallQueueItem item : items.values()) {
+                queueItemToTaskId.remove(item.getQueueItemId());
+                queueItemToContactId.remove(item.getQueueItemId());
+            }
+        }
+        
         log.info("【清理队列】任务:{} 队列已清理", taskId);
     }
 

@@ -46,7 +46,7 @@ public class CallSkillAgentRel extends BaseEntity implements Serializable {
      */
     @Schema(description = "坐席ID")
     @TableField("agent_id")
-    private String agentId;
+    private Long agentId;
 
 
 

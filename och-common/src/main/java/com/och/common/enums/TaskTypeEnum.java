@@ -12,7 +12,8 @@ import lombok.Getter;
 public enum TaskTypeEnum {
 
     PREDICTIVE(0, "预测", "predictiveDialerHandler"),
-    PREVIEW(1, "预览","previewOutboundHandler");
+    PREVIEW(1, "预览","previewOutboundHandler"),
+    ROBOT(2, "机器人", "robotOutboundHandler");
 
     private final Integer code;
     private final String message;

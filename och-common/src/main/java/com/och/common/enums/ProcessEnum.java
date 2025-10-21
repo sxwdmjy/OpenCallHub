@@ -18,4 +18,10 @@ public enum ProcessEnum {
      * 呼叫任务
      */
     CALL_TASK(),
+
+    /**
+     * 机器人外呼
+     */
+    CALL_ROBOT()
+    ;
 }

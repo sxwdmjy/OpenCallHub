@@ -3,7 +3,6 @@ package com.och.calltask.service.impl;
 import cn.hutool.core.util.RandomUtil;
 import com.och.calltask.domain.entity.CallTaskAssignment;
 import com.och.calltask.domain.vo.CallTaskVo;
-import com.och.calltask.domain.vo.PredictiveDialingCallResult;
 import com.och.calltask.service.IPredictiveDialingService;
 import com.och.common.config.redis.RedisService;
 import com.och.common.constant.CacheConstants;
@@ -24,10 +23,10 @@ import com.och.system.service.IFsSipGatewayService;
 import com.och.system.service.ISipAgentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -54,14 +53,15 @@ public class PredictiveDialingServiceImpl implements IPredictiveDialingService {
 
 
     @Override
-    public PredictiveDialingCallResult executePredictiveCall(CallTaskAssignment assignment, CallTaskVo callTask) {
+    public void executePredictiveCall(CallTaskAssignment assignment, CallTaskVo callTask) {
         log.info("【预测式外呼】开始执行呼叫，分配ID: {}", assignment.getId());
 
         try {
             // 2. 获取坐席信息
             SipAgentVo agent = sipAgentService.getDetail(assignment.getAgentId());
             if (agent == null) {
-                return createErrorResult(assignment.getId(), "坐席信息不存在");
+                log.error("【预测式外呼异常】坐席信息不存在，坐席ID: {}", assignment.getAgentId());
+                throw new CommonException("坐席信息不存在");
             }
 
             // 3. 生成呼叫ID和通道ID
@@ -74,74 +74,76 @@ public class PredictiveDialingServiceImpl implements IPredictiveDialingService {
             // 5. 构建通道信息
             ChannelInfo channelInfo = buildChannelInfo(callId, assignment, agent, uniqueId);
             callInfo.setChannelInfoMap(uniqueId, channelInfo);
+            
             // 6. 设置预测式外呼专用路由类型
-            // PREDICTIVE_DIALING
-            callInfo.setRouteType(7);
+            callInfo.setRouteType(7); // PREDICTIVE_DIALING
 
-            // 6. 保存呼叫信息到缓存
+            // 7. 保存呼叫信息到缓存
             fsCallCacheService.saveCallInfo(callInfo);
             fsCallCacheService.saveCallRel(uniqueId, callId);
-
-            // 7. 创建呼叫结果对象
-            PredictiveDialingCallResult result = createCallResult(callId, assignment, agent, uniqueId);
 
             // 8. 异步执行拨号
             CompletableFuture.runAsync(() -> {
                 try {
-                    executeDialing(callId, assignment, agent, uniqueId,callTask);
+                    executeDialing(callId, assignment, agent, uniqueId, callTask);
                 } catch (Exception e) {
                     log.error("【预测式外呼异常】呼叫ID:{} 拨号失败", callId, e);
+                    // 更新分配状态为失败
+                    updateAssignmentStatus(assignment, 2); // 2=失败
                 }
             });
 
             log.info("【预测式外呼】呼叫已发起，呼叫ID: {} 客户: {} 坐席: {}",
                     callId, assignment.getPhone(), agent.getAgentNumber());
 
-            return result;
-
         } catch (Exception e) {
             log.error("【预测式外呼异常】分配ID:{} 执行失败", assignment.getId(), e);
-            return createErrorResult(assignment.getId(), "执行异常: " + e.getMessage());
+            // 更新分配状态为失败
+            updateAssignmentStatus(assignment, 2); // 2=失败
+            throw new CommonException(assignment.getId() + "执行异常: " + e.getMessage());
         }
     }
 
     @Override
-    public List<PredictiveDialingCallResult> executeBatchPredictiveCalls(List<CallTaskAssignment> assignments, CallTaskVo callTask) {
+    public void executeBatchPredictiveCalls(List<CallTaskAssignment> assignments, CallTaskVo callTask) {
         log.info("【批量预测式外呼】开始执行批量呼叫，数量: {}", assignments.size());
 
-        List<PredictiveDialingCallResult> results = new ArrayList<>();
+        int successCount = 0;
+        int failureCount = 0;
 
         for (CallTaskAssignment assignment : assignments) {
             try {
-                PredictiveDialingCallResult result = executePredictiveCall(assignment,callTask);
-                results.add(result);
-
+                executePredictiveCall(assignment, callTask);
+                successCount++;
                 // 添加间隔，避免并发过高
                 Thread.sleep(100);
 
             } catch (Exception e) {
                 log.error("【批量外呼异常】分配ID:{} 执行失败", assignment.getId(), e);
-                results.add(createErrorResult(assignment.getId(), "批量执行异常: " + e.getMessage()));
+                failureCount++;
             }
         }
 
-        log.info("【批量预测式外呼】批量呼叫完成，成功: {} 失败: {}",
-                results.stream().mapToInt(r -> "SUCCESS".equals(r.getStatus()) ? 1 : 0).sum(),
-                results.stream().mapToInt(r -> "FAILED".equals(r.getStatus()) ? 1 : 0).sum());
-
-        return results;
+        log.info("【批量预测式外呼】批量呼叫完成，成功: {} 失败: {}", successCount, failureCount);
     }
 
-
-
-
+    /**
+     * 更新分配状态
+     */
+    private void updateAssignmentStatus(CallTaskAssignment assignment, Integer status) {
+        try {
+            assignment.setCallStatus(status);
+            //callTaskAssignmentService.updateById(assignment);
+        } catch (Exception e) {
+            log.warn("【状态更新异常】分配ID:{} 状态更新失败", assignment.getId(), e);
+        }
+    }
 
     /**
      * 执行拨号
      */
     private void executeDialing(Long callId, CallTaskAssignment contact, SipAgentVo agent, String uniqueId, CallTaskVo callTask) {
         try {
-
             // 获取外显号码
             String callerDisplay = getCallerDisplay(callTask.getPhonePoolId());
 
@@ -150,13 +152,19 @@ public class PredictiveDialingServiceImpl implements IPredictiveDialingService {
 
             // 执行拨号 - 使用预测式外呼专用路由
             executePredictiveCall(callId, contact.getPhone(), callerDisplay, uniqueId, timeout);
+            
+            // 更新分配状态为已拨打
+            contact.setCallStatus(1); // 1=已拨打
+            contact.setAttemptCount(contact.getAttemptCount() + 1);
+            //callTaskAssignmentService.updateById(contact);
 
         } catch (Exception e) {
             log.error("【拨号执行异常】呼叫ID:{} 拨号失败", callId, e);
+            // 更新分配状态为失败
+            contact.setCallStatus(2); // 2=失败
+            //callTaskAssignmentService.updateById(contact);
         }
     }
-
-
 
     /**
      * 构建呼叫信息
@@ -196,62 +204,47 @@ public class PredictiveDialingServiceImpl implements IPredictiveDialingService {
     }
 
     /**
-     * 创建呼叫结果
-     */
-    private PredictiveDialingCallResult createCallResult(Long callId,
-                                                         CallTaskAssignment contact, SipAgentVo agent, String uniqueId) {
-        PredictiveDialingCallResult result = new PredictiveDialingCallResult();
-        result.setCallId(callId);
-        result.setAssignmentId(contact.getId());
-        result.setStatus("INITIATING");
-        result.setMessage("正在初始化");
-        result.setCreateTime(LocalDateTime.now());
-        result.setAgentId(agent.getId());
-        result.setContactId(contact.getId());
-        result.setContactPhone(contact.getPhone());
-        result.setCallerDisplay(agent.getAgentNumber());
-        result.setUniqueId(uniqueId);
-        return result;
-    }
-
-    /**
-     * 创建错误结果
-     */
-    private PredictiveDialingCallResult createErrorResult(Long assignmentId, String errorMessage) {
-        PredictiveDialingCallResult result = new PredictiveDialingCallResult();
-        result.setAssignmentId(assignmentId);
-        result.setStatus("FAILED");
-        result.setMessage(errorMessage);
-        result.setErrorMessage(errorMessage);
-        result.setCreateTime(LocalDateTime.now());
-        return result;
-    }
-
-
-
-    /**
      * 获取外显号码
      */
     private String getCallerDisplay(Long poolId) {
-        CallDisplayPoolVo poolDetail = iCallDisplayPoolService.getPoolDetail(poolId);
-        if (Objects.isNull(poolDetail)) {
+        if (poolId == null) {
+            log.warn("【外显号码】未配置号码池");
             return "";
         }
+        
+        CallDisplayPoolVo poolDetail = iCallDisplayPoolService.getPoolDetail(poolId);
+        if (Objects.isNull(poolDetail)) {
+            log.warn("【外显号码】号码池不存在，ID: {}", poolId);
+            return "";
+        }
+        
+        if (CollectionUtils.isEmpty(poolDetail.getPhoneList())) {
+            log.warn("【外显号码】号码池为空，ID: {}", poolId);
+            return "";
+        }
+        
         Integer type = poolDetail.getType();
-        switch (type){
+        switch (type) {
             //随机
             case 1 -> {
-                return RandomUtil.randomEle(poolDetail.getPhoneList()).getDisplayNumber();
+                CallDisplaySimpleVo phone = RandomUtil.randomEle(poolDetail.getPhoneList());
+                return phone != null ? phone.getDisplayNumber() : "";
             }
             //轮询
             case 2 -> {
-                Integer pollingNum = redisService.keyIsExists(CacheConstants.CALL_DISPLAY_POLLING_KEY + poolId) ? redisService.getCacheObject(CacheConstants.CALL_DISPLAY_POLLING_KEY + poolId) : 0;
+                Integer pollingNum = redisService.keyIsExists(CacheConstants.CALL_DISPLAY_POLLING_KEY + poolId) ? 
+                    redisService.getCacheObject(CacheConstants.CALL_DISPLAY_POLLING_KEY + poolId) : 0;
                 Integer nextPollingNum = findNextPollingNum(poolDetail.getPhoneList(), pollingNum);
                 redisService.setCacheObject(CacheConstants.CALL_DISPLAY_POLLING_KEY + poolId, nextPollingNum);
-                return poolDetail.getPhoneList().get(nextPollingNum).getDisplayNumber();
+                CallDisplaySimpleVo phone = poolDetail.getPhoneList().get(nextPollingNum);
+                return phone != null ? phone.getDisplayNumber() : "";
+            }
+            default -> {
+                // 默认使用第一个号码
+                CallDisplaySimpleVo phone = poolDetail.getPhoneList().get(0);
+                return phone != null ? phone.getDisplayNumber() : "";
             }
         }
-        return "";
     }
 
     private Integer findNextPollingNum(List<CallDisplaySimpleVo> phoneList, Integer pollingNum) {
@@ -263,8 +256,6 @@ public class PredictiveDialingServiceImpl implements IPredictiveDialingService {
         }
         return pollingNum + 1;
     }
-
-
 
     /**
      * 生成呼叫ID
@@ -285,7 +276,6 @@ public class PredictiveDialingServiceImpl implements IPredictiveDialingService {
      */
     private void executePredictiveCall(Long callId, String phone, String callerDisplay, String uniqueId, Integer timeout) {
         try {
-
             // 获取SIP网关信息（简化实现）
             FsSipGateway sipGateway = getSipGateway(callerDisplay);
 
@@ -300,19 +290,22 @@ public class PredictiveDialingServiceImpl implements IPredictiveDialingService {
         }
     }
 
-
     /**
      * 获取SIP网关信息
      */
     private FsSipGateway getSipGateway(String phone) {
+        if (StringUtils.isBlank(phone)) {
+            throw new CommonException("外显号码为空");
+        }
+        
         CallRouteVo callRoute = lfsCallCacheService.getCallRoute(phone, 2);
         if (Objects.isNull(callRoute)) {
-            throw new CommonException("未配置号码路由");
+            throw new CommonException("未配置号码路由: " + phone);
         }
 
         FsSipGateway sipGateway = iFsSipGatewayService.getDetail(Long.valueOf(callRoute.getRouteValue()));
-        if(Objects.isNull(sipGateway)){
-            throw new CommonException("未配置SIP网关");
+        if (Objects.isNull(sipGateway)) {
+            throw new CommonException("未配置SIP网关: " + callRoute.getRouteValue());
         }
         return sipGateway;
     }

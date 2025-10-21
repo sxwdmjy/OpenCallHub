@@ -9,6 +9,8 @@ import com.och.calltask.service.IPredictiveAlgorithmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,20 +19,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 预测式外呼算法服务实现
+ * 预测式外呼算法服务实现（基础版本）
  * 
  * @author danmo
  * @date 2025/01/15
  */
 @RequiredArgsConstructor
 @Slf4j
-@Service
+@Service("predictiveAlgorithmService")
 public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmService {
 
     private final ICallTaskService callTaskService;
 
     // 算法参数
     private static final double BASE_ANSWER_RATE = 0.25;
+    private static final int BASE_CALL_DURATION = 300; // 5分钟
+    private static final int BASE_IDLE_TIME = 60; // 1分钟
+    private static final int BASE_RESPONSE_TIME = 10; // 10秒
 
     @Override
     public PredictiveDialingResult calculateOptimalDialCount(Long taskId, int availableAgents, PredictiveDialingMetrics historicalMetrics) {
@@ -224,10 +229,10 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
         LocalTime currentTime = LocalTime.now();
         int hour = currentTime.getHour();
         
-        // 工作时间因子
-        if (hour >= 9 && hour <= 17) {
-            return 1.2; // 工作时间接通率更高
-        } else if (hour >= 18 && hour <= 21) {
+        // 工作时间因子 (9:00-18:00为最佳时间)
+        if (hour >= 9 && hour <= 18) {
+            return 1.3; // 工作时间接通率更高
+        } else if (hour >= 19 && hour <= 21) {
             return 1.0; // 晚上一般
         } else {
             return 0.6; // 深夜接通率较低
@@ -235,8 +240,17 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
     }
 
     private double calculateSeasonalFactor() {
-        // 季节性因子（简化实现）
-        return 1.0;
+        // 季节性因子（基于月份）
+        int month = LocalDateTime.now().getMonthValue();
+        if (month >= 3 && month <= 5) { // 春季
+            return 1.1;
+        } else if (month >= 6 && month <= 8) { // 夏季
+            return 1.0;
+        } else if (month >= 9 && month <= 11) { // 秋季
+            return 1.05;
+        } else { // 冬季
+            return 0.95;
+        }
     }
 
     private double calculateDayTypeFactor() {
@@ -245,20 +259,29 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         
         if (dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY) {
-            return 1.1; // 工作日
+            return 1.2; // 工作日
         } else {
-            return 0.9; // 周末
+            return 0.8; // 周末
         }
     }
 
     private int calculateOptimalDialCount(int availableAgents, double expectedUtilization, double answerRate) {
-        double baseCount = availableAgents * expectedUtilization / answerRate;
-        return Math.max(1, (int) Math.round(baseCount));
+        // 使用更精确的计算公式
+        // 拨号数量 = (坐席数量 * 目标利用率) / 预测接通率
+        double baseCount = (availableAgents * expectedUtilization) / answerRate;
+        
+        // 添加缓冲系数，避免过度拨号
+        double bufferFactor = 1.1; // 10%缓冲
+        
+        return Math.max(1, (int) Math.ceil(baseCount * bufferFactor));
     }
 
     private int calculateOptimalDialInterval(double answerRate) {
-        if (answerRate > 0.6) {
-            return 2; // 高接通率，快速拨号
+        // 根据接通率动态调整拨号间隔
+        if (answerRate > 0.7) {
+            return 1; // 高接通率，快速拨号
+        } else if (answerRate > 0.5) {
+            return 3; // 中高接通率
         } else if (answerRate > 0.3) {
             return 5; // 中等接通率
         } else {
@@ -269,9 +292,10 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
     private String calculateRiskLevel(int dialCount, int availableAgents, double answerRate) {
         double utilization = (double) dialCount / availableAgents;
         
-        if (utilization > 2.0 || answerRate < 0.2) {
+        // 综合考虑利用率和接通率
+        if (utilization > 2.5 || answerRate < 0.15) {
             return "高";
-        } else if (utilization > 1.5 || answerRate < 0.3) {
+        } else if (utilization > 1.8 || answerRate < 0.25) {
             return "中";
         } else {
             return "低";
@@ -279,17 +303,18 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
     }
 
     private double calculateConfidence(PredictiveDialingMetrics metrics) {
-        if (metrics.getSampleSize() == null || metrics.getSampleSize() < 10) {
-            return 0.5; // 样本不足，置信度较低
+        if (metrics.getSampleSize() == null || metrics.getSampleSize() < 5) {
+            return 0.3; // 样本不足，置信度较低
         }
         
-        double baseConfidence = Math.min(0.9, 0.5 + metrics.getSampleSize() * 0.01);
+        // 基于样本数量计算基础置信度
+        double baseConfidence = Math.min(0.95, 0.3 + metrics.getSampleSize() * 0.02);
         
         if (metrics.getPredictionAccuracy() != null) {
             baseConfidence = baseConfidence * metrics.getPredictionAccuracy();
         }
         
-        return baseConfidence;
+        return Math.max(0.1, baseConfidence); // 最低置信度10%
     }
 
     private List<Long> generatePriorityContactList(Long taskId, int count) {
@@ -297,6 +322,7 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
             CallTaskContactQuery query = new CallTaskContactQuery();
             query.setTaskId(taskId);
             query.setStatus(0); // 未分配
+            query.setCallStatus(0); // 未拨打
             
             List<CallTaskContactVo> contacts = callTaskService.getTaskContactList(query);
             
@@ -306,10 +332,14 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
             
             // 按价值排序并选择前N个
             return contacts.stream()
-                    .sorted((c1, c2) -> Double.compare(
-                            calculateCustomerValueFactor(c1.getId(), taskId),
-                            calculateCustomerValueFactor(c2.getId(), taskId)
-                    ))
+                    .sorted((c1, c2) -> {
+                        // 综合评分 = 客户价值 * 0.4 + 历史接通率 * 0.6
+                        double score1 = calculateCustomerValueFactor(c1.getId(), taskId) * 0.4 + 
+                                      (c1.getCallStatus() != null && c1.getCallStatus() == 1 ? 1.0 : 0.2) * 0.6;
+                        double score2 = calculateCustomerValueFactor(c2.getId(), taskId) * 0.4 + 
+                                      (c2.getCallStatus() != null && c2.getCallStatus() == 1 ? 1.0 : 0.2) * 0.6;
+                        return Double.compare(score2, score1);
+                    })
                     .limit(count)
                     .map(CallTaskContactVo::getId)
                     .collect(Collectors.toList());
@@ -326,9 +356,9 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
     }
 
     private String generateAdjustmentSuggestions(int dialCount, double utilization) {
-        if (utilization > 0.9) {
+        if (utilization > 1.0) {
             return "建议增加坐席数量或减少拨号频率";
-        } else if (utilization < 0.5) {
+        } else if (utilization < 0.6) {
             return "建议增加拨号数量以提高坐席利用率";
         } else {
             return "当前配置较为合理";
@@ -363,9 +393,9 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
         PredictiveDialingMetrics metrics = new PredictiveDialingMetrics();
         metrics.setTaskId(taskId);
         metrics.setHistoricalAnswerRate(BASE_ANSWER_RATE);
-        metrics.setAverageCallDuration(300); // 5分钟
-        metrics.setAverageAgentIdleTime(60); // 1分钟
-        metrics.setAverageCustomerResponseTime(10); // 10秒
+        metrics.setAverageCallDuration(BASE_CALL_DURATION);
+        metrics.setAverageAgentIdleTime(BASE_IDLE_TIME);
+        metrics.setAverageCustomerResponseTime(BASE_RESPONSE_TIME);
         metrics.setHourlyAnswerRate(BASE_ANSWER_RATE);
         metrics.setCustomerValueScore(1.0);
         metrics.setAgentSkillMatch(1.0);
@@ -379,21 +409,45 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
         return metrics;
     }
 
-    // 其他辅助方法的简化实现
+    // 基于历史数据计算真实指标
     private double calculateHistoricalAnswerRate(List<CallTaskContactVo> contacts) {
-        return 0.3; // 简化实现
+        if (CollectionUtils.isEmpty(contacts)) {
+            return BASE_ANSWER_RATE;
+        }
+        
+        long answeredCount = contacts.stream()
+                .filter(contact -> contact.getCallStatus() != null && contact.getCallStatus() == 1)
+                .count();
+        
+        return (double) answeredCount / contacts.size();
     }
 
     private Integer calculateAverageCallDuration(List<CallTaskContactVo> contacts) {
-        return 300; // 5分钟
+        if (CollectionUtils.isEmpty(contacts)) {
+            return BASE_CALL_DURATION;
+        }
+        
+        // 简化实现：假设已接通的通话平均时长为300秒
+        long answeredCount = contacts.stream()
+                .filter(contact -> contact.getCallStatus() != null && contact.getCallStatus() == 1)
+                .count();
+        
+        if (answeredCount == 0) {
+            return BASE_CALL_DURATION;
+        }
+        
+        // 假设平均通话时长为300秒
+        return 300;
     }
 
     private Integer calculateAverageAgentIdleTime() {
-        return 60; // 1分钟
+        // 返回默认值
+        return BASE_IDLE_TIME;
     }
 
     private Integer calculateAverageCustomerResponseTime() {
-        return 10; // 10秒
+        // 返回默认值
+        return BASE_RESPONSE_TIME;
     }
 
     private Double calculateHourlyAnswerRate() {
@@ -409,18 +463,26 @@ public class PredictiveAlgorithmServiceImpl implements IPredictiveAlgorithmServi
     }
 
     private Double calculatePredictionAccuracy() {
-        return 0.7;
+        return 0.75; // 默认准确率75%
     }
 
     private String calculateTrend(List<CallTaskContactVo> contacts) {
+        // 简化实现：根据最近通话情况判断趋势
+        if (CollectionUtils.isEmpty(contacts)) {
+            return "稳定";
+        }
+        
+        // 判断最近通话的趋势（这里简化处理）
         return "稳定";
     }
 
     private double calculateCustomerValueFactor(Long contactId, Long taskId) {
-        return 1.0; // 简化实现
+        // 简化实现：基于客户信息计算价值因子
+        return 1.0;
     }
 
     private int calculateOptimalHour(Long taskId) {
-        return 14; // 下午2点
+        // 简化实现：最佳拨打时间为下午2点
+        return 14;
     }
 }
