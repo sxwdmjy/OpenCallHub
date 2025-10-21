@@ -48,7 +48,6 @@
         <dependency>
             <groupId>io.github.sxwdmjy</groupId>
             <artifactId>och-common</artifactId>
-            <version>1.0.1</version>
         </dependency>
         <!--tts-->
         <dependency>

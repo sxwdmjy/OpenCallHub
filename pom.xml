@@ -52,6 +52,7 @@
         <spring.quartz.version>3.5.3</spring.quartz.version>
         <redisson.version>3.49.0</redisson.version>
         <log4j2.version>2.23.1</log4j2.version>
+        <och-common.version>1.0.1</och-common.version>
     </properties>
 
     <dependencyManagement>
@@ -327,6 +328,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-quartz</artifactId>
                 <version>${spring.quartz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.sxwdmjy</groupId>
+                <artifactId>och-common</artifactId>
+                <version>${och-common.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
