@@ -43,7 +43,7 @@ public class FsAclXmlCurlHandler implements FsXmlCurlEventStrategy {
         try {
             xml.append(getConfiguration(fsXmlCurl.getKeyValue()));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+          log.error("Failed to process XML ACL configuration for key: {}", fsXmlCurl.getKeyValue(), e);
         }
         log.info("dialplanHandle: {}", xml);
         return xml.toString().replaceAll("networkLists", "network-lists");
