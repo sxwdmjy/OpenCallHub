@@ -41,7 +41,7 @@ public class FsXmlCdrXmlCurlHandler implements FsXmlCurlEventStrategy {
         try {
             xml += getContext(fsXmlCurl.getKeyValue());
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+           log.error("Failed to process XML CDR configuration for key: {}", fsXmlCurl.getKeyValue(), e);
         }
         log.info("dialplanHandle xml curl : {}, {}", JSON.toJSONString(fsXmlCurl, true), xml);
         return xml;
