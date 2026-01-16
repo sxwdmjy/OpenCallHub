@@ -17,7 +17,7 @@
 #### [github地址](https://github.com/sxwdmjy/openCallHub)
 #### [gitee地址](https://gitee.com/sxwdmjy/openCallHub)
 #### [gitCode地址](https://gitcode.com/ochb/openCallHub)
-#### [重构MRCP服务端地址](https://gitee.com/sxwdmjy/och-mrcp)
+#### [重构MRCP服务端地址](https://github.com/sxwdmjy/och-mrcp)
 #### [使用文档](https://opencallhub.com/doc/)
 
 #### 在线收集需求中。。。。。。。当前mrcp模块已经集成sip和mrcpV2协议，意在方便对接各大厂商的语音服务，待完善，有能力者可提交PR共同完善
