@@ -12,9 +12,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * 登录用户信息
+ * <p>实现 Spring Security 的 UserDetails 接口，作为认证主体封装用户身份信息。
+ * 包含用户基本信息、角色ID列表、数据权限范围和自定义权限集合。</p>
+ *
  * @author danmo
  * @date 2024-02-21 13:44
- **/
+ */
 @Schema
 @Data
 public class LoginUserInfo implements UserDetails, CredentialsContainer {

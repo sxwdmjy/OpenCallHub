@@ -19,6 +19,11 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Netty 文件传输客户端
+ * <p>连接到文件传输服务器，自动重连、接收文件并保存到本地目录。
+ * 通过配置 netty.server.host 和 netty.server.port 指定服务器地址。</p>
+ */
 @Component
 @Slf4j
 public class FileTransferClient {

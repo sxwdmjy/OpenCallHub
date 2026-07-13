@@ -1,53 +1,58 @@
 package com.och.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.och.common.base.BaseEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.io.Serializable;
-
+import java.util.Date;
 
 /**
- * 号码池号码关联表(CallDisplayPoolRel)表实体类
+ * 号码池号码关联实体
+ * <p>映射 call_display_pool_rel 表，存储号码池与号码的关联关系。</p>
  *
  * @author danmo
- * @since 2024-08-09 14:55:59
  */
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("call_display_pool_rel")
-public class CallDisplayPoolRel extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = 423960782716618543L;
+public class CallDisplayPoolRel {
 
-    /**
-     * 主键
-     */
-
-    @Schema(description = "主键")
+    /** 主键ID */
     @TableId(type = IdType.AUTO)
     private Long id;
 
-
-    /**
-     * 电话池ID
-     */
-    @Schema(description = "电话池ID")
+    /** 电话池ID */
     @TableField("pool_id")
     private Long poolId;
 
-
-    /**
-     * 号码ID
-     */
-    @Schema(description = "号码ID")
+    /** 号码ID */
     @TableField("display_id")
     private Long displayId;
 
+    /** 创建人 */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    /** 更新人 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Long updateBy;
+
+    /** 更新时间 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    /** 逻辑删除：0-正常 1-已删除 */
+    @TableLogic
+    @TableField("del_flag")
+    private Integer delFlag;
 
 }
 

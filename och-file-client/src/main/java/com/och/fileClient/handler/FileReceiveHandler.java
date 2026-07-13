@@ -44,6 +44,11 @@ public class FileReceiveHandler extends SimpleChannelInboundHandler<TransferProt
         }
     }
 
+    /**
+     * 文件传输处理
+     * <p>根据 TransferProtocol 中的 offset 和 data 将数据写入文件的指定位置，
+     * 支持断点续传和分块传输。</p>
+     */
     private void fileTransfer(ChannelHandlerContext ctx, TransferProtocol msg) {
         String fileName = msg.getFileName();
         if (StringUtil.isNullOrEmpty(fileName)) {
@@ -54,6 +59,8 @@ public class FileReceiveHandler extends SimpleChannelInboundHandler<TransferProt
         RandomAccessFile raf = null;
         try {
             raf = new RandomAccessFile(file, "rw");
+            // 使用 offset 字段定位写入位置，支持分块传输
+            raf.seek(msg.getOffset());
             raf.write(msg.getData());
         }catch (IOException e){
             log.error("File transfer failed: {}", e.getMessage());
@@ -62,7 +69,7 @@ public class FileReceiveHandler extends SimpleChannelInboundHandler<TransferProt
                 try {
                     raf.close();
                 } catch (IOException e) {
-
+                    log.error("Failed to close file: {}", e.getMessage());
                 }
             }
         }

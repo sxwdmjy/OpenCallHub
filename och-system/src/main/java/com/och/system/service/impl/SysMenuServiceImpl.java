@@ -4,13 +4,15 @@ import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
+import com.och.common.exception.CommonException;
+import com.och.common.base.BaseServiceImpl;
 import com.och.system.domain.entity.SysMenu;
 import com.och.system.domain.query.menu.SysMenuAddQuery;
 import com.och.system.domain.query.menu.SysMenuQuery;
-import com.och.system.mapper.SysMenuMapper;
 import com.och.system.service.ISysMenuService;
+import com.och.system.mapper.SysMenuMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -25,17 +27,16 @@ import java.util.Optional;
  * @author danmo
  * @since 2024-02-22 11:22:25
  */
+@Slf4j
 @Service
 public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
 
-    @Override
     public void add(SysMenuAddQuery query) {
         SysMenu sysMenu = new SysMenu();
         BeanUtils.copyProperties(query, sysMenu);
         save(sysMenu);
     }
 
-    @Override
     public void edit(SysMenuAddQuery query) {
         SysMenu sysMenu = new SysMenu();
         BeanUtils.copyProperties(query, sysMenu);
@@ -43,12 +44,10 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu> 
         updateById(sysMenu);
     }
 
-    @Override
     public List<SysMenu> getList(SysMenuQuery query) {
         return this.baseMapper.getList(query);
     }
 
-    @Override
     public void delete(SysMenuQuery query) {
         Optional.ofNullable(query.getMenuIds()).orElseGet(ArrayList::new).add(query.getMenuId());
         if (!CollectionUtils.isEmpty(query.getMenuIds())) {
@@ -57,7 +56,6 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu> 
         }
     }
 
-    @Override
     public List<Tree<Long>> buildMenuTree(List<SysMenu> list) {
         TreeNodeConfig treeNodeConfig = new TreeNodeConfig();
         //自定义属性名 都要默认值的
@@ -81,7 +79,6 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuMapper, SysMenu> 
         }));
     }
 
-    @Override
     public List<SysMenu> getMenuListByRoleIds(List<Long> roleIds) {
         return this.baseMapper.getMenuListByRoleIds(roleIds);
     }

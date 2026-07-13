@@ -1,89 +1,74 @@
 package com.och.system.domain.entity;
 
-
 import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * (Subscriber) 订阅用户（SIP用户）
+ * Kamailio SIP 订阅用户
+ * <p>映射 ko_subscriber 表，存储 Kamailio 的 SIP 用户认证信息，
+ * 包含用户名、域、密码哈希（HA1/HA1B）、语音信箱 PIN 等。</p>
  *
  * @author danmo
- * @date 2024-07-29 10:49:24
  */
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("ko_subscriber")
-public class KoSubscriber implements Serializable {
+public class KoSubscriber {
 
-    private static final long serialVersionUID = 1L; //1
-
-    @Schema(description = "id")
+    /** 主键ID */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
-    @Schema(description = "username")
+    /** SIP 用户名 */
     @TableField("username")
     private String username;
 
-
-    @Schema(description = "domain")
+    /** SIP 域 */
     @TableField("domain")
     private String domain;
 
-
-    @Schema(description = "password")
+    /** SIP 密码 */
     @TableField("password")
     @JsonIgnore
     private String password;
 
-
-    @Schema(description = "ha1")
+    /** HA1 哈希值 */
     @TableField("ha1")
     private String ha1;
 
-
-    @Schema(description = "ha1b")
+    /** HA1B 哈希值 */
     @TableField("ha1b")
     private String ha1b;
 
-
-    @Schema(description = "vmpin")
+    /** 语音信箱 PIN */
     @TableField("vmpin")
     private String vmpin;
 
-
-    @Schema(description = "状态 0-开启 1-关闭")
+    /** 状态：0-开启 1-关闭 */
     @TableField("status")
     private Integer status;
 
-
-    @Schema(description = "创建者")
+    /** 创建人 */
     @TableField(fill = FieldFill.INSERT)
     private Long createBy;
 
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Schema(description = "创建时间")
+    /** 创建时间 */
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
-
-    @Schema(description = "更新者")
+    /** 更新人 */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateBy;
 
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @Schema(description = "更新时间")
+    /** 更新时间 */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
-
 }

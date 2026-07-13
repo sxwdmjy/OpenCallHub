@@ -4,7 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseServiceImpl;
-import com.och.common.exception.CommonException;
+import com.och.common.error.BizException;
+import com.och.common.error.ErrorCode;
 import com.och.common.utils.MD5Utils;
 import com.och.common.utils.StringUtils;
 import com.och.system.domain.entity.KoSubscriber;
@@ -17,7 +18,7 @@ import com.och.system.domain.vo.sip.SipSimpleVo;
 import com.och.system.mapper.KoSubscriberMapper;
 import com.och.system.service.IKoSubscriberService;
 import com.och.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -26,22 +27,23 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * (Subscriber)
+ * SIP分机订阅者管理服务
+ * <p>负责SIP分机的注册管理，包括分机的增删改查、批量创建和认证凭据管理</p>
  *
  * @author danmo
  * @date 2024-07-29 10:49:24
  */
+@RequiredArgsConstructor
 @Service
 public class KoSubscriberServiceImpl extends BaseServiceImpl<KoSubscriberMapper, KoSubscriber> implements IKoSubscriberService {
 
-    @Autowired
-    private ISysUserService sysUserService;
+    private final ISysUserService sysUserService;
 
     @Override
     public void add(KoSubscriberAddQuery query) {
         Boolean checked = checkUserName(query.getUsername());
         if (checked) {
-            throw new CommonException("账号已存在");
+            throw new BizException(ErrorCode.BIZ_ACCOUNT_DUPLICATE);
         }
         KoSubscriber subscriber = new KoSubscriber();
         subscriber.setUsername(query.getUsername());
@@ -89,7 +91,7 @@ public class KoSubscriberServiceImpl extends BaseServiceImpl<KoSubscriberMapper,
             List<String> userNameList = subscriberList.stream().map(KoSubscriber::getUsername).collect(Collectors.toList());
             List<KoSubscriber> nameList = getByUserNameList(userNameList);
             if (CollectionUtil.isNotEmpty(nameList)) {
-                throw new CommonException("账号已存在");
+                throw new BizException(ErrorCode.BIZ_ACCOUNT_DUPLICATE);
             }
         }
         saveBatch(subscriberList);
@@ -99,10 +101,10 @@ public class KoSubscriberServiceImpl extends BaseServiceImpl<KoSubscriberMapper,
     public void edit(KoSubscriberUpdateQuery query) {
         KoSubscriber subscriber = getById(query.getId());
         if (Objects.isNull(subscriber)){
-            throw new CommonException("无效ID");
+            throw new BizException(ErrorCode.BIZ_RESOURCE_ID_REQUIRED);
         }
         if(!StringUtils.equals(subscriber.getUsername(), query.getUsername()) && checkUserName(query.getUsername())){
-            throw new CommonException("账号已存在");
+            throw new BizException(ErrorCode.BIZ_ACCOUNT_DUPLICATE);
         }else if (StringUtils.isNotBlank(query.getUsername())) {
             subscriber.setUsername(query.getUsername());
         }

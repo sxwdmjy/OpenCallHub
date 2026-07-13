@@ -95,39 +95,30 @@ spring:
       use-key-prefix: true
       key-prefix: "och:"
   # 其他配置保持不变
-  #  rabbitmq:
-  #    host: 127.0.0.1
-  #    port: 5672
-  #    username: guest
-  #    password: guest
-  #    virtual-host: /
-  #    publisher-confirm-type: SIMPLE
-  #    publisher-returns: true
-  #    listener:
-  #      simple:
-  #        acknowledge-mode: manual
-  #        default-requeue-rejected: true
-  #        retry:
-  #          enabled: true
-  #          max-attempts: 3
-  #      direct:
-  #        acknowledge-mode: manual
-  #        retry:
-  #          enabled: true
-  ai:
-    dashscope:
-      api-key: 23
-    chat:
-      model: qwq-plus
-
-    deepseek:
-      api-key: 123
-      base-url: "https://api.deepseek.com"
-      chat:
-        options:
-          model: deepseek-chat
-      embedding:
-        enabled: false
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    publisher-confirm-type: SIMPLE
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        default-requeue-rejected: true
+        retry:
+          enabled: true
+          max-attempts: 3
+      direct:
+        acknowledge-mode: manual
+        retry:
+          enabled: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    table: flyway_schema_history
+    baseline-on-migrate: true
   quartz:
     job-store-type: jdbc
     jdbc:
@@ -257,3 +248,24 @@ captcha:
     expire: 120000
     # 二次验证缓存key前缀，默认是 captcha:secondary
     keyPrefix: "captcha:secondary"
+
+# openCallHub 基础配置
+och:
+  redis:
+    key-prefix: "och:"
+    default-ttl-seconds: 3600
+  mq:
+    exchange: och.events
+    queue: och.events.queue
+    routing-key: och.event.#
+    publish-routing-key: och.event.foundation
+    dead-letter-exchange: och.events.dlx
+    dead-letter-queue: och.events.dlq
+    max-retry-count: 3
+    retry-delay-ms: 5000
+  file:
+    type: local
+    local-base-path: ./data/files
+  outbound:
+    scheduler:
+      enabled: true

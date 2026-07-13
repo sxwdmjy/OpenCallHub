@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,10 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "curl管理")
 @RestController
 @RequestMapping("/fs/curl")
+@RequiredArgsConstructor
 public class FsXmlCurlController {
-
-    @Autowired
-    private IFsXmlCurlService iFsXmlCurlService;
+    private final IFsXmlCurlService iFsXmlCurlService;
 
     @Operation(summary = "POST请求", method = "POST")
     @PostMapping(value = "/api", produces = {MediaType.TEXT_XML_VALUE})

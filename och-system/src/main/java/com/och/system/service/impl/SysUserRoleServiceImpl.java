@@ -28,7 +28,7 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRoleMapper, S
             update(new LambdaUpdateWrapper<SysUserRole>().set(SysUserRole::getDelFlag, 0).eq(SysUserRole::getUserId, userId));
             return;
         }
-        List<SysUserRole> sysUserRoles = list(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, userId).eq(SysUserRole::getDelFlag, 0));
+        List<SysUserRole> sysUserRoles = list(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId).eq(SysUserRole::getDelFlag, 0));
         //角色为空全部新增
         if (CollectionUtils.isEmpty(sysUserRoles)) {
             List<SysUserRole> sysUserRoleList = roleIds.stream().map(roleId -> {
@@ -41,17 +41,20 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRoleMapper, S
         } else {
             //需要删除角色
             List<Long> delIdList = sysUserRoles.stream().filter(sysUserRole -> !roleIds.contains(sysUserRole.getRoleId())).map(SysUserRole::getId).collect(Collectors.toList());
-            update(new LambdaUpdateWrapper<SysUserRole>().set(SysUserRole::getDelFlag, 1).in(SysUserRole::getId, delIdList));
+            if (!delIdList.isEmpty()) {
+                update(new LambdaUpdateWrapper<SysUserRole>().set(SysUserRole::getDelFlag, 1).in(SysUserRole::getId, delIdList));
+            }
             //需要新增角色
             List<Long> addRoleIds = roleIds.stream().filter(roleId -> sysUserRoles.stream().noneMatch(sysUserRole -> Objects.equals(sysUserRole.getRoleId(), roleId))).collect(Collectors.toList());
-
-            List<SysUserRole> addUserRoleList = addRoleIds.stream().map(roleId -> {
-                SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setUserId(userId);
-                sysUserRole.setRoleId(roleId);
-                return sysUserRole;
-            }).collect(Collectors.toList());
-            saveBatch(addUserRoleList, 200);
+            if (!addRoleIds.isEmpty()) {
+                List<SysUserRole> addUserRoleList = addRoleIds.stream().map(roleId -> {
+                    SysUserRole sysUserRole = new SysUserRole();
+                    sysUserRole.setUserId(userId);
+                    sysUserRole.setRoleId(roleId);
+                    return sysUserRole;
+                }).collect(Collectors.toList());
+                saveBatch(addUserRoleList, 200);
+            }
         }
     }
 }

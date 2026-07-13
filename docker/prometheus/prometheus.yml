@@ -1,0 +1,40 @@
+# ============================================================
+# Prometheus 监控配置
+# 采集: JVM指标 / MySQL / Redis / RabbitMQ / Spring Boot Actuator
+# ============================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files: []
+
+scrape_configs:
+  # ─── openCallHub 应用 ───
+  - job_name: 'opencallhub-api'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['och-api:4320']
+        labels:
+          service: 'opencallhub'
+          module: 'api'
+
+  # ─── MySQL Exporter ───
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql-exporter:9104']
+
+  # ─── Redis Exporter ───
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  # ─── RabbitMQ Exporter ───
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']

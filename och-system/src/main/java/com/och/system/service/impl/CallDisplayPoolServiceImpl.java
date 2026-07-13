@@ -12,7 +12,7 @@ import com.och.system.mapper.CallDisplayPoolMapper;
 import com.och.system.service.ICallDisplayPoolRelService;
 import com.och.system.service.ICallDisplayPoolService;
 import com.och.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -21,19 +21,19 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 号码池管理(CallDisplayPool)表服务实现类
+ * 号码池管理服务
+ * <p>负责号码池的增删改查操作，包括号码池与号码关联关系的维护</p>
  *
  * @author danmo
  * @since 2023-11-03 14:57:17
  */
+@RequiredArgsConstructor
 @Service
 public class CallDisplayPoolServiceImpl extends BaseServiceImpl<CallDisplayPoolMapper, CallDisplayPool> implements ICallDisplayPoolService {
 
-    @Autowired
-    private ICallDisplayPoolRelService iCallDisplayPoolRelService;
+    private final ICallDisplayPoolRelService iCallDisplayPoolRelService;
 
-    @Autowired
-    private ISysUserService iSysUserService;
+    private final ISysUserService iSysUserService;
 
     @Override
     public void addPool(CallDisplayPoolAddQuery query) {

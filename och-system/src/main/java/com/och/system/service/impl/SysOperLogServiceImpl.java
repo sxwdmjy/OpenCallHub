@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
-import com.och.common.exception.CommonException;
+import com.och.common.error.BizException;
+import com.och.common.error.ErrorCode;
 import com.och.system.domain.entity.SysOperLog;
 import com.och.system.domain.query.BaseQuery;
 import com.och.system.domain.query.log.SysOperationLogQuery;
@@ -35,7 +36,7 @@ public class SysOperLogServiceImpl extends BaseServiceImpl<SysOperLogMapper, Sys
     @Override
     public void delete(SysOperationLogQuery query) {
         if (CollectionUtil.isEmpty(query.getIds())) {
-            throw new CommonException("ID不能为空");
+            throw new BizException(ErrorCode.BIZ_RESOURCE_ID_REQUIRED);
         }
         List<SysOperLog> operLogs = query.getIds().stream().map(id -> {
             SysOperLog operLog = new SysOperLog();

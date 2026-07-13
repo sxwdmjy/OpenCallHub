@@ -17,6 +17,11 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * 文件 TTS 服务实现
+ * <p>根据配置的引擎类型和 {@code @FileTtsType} 注解自动发现 TTS 处理器，
+ * 将文本转换为语音文件，支持阿里云、腾讯云等平台。</p>
+ */
 @AllArgsConstructor
 @Slf4j
 @Service

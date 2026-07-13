@@ -1,83 +1,73 @@
 package com.och.system.domain.entity;
 
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.och.common.base.BaseEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.io.Serializable;
+import java.util.Date;
 
 /**
- * fs访问控制表(FsAcl)
+ * FS访问控制实体
+ * <p>映射 fs_acl 表，存储 FreeSWITCH 访问控制规则。</p>
  *
  * @author danmo
- * @date 2023-09-13 13:53:45
  */
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("fs_acl")
-public class FsAcl extends BaseEntity implements Serializable {
+public class FsAcl {
 
-    private static final long serialVersionUID = 1L; //1
-
-    /**
-     * 主键ID
-     */
-    @Schema(description = "主键ID")
+    /** 主键ID */
     @TableId(type = IdType.AUTO)
     private Long id;
 
-
-    /**
-     * 网关名称
-     */
-    @Schema(description = "网关名称")
+    /** 网关名称 */
     @TableField("name")
     private String name;
 
-
-    /**
-     * 类型 allow-允许 deny-拒绝
-     */
-    @Schema(description = "类型 allow-允许 deny-拒绝")
+    /** 类型：allow-允许 deny-拒绝 */
     @TableField("default_type")
     private String defaultType;
 
-
-    /**
-     * 列表ID
-     */
-    @Schema(description = "列表ID")
+    /** 列表ID */
     @TableField("list_id")
     private Long listId;
 
-
-    /**
-     * 规则类型 allow-允许 deny-拒绝
-     */
-    @Schema(description = "规则类型 allow-允许 deny-拒绝")
+    /** 规则类型：allow-允许 deny-拒绝 */
     @TableField("node_type")
     private String nodeType;
 
-
-    /**
-     * IP地址
-     */
-    @Schema(description = "IP地址")
+    /** IP地址 */
     @TableField("cidr")
     private String cidr;
 
-
-    /**
-     * 域地址
-     */
-    @Schema(description = "域地址")
+    /** 域地址 */
     @TableField("domain")
     private String domain;
+
+    /** 创建人 */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    /** 更新人 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Long updateBy;
+
+    /** 更新时间 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    /** 逻辑删除：0-正常 1-已删除 */
+    @TableLogic
+    @TableField("del_flag")
+    private Integer delFlag;
 
 }

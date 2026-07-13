@@ -75,10 +75,8 @@ public class AlFileTtsHandler extends AbstractFileTtsHandler {
                 @Override
                 public void onComplete(SpeechSynthesizerResponse response) {
                     //调用onComplete时表示所有TTS数据已接收完成，因此为整个合成数据的延迟。该延迟可能较大，不一定满足实时场景。
-                    System.out.println("name: " + response.getName() +
-                            ", status: " + response.getStatus()+
-                            ", output file :"+file.getAbsolutePath()
-                    );
+                    log.info("TTS合成完成: name={}, status={}, outputFile={}",
+                            response.getName(), response.getStatus(), file.getAbsolutePath());
                     fileConsumer.accept(file);
                     try {
                         fout.close();
@@ -104,12 +102,8 @@ public class AlFileTtsHandler extends AbstractFileTtsHandler {
                 @Override
                 public void onFail(SpeechSynthesizerResponse response){
                     //task_id是调用方和服务端通信的唯一标识，当遇到问题时需要提供task_id以便排查。
-                    System.out.println(
-                            "task_id: " + response.getTaskId() +
-                                    //状态码 20000000 表示识别成功
-                                    ", status: " + response.getStatus() +
-                                    //错误信息
-                                    ", status_text: " + response.getStatusText());
+                    log.error("TTS合成失败: taskId={}, status={}, statusText={}",
+                            response.getTaskId(), response.getStatus(), response.getStatusText());
                 }
             };
         } catch (Exception e) {
@@ -146,7 +140,7 @@ public class AlFileTtsHandler extends AbstractFileTtsHandler {
             synthesizer.waitForComplete();
             log.info("tts stop latency " + (System.currentTimeMillis() - start) + " ms");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("TTS合成异常", e);
         } finally {
             //关闭连接
             if (null != synthesizer) {
@@ -168,7 +162,7 @@ public class AlFileTtsHandler extends AbstractFileTtsHandler {
         AccessToken accessToken = new AccessToken(accessKeyId, accessKeySecret);
         try {
             accessToken.apply();
-            System.out.println("get token: " + accessToken.getToken() + ", expire time: " + accessToken.getExpireTime());
+            log.info("获取阿里云TTS token成功, expireTime={}", accessToken.getExpireTime());
             long expireTime = accessToken.getExpireTime() -  DateUtil.currentSeconds();
             redisService.setCacheObject(CacheConstants.ALI_TTS_TOKEN_KEY,accessToken.getToken(), expireTime, TimeUnit.SECONDS);
             return accessToken.getToken();

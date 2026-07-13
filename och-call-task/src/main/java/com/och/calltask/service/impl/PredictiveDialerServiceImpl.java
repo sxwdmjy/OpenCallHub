@@ -1,207 +1,130 @@
 package com.och.calltask.service.impl;
 
-
-import com.och.calltask.job.PredictiveDialerJob;
-import com.och.calltask.service.IPredictiveDialerService;
-import com.och.common.exception.CommonException;
-import lombok.RequiredArgsConstructor;
+import com.och.acd.service.impl.QueueDispatchServiceImpl;
+import com.och.calltask.application.algorithm.PredictiveAlgorithm;
+import com.och.calltask.domain.OutboundCustomer;
+import com.och.calltask.domain.OutboundDialAttempt;
+import com.och.calltask.mapper.OutboundDialAttemptMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.Calendar;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 /**
- * 外呼任务
- *
- * @author: danmo
- * @date: 2025/06/25
+ * 预测拨号服务
+ * <p>
+ * 根据坐席空闲率和预测算法引擎，动态计算拨号数量，最大化坐席利用率。
+ * 算法能力由 {@link PredictiveAlgorithm} 策略接口提供，支持不同算法实现的热切换。
+ * </p>
  */
-
-@RequiredArgsConstructor
 @Slf4j
 @Service
-public class PredictiveDialerServiceImpl implements IPredictiveDialerService {
+@RequiredArgsConstructor
+public class PredictiveDialerServiceImpl extends com.baomidou.mybatisplus.extension.service.impl.ServiceImpl<com.och.calltask.mapper.OutboundDialAttemptMapper, com.och.calltask.domain.OutboundDialAttempt> implements com.och.calltask.service.IPredictiveDialerService {
 
-    private final Scheduler scheduler;
+    private final QueueDispatchServiceImpl queueDispatchService;
+    private final OutboundQueueServiceImpl queueService;
+    private final PredictiveAlgorithm predictiveAlgorithm;
 
-    private static final String GROUP_NAME = "CALL_TASK_GROUP";
-    private static final String JOB_NAME = "CALL_TASK_JOB_";
-    private static final String TRIGGER_NAME = "CALL_TASK_TRIGGER_";
-
-    @Override
-    public void createTask(Long taskId, Integer priority, Date startDay, Date endDay, String sTime, String eTime, String workCycle) {
-        log.info("开始创建外呼任务 taskId:{}, startDay:{}, endDay:{}, stime:{}, etime:{}, workCycle:{}", taskId, startDay, endDay, sTime, eTime, workCycle);
-        try {
-            JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
-            if (scheduler.checkExists(jobKey)) {
-                log.warn("任务 {} 已存在，正在删除旧任务", taskId);
-                scheduler.deleteJob(jobKey);
-            }
-            // 创建任务详情
-            JobDetail jobDetail = JobBuilder.newJob(PredictiveDialerJob.class)
-                    .withIdentity(jobKey)
-                    .usingJobData("taskId", taskId.toString())
-                    .storeDurably()
-                    .build();
-
-            TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger()
-                    .withIdentity(TRIGGER_NAME + taskId, GROUP_NAME)
-                    .startAt(parseStartDay(startDay))
-                    .endAt(parseEndDay(endDay))
-                    .withPriority(priority);
-            int startHour = parseTime(sTime).getHour();
-            int startMinute = parseTime(sTime).getMinute();
-            int endHour = parseTime(eTime).getHour();
-            int endMinute = parseTime(eTime).getMinute();
-            DailyTimeIntervalScheduleBuilder scheduleBuilder = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
-                    .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(startHour, startMinute))
-                    .endingDailyAt(TimeOfDay.hourAndMinuteOfDay(endHour, endMinute))
-                    .onDaysOfTheWeek(parseWeekDays(workCycle))
-                    // 每分钟执行
-                    .withIntervalInMinutes(1);
-            DailyTimeIntervalTrigger trigger = triggerBuilder.withSchedule(scheduleBuilder)
-                    .build();
-            scheduler.scheduleJob(jobDetail, trigger);
-            log.info("成功创建外呼任务 taskId:{}", taskId);
-        } catch (Exception e) {
-            log.error("创建任务失败 taskId:{}", taskId, e);
-            throw new CommonException("创建任务异常");
-        }
-    }
-
-    @Override
-    public void deleteTask(Long taskId) {
-        log.info("开始删除外呼任务 taskId:{}", taskId);
-        try {
-            JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
-            if (scheduler.checkExists(jobKey)) {
-                scheduler.deleteJob(jobKey);
-                log.info("成功删除外呼任务 taskId:{}", taskId);
-            } else {
-                log.warn("任务 {} 不存在", taskId);
-            }
-        } catch (Exception e) {
-            log.error("删除任务失败 taskId:{}", taskId, e);
-            throw new CommonException("删除任务异常");
-        }
-    }
-
-    @Override
-    public void deleteTask(List<Long> ids) {
-        log.info("开始批量删除外呼任务 taskIds:{}", ids);
-        ids.forEach(this::deleteTask);
-    }
-
-    @Override
-    public void pauseTask(Long taskId) {
-        log.info("开始暂停外呼任务 taskId:{}", taskId);
-        try {
-            JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
-            if (scheduler.checkExists(jobKey)) {
-                scheduler.pauseJob(jobKey);
-                log.info("成功暂停外呼任务 taskId:{}", taskId);
-            } else {
-                log.info("任务 {} 不存在", taskId);
-            }
-        } catch (Exception e) {
-            log.error("暂停任务失败 taskId:{}", taskId, e);
-            throw new CommonException("暂停任务异常");
-        }
-    }
-
-    @Override
-    public void resumeTask(Long taskId) {
-        log.info("开始恢复外呼任务 taskId:{}", taskId);
-        try {
-            JobKey jobKey = JobKey.jobKey(JOB_NAME + taskId, GROUP_NAME);
-            if (scheduler.checkExists(jobKey)) {
-                scheduler.resumeJob(jobKey);
-            } else {
-                log.info("任务 {} 不存在", taskId);
-            }
-        } catch (Exception e) {
-            log.error("恢复任务失败 taskId:{}", taskId, e);
-            throw new CommonException("恢复任务异常");
-        }
-    }
+    /** 最大拨号数上限，防止呼叫过载 */
+    private static final int MAX_DIAL_COUNT = 50;
 
     /**
-     * 解析开始时间
+     * 计算本轮预测拨号数
+     * <p>
+     * 综合考虑空闲坐席数量和算法预测的接通率，给出本轮最优拨号数。
+     * </p>
      *
-     * @param day
-     * @return
+     * @param skillGroupId 技能组 ID
+     * @return 建议的本轮拨号数
      */
-    private Date parseStartDay(Date day) {
-        if (day == null) {
-            throw new IllegalArgumentException("日期不能为空");
+    public double calculateDialRate(Long skillGroupId) {
+        // 第1步：获取空闲坐席数
+        QueueDispatchServiceImpl.QueueStats stats = queueDispatchService.getQueueStats(skillGroupId);
+        int idleAgents = stats.availableAgents();
+
+        if (idleAgents <= 0) {
+            log.debug("[PredictiveDialer] No idle agents for skillGroup={}, dialRate=0", skillGroupId);
+            return 0;
         }
 
-        Calendar calendar = java.util.Calendar.getInstance();
-        calendar.setTime(day);
-        // 设置为当天的00:00:00.000
-        calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
-        calendar.set(java.util.Calendar.MINUTE, 0);
-        calendar.set(java.util.Calendar.SECOND, 0);
-        calendar.set(java.util.Calendar.MILLISECOND, 0);
+        // 第2步：通过预测算法获取接通率
+        double answerRate = predictiveAlgorithm.predictAnswerProbability(null);
 
-        return calendar.getTime();
+        log.debug("[PredictiveDialer] skillGroup={}, idleAgents={}, answerRate={}",
+                skillGroupId, idleAgents, String.format("%.2f%%", answerRate * 100));
+
+        // 第3步：通过预测算法计算最优拨号数
+        int optimalCount = predictiveAlgorithm.calculateOptimalDialCount(idleAgents, answerRate);
+
+        // 限制上限，防止过载
+        optimalCount = Math.min(optimalCount, MAX_DIAL_COUNT);
+
+        log.info("[PredictiveDialer] skillGroup={}, idleAgents={}, answerRate={}, optimalCount={}",
+                skillGroupId, idleAgents, String.format("%.2f%%", answerRate * 100), optimalCount);
+
+        return optimalCount;
     }
 
     /**
-     * 解析结束时间
+     * 从队列中取出下一个客户并拨号
+     * <p>结合算法预测和队列出队，实现预测式外呼的完整拨号循环：
+     * 1. 计算当前最优拨号数 → 判断是否应该拨号
+     * 2. 如果可以拨号，从队列中取出下一个 SCHEDULED 客户
+     * 3. 创建拨号尝试记录
+     * </p>
      *
-     * @param day
-     * @return
+     * @param skillGroupId 技能组ID
+     * @param taskId       外呼任务ID
+     * @return 拨号尝试记录（如果无可用客户则返回 null）
      */
-    private Date parseEndDay(Date day) {
-        if (day == null) {
-            throw new IllegalArgumentException("日期不能为空");
+    @Transactional
+    public OutboundDialAttempt dialNext(Long skillGroupId, Long taskId) {
+        double rate = calculateDialRate(skillGroupId);
+        if (rate <= 0) {
+            return null;
         }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(day);
-        // 设置为当天的23:59:59.999
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
 
-        return calendar.getTime();
+        OutboundCustomer customer = queueService.dequeue(taskId);
+        if (customer == null) {
+            log.debug("[PredictiveDialer] Queue empty: taskId={}", taskId);
+            return null;
+        }
+
+        int attemptNo = customer.getAttemptCount() != null ? customer.getAttemptCount() + 1 : 1;
+        String dedupKey = taskId + ":" + customer.getId() + ":" + attemptNo;
+
+        OutboundDialAttempt attempt = OutboundDialAttempt.builder()
+                .taskId(taskId)
+                .customerId(customer.getId())
+                .attemptNo(attemptNo)
+                .dedupKey(dedupKey)
+                .state("DIALING")
+                .dialTime(LocalDateTime.now())
+                .build();
+        baseMapper.insert(attempt);
+
+        log.info("[PredictiveDialer] Dial initiated: taskId={}, customerId={}, phone={}, optimalCount={}",
+                taskId, customer.getId(), customer.getPhoneNumber(), rate);
+        return attempt;
     }
 
     /**
-     * 解析时间
+     * 记录拨号完成并更新预测模型
+     * <p>
+     * 当外呼系统回调拨号结果时调用此方法，将结果反馈给预测算法以持续优化。
+     * </p>
      *
-     * @param timeStr
-     * @return
+     * @param attempt 包含最终拨号结果的尝试记录
      */
-    private LocalTime parseTime(String timeStr) {
-        return LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm"));
-    }
-
-    /**
-     * @param cycle
-     * @return
-     */
-    private Set<Integer> parseWeekDays(String cycle) {
-        return Arrays.stream(cycle.split(","))
-                .map(Integer::parseInt)
-                .map(weekDay -> {
-                    return switch (weekDay) {
-                        case 1 -> Calendar.MONDAY;
-                        case 2 -> Calendar.TUESDAY;
-                        case 3 -> Calendar.WEDNESDAY;
-                        case 4 -> Calendar.THURSDAY;
-                        case 5 -> Calendar.FRIDAY;
-                        case 6 -> Calendar.SATURDAY;
-                        case 7 -> Calendar.SUNDAY;
-                        default -> null;
-                    };
-                })
-                .collect(Collectors.toSet());
+    public void recordDialResult(OutboundDialAttempt attempt) {
+        if (attempt == null || attempt.getDialResult() == null) {
+            return;
+        }
+        predictiveAlgorithm.updateModel(attempt);
+        log.debug("[PredictiveDialer] Model updated: dialResult={}, phone={}",
+                attempt.getDialResult(), attempt.getCustomerId());
     }
 }

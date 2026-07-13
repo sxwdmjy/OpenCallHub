@@ -12,7 +12,7 @@ import com.och.system.domain.vo.dialplan.FsDialplanVo;
 import com.och.system.mapper.FsDialplanMapper;
 import com.och.system.service.IFsDialplanService;
 import com.och.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -21,16 +21,17 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * fs拨号计划表(FsDialplan)
+ * FS拨号计划管理服务
+ * <p>负责FreeSWITCH拨号计划的增删改查操作</p>
  *
  * @author danmo
  * @date 2023-09-15 11:04:20
  */
+@RequiredArgsConstructor
 @Service
 public class FsDialplanServiceImpl extends BaseServiceImpl<FsDialplanMapper, FsDialplan> implements IFsDialplanService {
 
-    @Autowired
-    private ISysUserService sysUserService;
+    private final ISysUserService sysUserService;
 
     @Override
     public void add(FsDialplanAddQuery query) {

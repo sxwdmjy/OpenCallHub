@@ -17,6 +17,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
+ * 抽象 WebSocket 消息事件处理策略
+ * <p>采用模板方法模式，在处理事件前自动设置当前用户的安全上下文（ThreadLocal），
+ * 处理完成后自动清理，确保子类能正确获取当前登录用户信息。</p>
+ *
  * @author danmo
  * @date 2025/05/29 10:29
  */

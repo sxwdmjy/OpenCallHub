@@ -1,86 +1,69 @@
 package com.och.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.och.common.base.BaseEntity;
-import com.och.system.domain.query.file.VoiceFileAddQuery;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.io.Serializable;
-
+import java.util.Date;
 
 /**
- * 语音文件表(VoiceFile)表实体类
+ * 语音文件实体
+ * <p>映射 voice_file 表，存储语音文件信息。</p>
  *
  * @author danmo
- * @since 2023-11-01 14:34:24
  */
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("voice_file")
-public class VoiceFile extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = 873281745058075384L;
+public class VoiceFile {
 
-    /**
-     * 主键ID
-     */
-
-    @Schema(description = "主键ID")
+    /** 主键ID */
     @TableId(type = IdType.AUTO)
     private Long id;
 
-
-    /**
-     * 文件名称
-     */
-    @Schema(description = "文件名称")
+    /** 文件名称 */
     @TableField("name")
     private String name;
 
-
-    /**
-     * 类型 1-手动上传 2-语音合成
-     */
-    @Schema(description = "类型 1-手动上传 2-语音合成")
+    /** 类型：1-手动上传 2-语音合成 */
     @TableField("type")
     private Integer type;
 
-
-    /**
-     * tts方式 1-腾讯 2-阿里 3-讯飞(type=9生效)
-     */
-    @Schema(description = "tts方式 1-腾讯 2-阿里 3-讯飞(type=2生效)")
+    /** TTS方式：1-腾讯 2-阿里 3-讯飞 */
     @TableField("tts")
     private Integer tts;
 
-
-    /**
-     * 合成文本
-     */
-    @Schema(description = "合成文本")
+    /** 合成文本 */
     @TableField("speech_text")
     private String speechText;
 
-    /**
-     * 文件ID
-     */
-    @Schema(description = "文件ID")
+    /** 文件ID */
     @TableField("file_id")
     private Long fileId;
 
+    /** 创建人 */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
 
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
 
-    public void setQuery2Entity(VoiceFileAddQuery query) {
-        this.id = query.getId();
-        this.name = query.getName();
-        this.type = query.getType();
-        this.tts = query.getTts();
-        this.speechText = query.getSpeechText();
-        this.fileId = query.getFileId();
-    }
+    /** 更新人 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Long updateBy;
+
+    /** 更新时间 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    /** 逻辑删除：0-正常 1-已删除 */
+    @TableLogic
+    @TableField("del_flag")
+    private Integer delFlag;
 }
 

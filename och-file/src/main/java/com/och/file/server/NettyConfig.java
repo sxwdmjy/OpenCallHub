@@ -4,6 +4,10 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Netty 文件服务器配置
+ * <p>绑定 file-server 配置前缀，支持自定义监听端口、线程数和最大内容长度。</p>
+ */
 @Configuration
 @ConfigurationProperties(prefix = "file-server")
 @Data

@@ -1,13 +1,15 @@
 package com.och.api.controller.sys;
 
+import lombok.RequiredArgsConstructor;
+
 import cn.hutool.core.lang.tree.Tree;
 import com.github.pagehelper.PageInfo;
 import com.och.common.annotation.Log;
 import com.och.common.base.BaseController;
-import com.och.common.base.ResResult;
+import com.och.common.api.ApiResponse;
 import com.och.common.enums.BusinessTypeEnum;
-import com.och.common.enums.ExceptionStatusEnum;
-import com.och.common.exception.RequestException;
+import com.och.common.error.BizException;
+import com.och.common.error.ErrorCode;
 import com.och.security.utils.SecurityUtils;
 import com.och.system.domain.entity.SysMenu;
 import com.och.system.domain.query.menu.SysMenuQuery;
@@ -20,7 +22,6 @@ import com.och.system.service.ISysMenuService;
 import com.och.system.service.ISysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -37,19 +38,16 @@ import java.util.Objects;
 @Tag(name = "用户管理")
 @RestController
 @RequestMapping("/system/v1/user")
+@RequiredArgsConstructor
 public class SysUseController extends BaseController {
-
-    @Autowired
-    private ISysUserService iSysUserService;
-
-    @Autowired
-    private ISysMenuService iSysMenuService;
+    private final ISysUserService iSysUserService;
+    private final ISysMenuService iSysMenuService;
 
     @Log(title = "新增用户", businessType = BusinessTypeEnum.INSERT)
     @PreAuthorize("@authz.hasPerm('system:user:add')")
     @Operation(summary = "新增用户", method = "POST")
     @PostMapping("/add")
-    public ResResult add(@RequestBody @Validated SysUserAddQuery query) {
+    public ApiResponse add(@RequestBody @Validated SysUserAddQuery query) {
         iSysUserService.add(query);
         return success();
     }
@@ -58,7 +56,7 @@ public class SysUseController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:user:edit')")
     @Operation(summary = "修改用户", method = "POST")
     @PostMapping("/edit/{userId}")
-    public ResResult edit(@PathVariable("userId") Long userId, @RequestBody @Validated SysUserUpdateQuery query) {
+    public ApiResponse edit(@PathVariable("userId") Long userId, @RequestBody @Validated SysUserUpdateQuery query) {
         query.setUserId(userId);
         iSysUserService.edit(query);
         return success();
@@ -68,7 +66,7 @@ public class SysUseController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:user:editPassWord')")
     @Operation(summary = "修改用户密码", method = "POST", description = "只传密码字段")
     @PostMapping("/editPassWord/{userId}")
-    public ResResult editPassWord(@PathVariable("userId") Long userId, @RequestBody SysUserAddQuery query) {
+    public ApiResponse editPassWord(@PathVariable("userId") Long userId, @RequestBody SysUserAddQuery query) {
         query.setUserId(userId);
         iSysUserService.editPassWord(query);
         return success();
@@ -78,7 +76,7 @@ public class SysUseController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:user:delete')")
     @Operation(summary = "删除用户", method = "POST")
     @PostMapping("/delete")
-    public ResResult delete(@RequestBody SysUserQuery query) {
+    public ApiResponse delete(@RequestBody SysUserQuery query) {
         iSysUserService.delete(query);
         return success();
     }
@@ -87,9 +85,9 @@ public class SysUseController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:user:get')")
     @Operation(summary = "获取用户详情", method = "POST")
     @PostMapping("/get")
-    public ResResult<SysUserVo> get(@RequestBody SysUserQuery query) {
+    public ApiResponse<SysUserVo> get(@RequestBody SysUserQuery query) {
         if (Objects.isNull(query.getUserId())) {
-            throw new RequestException(ExceptionStatusEnum.ERROR_USERID_NOT_NULL.getCode(), ExceptionStatusEnum.ERROR_USERID_NOT_NULL.getMsg());
+            throw new BizException(ErrorCode.BIZ_USER_ID_REQUIRED);
         }
         SysUserVo sysUserVo = iSysUserService.getByUserId(query.getUserId());
         return success(sysUserVo);
@@ -99,7 +97,7 @@ public class SysUseController extends BaseController {
     @PreAuthorize("@authz.hasPerm('system:user:list')")
     @Operation(summary = "获取用户列表", method = "POST")
     @PostMapping("/page/list")
-    public ResResult<PageInfo<SysUserVo>> getPageList(@RequestBody SysUserQuery query) {
+    public ApiResponse<PageInfo<SysUserVo>> getPageList(@RequestBody SysUserQuery query) {
         PageInfo<SysUserVo> pageInfo = iSysUserService.getPageList(query);
         return success(pageInfo);
     }
@@ -107,14 +105,14 @@ public class SysUseController extends BaseController {
     @Log(title = "获取用户下拉列表", businessType = BusinessTypeEnum.SELECT)
     @Operation(summary = "获取用户下拉列表", method = "POST")
     @PostMapping("/select/list")
-    public ResResult<List<SysSimpleUserVo>> getSelectList(@RequestBody SysUserQuery query) {
+    public ApiResponse<List<SysSimpleUserVo>> getSelectList(@RequestBody SysUserQuery query) {
         return success(iSysUserService.getSelectList(query));
     }
 
     @Log(title = "获取用户菜单", businessType = BusinessTypeEnum.SELECT)
     @Operation(summary = "获取用户菜单", method = "GET")
     @GetMapping("getRouters")
-    public ResResult<List<Tree<Long>>> getRouters() {
+    public ApiResponse<List<Tree<Long>>> getRouters() {
         // 角色信息
         List<SysMenu> menus = new LinkedList<>();
         List<Long> roles = SecurityUtils.getRole();

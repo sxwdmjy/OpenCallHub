@@ -1,53 +1,60 @@
 package com.och.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.och.common.base.BaseEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.io.Serializable;
+import java.util.Date;
 
 
 /**
- * 角色菜单关联表(SysRoleMenu)表实体类
+ * 角色菜单关联实体
+ * <p>映射 sys_role_menu 表，存储角色与菜单的关联关系。</p>
  *
  * @author danmo
- * @since 2024-02-22 11:22:25
  */
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("sys_role_menu")
-public class SysRoleMenu extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = 641780087656811215L;
+public class SysRoleMenu {
 
-    /**
-     * 主键ID
-     */
-
-    @Schema(description = "主键ID")
+    /** 主键ID */
     @TableId(type = IdType.AUTO)
     private Long id;
 
 
-    /**
-     * 角色ID
-     */
-    @Schema(description = "角色ID")
+    /** 角色ID */
     @TableField("role_id")
     private Long roleId;
 
-
-    /**
-     * 菜单ID
-     */
-    @Schema(description = "菜单ID")
+    /** 菜单ID */
     @TableField("menu_id")
     private Long menuId;
 
+    /** 创建人 */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    /** 更新人 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Long updateBy;
+
+    /** 更新时间 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    /** 逻辑删除：0-正常 1-已删除 */
+    @TableLogic
+    @TableField("del_flag")
+    private Integer delFlag;
 
 }
 

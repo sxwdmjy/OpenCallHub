@@ -10,6 +10,7 @@ import com.och.system.domain.query.corp.CorpAddQuery;
 import com.och.system.domain.query.corp.CorpQuery;
 import com.och.system.mapper.CorpInfoMapper;
 import com.och.system.service.ICorpInfoService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -24,33 +25,34 @@ import java.util.stream.Collectors;
  * @author danmo
  * @date 2023-07-07 14:37:57
  */
+@Slf4j
 @Service
 public class CorpInfoServiceImpl extends BaseServiceImpl<CorpInfoMapper, CorpInfo> implements ICorpInfoService {
 
 
     @Override
     public void add(CorpAddQuery query) {
-        CorpInfo CorpInfo = new CorpInfo();
-        BeanUtil.copyProperties(query, CorpInfo);
-        save(CorpInfo);
+        CorpInfo corpInfo = new CorpInfo();
+        BeanUtil.copyProperties(query, corpInfo);
+        save(corpInfo);
     }
 
     @Override
     public void edit(CorpAddQuery query) {
-        CorpInfo CorpInfo = new CorpInfo();
-        BeanUtil.copyProperties(query, CorpInfo);
-        CorpInfo.setId(query.getCorpId());
-        updateById(CorpInfo);
+        CorpInfo corpInfo = new CorpInfo();
+        BeanUtil.copyProperties(query, corpInfo);
+        corpInfo.setId(query.getCorpId());
+        updateById(corpInfo);
     }
 
     @Override
     public void delete(CorpQuery query) {
         if(CollectionUtil.isNotEmpty(query.getCorpIds())){
             List<CorpInfo> corpInfos = query.getCorpIds().stream().map(id -> {
-                CorpInfo CorpInfo = new CorpInfo();
-                CorpInfo.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
-                CorpInfo.setId(id);
-                return CorpInfo;
+                CorpInfo corpInfo = new CorpInfo();
+                corpInfo.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
+                corpInfo.setId(id);
+                return corpInfo;
             }).collect(Collectors.toList());
             updateBatchById(corpInfos);
         }

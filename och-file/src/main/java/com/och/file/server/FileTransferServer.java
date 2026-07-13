@@ -29,6 +29,11 @@ import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Netty 文件传输服务端
+ * <p>基于 Netty 的高性能文件传输服务器，支持流量整形（1MB/s）、协议编解码、空闲检测和文件分发。
+ * 在应用启动时自动绑定端口，支持将本地或远程 URL 文件发送给所有连接的客户端。</p>
+ */
 @Component
 @Slf4j
 public class FileTransferServer {

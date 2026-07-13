@@ -42,7 +42,9 @@ public class WsHandshakeInterceptor implements HandshakeInterceptor {
             // 从token中解析出userId
             Long userId = JwtUtils.getUserId(token);
             String jwtToken = (String) redisService.getCacheObject(CacheConstants.LOGIN_TOKEN_KEY + userId);
-            if (StringUtils.isEmpty(jwtToken) && !StringUtils.equals(token, jwtToken)) {
+            // 修复：使用 || 而非 &&，任一条件不满足即拒绝握手
+            // jwtToken 为空表示未登录或已过期，token 不匹配表示非法请求
+            if (StringUtils.isEmpty(jwtToken) || !StringUtils.equals(token, jwtToken)) {
                 return false;
             }
             LoginUserInfo userDetails = JSONObject.parseObject(JwtUtils.getLoginUserInfo(token), LoginUserInfo.class);

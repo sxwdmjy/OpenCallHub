@@ -1,3 +1,4 @@
+-- [已废弃-无需兼容] 此表定义已被 Flyway V3 res_phone_number 替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.call_display definition
 
 CREATE TABLE `call_display` (
@@ -14,6 +15,7 @@ CREATE TABLE `call_display` (
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COMMENT='号码管理';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V3 res_number_pool 替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.call_display_pool definition
 
 CREATE TABLE `call_display_pool` (
@@ -30,6 +32,7 @@ CREATE TABLE `call_display_pool` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='号码池管理';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V3 res_phone_number.number_pool_id 关联替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.call_display_pool_rel definition
 
 CREATE TABLE `call_display_pool_rel` (
@@ -45,6 +48,7 @@ CREATE TABLE `call_display_pool_rel` (
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COMMENT='号码池号码关联表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V3 res_ai_plugin 替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.call_engine definition
 
 CREATE TABLE `call_engine` (
@@ -97,6 +101,7 @@ CREATE TABLE `call_in_phone_rel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='呼入号码路由子码表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V7 call_record 替代，新表使用 created_at 字段（无 del_flag）
 -- openCallHub.call_record definition
 
 CREATE TABLE `call_record` (
@@ -174,6 +179,7 @@ CREATE TABLE `call_schedule` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='日程安排表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V6 acd_skill_group 替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.call_skill definition
 
 CREATE TABLE `call_skill` (
@@ -201,6 +207,7 @@ CREATE TABLE `call_skill` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='技能表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V6 acd_agent_status 替代，新表使用 created_at/updated_at 字段
 -- openCallHub.call_skill_agent_rel definition
 
 CREATE TABLE `call_skill_agent_rel` (
@@ -216,6 +223,7 @@ CREATE TABLE `call_skill_agent_rel` (
 ) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COMMENT='技能坐席关联表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V10 outbound_task 替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.call_task definition
 
 CREATE TABLE `call_task` (
@@ -250,6 +258,7 @@ CREATE TABLE `call_task` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='外呼任务表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V10 outbound_customer 替代，新表使用 created_at/updated_at 字段
 -- openCallHub.call_task_assignment definition
 
 CREATE TABLE `call_task_assignment` (
@@ -278,7 +287,7 @@ CREATE TABLE `call_task_assignment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='任务分配联系人表';
 
 
--- openCallHub.customer_crowd definition
+-- [已废弃-无需兼容] 此表定义已被 Flyway V19 customer_crowd 替代，新表使用 created_at/updated_at/deleted 字段
 
 CREATE TABLE `customer_crowd` (
                                   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -299,7 +308,7 @@ CREATE TABLE `customer_crowd` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='客户人群管理表';
 
 
--- openCallHub.customer_crowd_rel definition
+-- [已废弃-无需兼容] 此表定义已被 Flyway V19 customer_crowd_rel 替代，新表使用 created_at/deleted 字段
 
 CREATE TABLE `customer_crowd_rel` (
                                       `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -337,6 +346,7 @@ CREATE TABLE `customer_field` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='客户字段管理表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V8 customer_profile + customer_phone 替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.customer_seas definition
 
 CREATE TABLE `customer_seas` (
@@ -505,6 +515,7 @@ CREATE TABLE `fs_cdr` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='cdr话单表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V13 fs_node 替代，新表使用 create_time/update_time/del_flag 字段
 -- openCallHub.fs_config definition
 
 CREATE TABLE `fs_config` (
@@ -754,6 +765,7 @@ CREATE TABLE `phone_location` (
 ) ENGINE=InnoDB AUTO_INCREMENT=509949 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='号码归属地表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V3 res_extension + res_sip_account + V6 acd_agent_status 替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.sip_agent definition
 
 CREATE TABLE `sip_agent` (
@@ -983,6 +995,7 @@ CREATE TABLE `version` (
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='kamailio模块版本表';
 
 
+-- [已废弃-无需兼容] 此表定义已被 Flyway V3 res_audio_asset 替代，新表使用 created_at/updated_at/deleted 字段
 -- openCallHub.voice_file definition
 
 CREATE TABLE `voice_file` (

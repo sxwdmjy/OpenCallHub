@@ -9,10 +9,15 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 /**
+ * MyBatis-Plus 字段自动填充器
+ * <p>
+ * 在插入和更新操作时，自动填充 createTime、createBy、updateTime、updateBy 字段。
+ * 通过 SecurityUtils 获取当前登录用户 ID 作为操作人。
+ * </p>
+ *
  * @author danmo
- * @description 填充器
  * @date 2023/6/19 21:42
- **/
+ */
 @Slf4j
 @Component
 public class MetaObjectHandler implements com.baomidou.mybatisplus.core.handlers.MetaObjectHandler {

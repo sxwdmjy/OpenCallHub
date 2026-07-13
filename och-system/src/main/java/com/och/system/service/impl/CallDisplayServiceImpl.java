@@ -13,9 +13,8 @@ import com.och.system.mapper.CallDisplayMapper;
 import com.och.system.service.ICallDisplayService;
 import com.och.system.service.IPhoneLocationService;
 import com.och.system.service.ISysUserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,12 +24,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 号码管理(CallDisplay)表服务实现类
+ * 号码管理服务
+ * <p>负责外显号码的增删改查操作，包括号码归属地查询和号码分配管理</p>
  *
  * @author danmo
  * @since 2023-10-23 10:45:58
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class CallDisplayServiceImpl extends BaseServiceImpl<CallDisplayMapper, CallDisplay> implements ICallDisplayService {
 

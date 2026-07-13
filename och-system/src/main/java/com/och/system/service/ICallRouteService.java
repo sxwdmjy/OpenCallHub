@@ -9,7 +9,15 @@ import com.och.system.domain.vo.route.CallRouteVo;
 import java.util.List;
 
 /**
- * 号码路由表(CallRoute)表服务接口
+ * 号码路由管理服务接口
+ * <p>提供号码路由规则的增删改查、启用/禁用管理功能。
+ * 不同路由规则（按地区/按号码前缀/按技能组）可视为不同的路由策略，实现灵活的呼叫路由分发。</p>
+ *
+ * <h3>设计模式</h3>
+ * <ul>
+ *   <li><b>策略模式</b>：不同路由规则（按地区路由/按号码路由/按技能组路由）作为可替换的路由策略，根据业务场景动态选择</li>
+ *   <li><b>模板方法</b>：继承 IBaseService，复用通用 CRUD 模板</li>
+ * </ul>
  *
  * @author danmo
  * @since 2024-12-30 14:03:41

@@ -5,13 +5,12 @@ import cloud.tianai.captcha.application.TACBuilder;
 import cloud.tianai.captcha.application.vo.CaptchaResponse;
 import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
 import cloud.tianai.captcha.common.constant.CaptchaTypeConstant;
-import cloud.tianai.captcha.common.response.ApiResponse;
 import cloud.tianai.captcha.resource.common.model.dto.Resource;
 import cloud.tianai.captcha.validator.common.model.dto.MatchParam;
 import cn.hutool.core.img.FontUtil;
 import com.och.api.config.CaptchaRedisCacheStore;
 import com.och.common.base.BaseController;
-import com.och.common.base.ResResult;
+import com.och.common.api.ApiResponse;
 import com.och.common.utils.SpringUtils;
 import com.och.common.utils.StringUtils;
 import com.och.system.domain.query.captcha.CheckCaptchaQuery;
@@ -44,7 +43,7 @@ public class CaptchaController extends BaseController implements InitializingBea
      */
     @Operation(summary = "生成验证码", method = "GET")
     @GetMapping("/gen")
-    public ResResult<CaptchaResponse<ImageCaptchaVO>> genCaptcha(@RequestParam(value = "type", required = false) String type) {
+    public ApiResponse<CaptchaResponse<ImageCaptchaVO>> genCaptcha(@RequestParam(value = "type", required = false) String type) {
         if (StringUtils.isBlank(type)) {
             type = CaptchaTypeConstant.SLIDER;
         }
@@ -67,8 +66,9 @@ public class CaptchaController extends BaseController implements InitializingBea
 
     @Operation(summary = "生成验证码", method = "POST")
     @PostMapping("/check")
-    public ApiResponse genCaptcha(@RequestBody CheckCaptchaQuery query) {
-        return application.matching(query.getId(), new MatchParam(query.getCaptchaTrack()));
+    public ApiResponse<Object> checkCaptcha(@RequestBody CheckCaptchaQuery query) {
+        cloud.tianai.captcha.common.response.ApiResponse<?> captchaRes = application.matching(query.getId(), new MatchParam(query.getCaptchaTrack()));
+        return success(captchaRes);
     }
 
 

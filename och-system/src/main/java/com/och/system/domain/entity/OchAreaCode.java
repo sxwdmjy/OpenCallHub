@@ -1,119 +1,86 @@
 package com.och.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.och.common.base.BaseEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+import java.util.Date;
 
 /**
- * 基于location_gaode手工整理后的表(用于匹配区号)(OchAreaCode)表实体类
+ * 区号区域编码实体
+ * <p>映射 och_area_code 表，存储基于高德地图整理的区号匹配数据。</p>
  *
  * @author danmo
- * @since 2025-05-26 17:10:04
  */
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("och_area_code")
-public class OchAreaCode  implements Serializable {
-  private static final long serialVersionUID = 377995982711227256L;
-   
-    /**
-     *  
-     */
+public class OchAreaCode {
 
-    @Schema(description = "")
+    /** 主键ID */
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
-     
-    /**
-     *  省份名称 
-     */
-    @Schema(description = "省份名称")
+    /** 省份名称 */
     @TableField("provinceName")
     private String provincename;
-    
-    
-     
-    /**
-     *  城市名称 
-     */
-    @Schema(description = "城市名称")
+
+    /** 城市名称 */
     @TableField("cityName")
     private String cityname;
-    
-    
-     
-    /**
-     *  省份地域编码 
-     */
-    @Schema(description = "省份地域编码")
+
+    /** 省份地域编码 */
     @TableField("provinceAdcode")
     private Integer provinceadcode;
-    
-    
-     
-    /**
-     *  省份中心坐标 
-     */
-    @Schema(description = "省份中心坐标")
+
+    /** 省份中心坐标 */
     @TableField("provinceCenter")
     private String provincecenter;
-    
-    
-     
-    /**
-     *  城市区号 
-     */
-    @Schema(description = "城市区号")
+
+    /** 城市区号 */
     @TableField("cityCode")
     private String citycode;
-    
-    
-     
-    /**
-     *  城市地域编码 
-     */
-    @Schema(description = "城市地域编码")
+
+    /** 城市地域编码 */
     @TableField("cityAdcode")
     private Integer cityadcode;
-    
-    
-     
-    /**
-     *  城市中心坐标 
-     */
-    @Schema(description = "城市中心坐标")
+
+    /** 城市中心坐标 */
     @TableField("cityCenter")
     private String citycenter;
-    
-    
-     
-    /**
-     *  区域映射 
-     */
-    @Schema(description = "区域映射")
+
+    /** 区域映射 */
     @TableField("districts")
     private String districts;
-    
-    
-     
-    /**
-     *  省份国际ISO编码 
-     */
-    @Schema(description = "省份国际ISO编码")
+
+    /** 省份国际ISO编码 */
     @TableField("isoCode")
     private String isocode;
-    
-    
 
+    /** 创建人 */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    /** 更新人 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Long updateBy;
+
+    /** 更新时间 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    /** 逻辑删除：0-正常 1-已删除 */
+    @TableLogic
+    @TableField("del_flag")
+    private Integer delFlag;
 
 }
 

@@ -6,7 +6,7 @@ import com.och.system.domain.vo.role.SysRoleVo;
 import com.och.system.service.ISysRoleService;
 import com.och.system.service.ISysUserService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
@@ -15,16 +15,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * 用户详情服务
+ * <p>实现 Spring Security 的 UserDetailsService 接口，根据用户名从数据库加载用户信息。
+ * 同时查询用户的角色、权限和数据范围，封装为 LoginUserInfo 返回。</p>
+ *
  * @author danmo
  * @date 2024-07-10 15:00
- **/
+ */
 @Component
+@RequiredArgsConstructor
 public class OchUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private  ISysUserService iSysUserService;
-    @Autowired
-    private  ISysRoleService iSysRoleService;
+    private final ISysUserService iSysUserService;
+    private final ISysRoleService iSysRoleService;
 
     @Override
     public LoginUserInfo loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -55,9 +58,11 @@ public class OchUserDetailsService implements UserDetailsService {
         loginUserInfo.setDataScope(new ArrayList<>(dataScopes));
 
         Set<OchGrantedAuthority> authorities = Optional.ofNullable(roleList).orElseGet(ArrayList::new).stream()
-                .filter(role -> Objects.equals(0, role.getStatus())).map(role -> new OchGrantedAuthority(role.getRoleKey(), role.getMenuList().stream().map(SysMenuVo::getPerms).filter(StringUtils::isNotBlank).collect(Collectors.toList()))).collect(Collectors.toSet());
+                .filter(role -> Objects.equals(0, role.getStatus()))
+                .map(role -> new OchGrantedAuthority(role.getRoleKey(), Optional.ofNullable(role.getMenuList()).orElseGet(ArrayList::new).stream()
+                        .map(SysMenuVo::getPerms).filter(StringUtils::isNotBlank).collect(Collectors.toList())))
+                .collect(Collectors.toSet());
         loginUserInfo.setAuthorities(authorities);
-
 
         loginUserInfo.setAccountNonExpired(true);
         loginUserInfo.setCredentialsNonExpired(true);

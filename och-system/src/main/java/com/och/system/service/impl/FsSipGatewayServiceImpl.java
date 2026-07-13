@@ -4,7 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
-import com.och.common.exception.CommonException;
+import com.och.common.error.BizException;
+import com.och.common.error.ErrorCode;
 import com.och.system.domain.entity.FsSipGateway;
 import com.och.system.domain.query.fssip.FsSipGatewayAddQuery;
 import com.och.system.domain.query.fssip.FsSipGatewayQuery;
@@ -38,7 +39,7 @@ public class FsSipGatewayServiceImpl extends BaseServiceImpl<FsSipGatewayMapper,
     public void edit(FsSipGatewayAddQuery query) {
         FsSipGateway sipGateway = getById(query.getId());
         if (Objects.isNull(sipGateway)) {
-            throw new CommonException("无效ID");
+            throw new BizException(ErrorCode.BIZ_RESOURCE_ID_REQUIRED);
         }
         FsSipGateway updateSipGateway = new FsSipGateway();
         BeanUtil.copyProperties(query, updateSipGateway);

@@ -3,11 +3,11 @@ package com.och.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageInfo;
-import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
-import com.och.common.enums.ExceptionStatusEnum;
-import com.och.common.exception.CommonException;
+import com.och.common.error.BizException;
+import com.och.common.error.ErrorCode;
 import com.och.common.utils.SecurityUtils;
+import com.och.common.base.BaseServiceImpl;
 import com.och.system.domain.entity.SysUser;
 import com.och.system.domain.entity.SysUserRole;
 import com.och.system.domain.feature.IUserVo;
@@ -20,10 +20,10 @@ import com.och.system.mapper.SysUserMapper;
 import com.och.system.service.ISysRoleService;
 import com.och.system.service.ISysUserRoleService;
 import com.och.system.service.ISysUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -39,30 +39,25 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
-    @Autowired
-    private ISysRoleService iSysRoleService;
+    private final ISysRoleService iSysRoleService;
+
+    private final ISysUserRoleService iSysUserRoleService;
 
 
-    @Autowired
-    private ISysUserRoleService iSysUserRoleService;
-
-
-    @Override
     public SysUser getByUsername(String username) {
         return getOne(new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getUserName, username).eq(SysUser::getDelFlag, 0));
     }
 
 
-    @Override
     public SysUserVo getByUserId(Long userId) {
         return this.baseMapper.getByUserId(userId);
     }
 
 
-    @Override
     public PageInfo<SysUserVo> getPageList(SysUserQuery query) {
         startPage(query.getPageIndex(), query.getPageSize(), query.getSortField(), query.getSort());
         List<SysUserVo> userList = new LinkedList<>();
@@ -82,12 +77,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         return pageInfo;
     }
 
-    @Override
     public List<SysUserVo> getList(SysUserQuery query) {
         return this.baseMapper.getList(query);
     }
 
-    @Override
     public void decorate(IUserVo userVo) {
         if (Objects.isNull(userVo)) {
             return;
@@ -110,7 +103,6 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         userVo.setUpdateName(userMap.get(userVo.getUpdateBy()));
     }
 
-    @Override
     public void decorate(List<? extends IUserVo> userVoList) {
         if (CollectionUtils.isEmpty(userVoList)) {
             return;
@@ -138,13 +130,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void add(SysUserAddQuery query) {
         //校验用户名称
         SysUserQuery userQuery = new SysUserQuery();
         userQuery.setUserName(query.getUserName());
         if (checkUserName(userQuery)) {
-            throw new CommonException(ExceptionStatusEnum.ERROR_USER_NAME_EXISTENCE.getCode(), ExceptionStatusEnum.ERROR_USER_NAME_EXISTENCE.getMsg());
+            throw new BizException(ErrorCode.BIZ_USERNAME_DUPLICATE);
         }
 
         SysUser sysUser = new SysUser();
@@ -163,17 +154,16 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void edit(SysUserUpdateQuery query) {
         SysUser user = getById(query.getUserId());
         if(Objects.isNull(user)){
-            throw new CommonException(ExceptionStatusEnum.ERROR_USERID_NOT_EXIST);
+            throw new BizException(ErrorCode.BIZ_USER_NOT_FOUND);
         }
         //校验用户名称
         SysUserQuery userQuery = new SysUserQuery();
         userQuery.setUserName(query.getUserName());
         if (!StringUtils.equals(query.getUserName(), user.getUserName()) && checkUserName(userQuery)) {
-            throw new CommonException(ExceptionStatusEnum.ERROR_USER_NAME_EXISTENCE);
+            throw new BizException(ErrorCode.BIZ_USERNAME_DUPLICATE);
         }
 
         SysUser sysUser = new SysUser();
@@ -187,10 +177,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     }
 
 
-    @Override
     public void editPassWord(SysUserAddQuery query) {
         if (StringUtils.isEmpty(query.getPassword())) {
-            throw new CommonException("密码不能为空");
+            throw new BizException(ErrorCode.BIZ_VALIDATION_ERROR, "密码不能为空");
         }
         update(new LambdaUpdateWrapper<SysUser>()
                 .set(SysUser::getPassword, SecurityUtils.encryptPassword(query.getPassword()))
@@ -198,13 +187,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     }
 
 
-    public static void main(String[] args) {
-        String s = SecurityUtils.encryptPassword("12345678");
-        System.out.println(s);
-    }
-
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void delete(SysUserQuery query) {
         if (!CollectionUtils.isEmpty(query.getUserIds())) {
             List<SysUser> userList = query.getUserIds().stream().map(userId -> {
@@ -221,7 +204,6 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         }
     }
 
-    @Override
     public List<SysSimpleUserVo> getSelectList(SysUserQuery query) {
         return  this.baseMapper.getSelectList(query);
     }

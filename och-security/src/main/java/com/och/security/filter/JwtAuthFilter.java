@@ -11,8 +11,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -22,9 +22,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
+ * JWT 认证过滤器
+ * <p>继承 OncePerRequestFilter 确保每个请求只过滤一次。
+ * 流程：从请求头提取 Bearer Token → 校验 Redis 中的 token → 构建 Spring Security 认证上下文。
+ * 支持 token 缓存续期。</p>
+ *
  * @author danmo
  * @date 2024-02-21 11:04
- **/
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -52,8 +57,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         // 3. 校验 Redis 中的 token
         String cacheKey = CacheConstants.LOGIN_TOKEN_KEY + userId;
-        String jwtToken = redisService.getCacheObject(cacheKey);
-        if (StringUtils.isEmpty(jwtToken) || !jwtToken.equals(token)) {
+        Object cachedToken = redisService.getCacheObject(cacheKey);
+        if (!(cachedToken instanceof String jwtToken) || StringUtils.isEmpty(jwtToken) || !jwtToken.equals(token)) {
             SecurityContextHolder.clearContext();
             filterChain.doFilter(request, response);
             return;

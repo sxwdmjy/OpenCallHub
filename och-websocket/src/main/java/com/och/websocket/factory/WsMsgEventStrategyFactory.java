@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ * WebSocket 消息事件策略工厂
+ * <p>根据 {@code @WsEventName} 注解的值，自动发现并匹配对应的消息处理策略。
+ * 支持在子类和父类上查找注解，兼容模板方法模式。</p>
+ *
  * @author danmo
  * @date 2025/05/27 22:12
  */

@@ -8,16 +8,17 @@ import com.och.system.mapper.PhoneLocationMapper;
 import com.och.system.domain.entity.PhoneLocation;
 import com.och.system.service.IOchRegionService;
 import com.och.system.service.IPhoneLocationService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * (PhoneLocation)表服务实现类
+ * 号码归属地查询服务
+ * <p>通过号码前缀匹配归属地区域信息，支持携号转网号码的归属地识别</p>
  *
  * @author danmo
  * @since 2025-05-26 17:12:25
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class PhoneLocationServiceImpl extends BaseServiceImpl<PhoneLocationMapper, PhoneLocation> implements IPhoneLocationService {
 

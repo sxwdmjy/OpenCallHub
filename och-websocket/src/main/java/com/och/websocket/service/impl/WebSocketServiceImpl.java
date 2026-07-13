@@ -10,7 +10,6 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.PongMessage;
@@ -32,10 +31,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class WebSocketServiceImpl implements IWebSocketService, InitializingBean {
 
-    @Autowired
-    private RedisService redisService;
-
+    private final RedisService redisService;
     private final ScheduledExecutorService threadPoolExecutor = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ws-heartbeat-pool", true));
+
+    public WebSocketServiceImpl(RedisService redisService) {
+        this.redisService = redisService;
+    }
 
     @Override
     public String getSessionId(String userId) {
@@ -71,7 +72,7 @@ public class WebSocketServiceImpl implements IWebSocketService, InitializingBean
 
     @Override
     public void sendBroadcastMsg(String msg) throws IOException {
-        for (WebSocketSession socketSession : WsSessionUtil.sessionPool.values()) {
+        for (WebSocketSession socketSession : WsSessionUtil.getAllSessions().values()) {
             if (Objects.nonNull(socketSession)) {
                 socketSession.sendMessage(new TextMessage(msg));
             }

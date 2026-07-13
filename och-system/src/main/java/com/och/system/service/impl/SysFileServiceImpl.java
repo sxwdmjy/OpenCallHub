@@ -8,26 +8,28 @@ import com.och.file.service.IFileUploadService;
 import com.och.system.domain.entity.SysFile;
 import com.och.system.mapper.SysFileMapper;
 import com.och.system.service.ISysFileService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
 /**
- * 文件管理(SysFile)表服务实现类
+ * 文件管理服务
+ * <p>负责文件的上传与存储管理，支持MultipartFile和File两种上传方式</p>
  *
  * @author danmo
  * @since 2024-11-18 10:22:33
  */
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class SysFileServiceImpl extends BaseServiceImpl<SysFileMapper, SysFile> implements ISysFileService {
 
-    @Autowired
-    private IFileUploadService fileUploadService;
+    private final IFileUploadService fileUploadService;
 
-    @Autowired
-    private SysSettingConfig lfsSettingConfig;
+    private final SysSettingConfig settingConfig;
 
     @Override
     public FileUploadVo uploadFile(MultipartFile file, String type) {

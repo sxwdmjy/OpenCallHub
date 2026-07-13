@@ -5,7 +5,7 @@ import com.och.common.exception.ParserException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "cdr管理")
 @RestController
 @RequestMapping("/fs/cdr")
+@RequiredArgsConstructor
 public class FsXmlCdrController {
-
-    @Autowired
-    private IFsXmlCdrService iFsXmlCdrService;
+    private final IFsXmlCdrService iFsXmlCdrService;
 
     @Operation(summary = "cdr请求", method = "POST")
     @PostMapping(value = "/api",produces = MediaType.APPLICATION_XML_VALUE)

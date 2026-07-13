@@ -1,110 +1,81 @@
 package com.och.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.och.common.base.BaseEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.io.Serializable;
+import java.util.Date;
 
 
 /**
- * 用户信息表(User)表实体类
+ * 系统用户
+ * <p>映射 sys_user 表，存储平台登录用户的账号、密码、昵称、手机号等基本信息。
+ * 通过 SysUserRole 关联角色，角色关联菜单权限。</p>
  *
  * @author danmo
- * @since 2024-02-20 18:41:37
  */
-@EqualsAndHashCode(callSuper = true)
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("sys_user")
-public class SysUser extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = 709948659840527062L;
+public class SysUser {
 
-    /**
-     * 用户ID
-     */
-
-    @Schema(description = "用户ID")
+    /** 用户ID */
     @TableId(type = IdType.AUTO)
     private Long userId;
 
 
-    /**
-     * 用户账号
-     */
-    @Schema(description = "用户账号")
+    /** 登录账号 */
     @TableField("user_name")
     private String userName;
 
-
-    /**
-     * 用户昵称
-     */
-    @Schema(description = "用户昵称")
+    /** 用户昵称 */
     @TableField("nick_name")
     private String nickName;
 
-
-    /**
-     * 密码
-     */
-    @Schema(description = "密码")
-    @TableField("password")
+    /** 加密密码 */
     private String password;
 
-
-    /**
-     * 用户头像
-     */
-    @Schema(description = "用户头像")
-    @TableField("avatar")
+    /** 头像地址 */
     private String avatar;
 
-
-    /**
-     * 用户性别
-     */
-    @Schema(description = "用户性别（0-未知 1-男 2-女）")
-    @TableField("sex")
+    /** 性别：0-未知 1-男 2-女 */
     private Integer sex;
 
-
-    /**
-     * 手机号
-     */
-    @Schema(description = "手机号")
-    @TableField("phone")
+    /** 手机号 */
     private String phone;
 
-
-    /**
-     * 邮箱
-     */
-    @Schema(description = "邮箱")
-    @TableField("email")
+    /** 邮箱 */
     private String email;
 
-
-    /**
-     * 状态 1-启用 2-禁用
-     */
-    @Schema(description = "状态 1-启用 2-禁用")
-    @TableField("status")
+    /** 状态：1-启用 2-禁用 */
     private Integer status;
 
-
-    /**
-     * 备注
-     */
-    @Schema(description = "备注")
-    @TableField("remark")
+    /** 备注 */
     private String remark;
 
+    /** 创建人 */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    /** 更新人 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Long updateBy;
+
+    /** 更新时间 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    /** 逻辑删除：0-正常 1-已删除 */
+    @TableLogic
+    @TableField("del_flag")
+    private Integer delFlag;
 }
 

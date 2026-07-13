@@ -37,6 +37,11 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("建立ws 连接 sessionId:{}", session.getId());
         LoginUserInfo user = (LoginUserInfo)session.getAttributes().get("user");
+        if (user == null) {
+            log.warn("ws 连接未携带用户信息，拒绝连接 sessionId:{}", session.getId());
+            session.close(CloseStatus.NOT_ACCEPTABLE);
+            return;
+        }
         Long userId = user.getUserId();
         String sessionId = session.getId();
         redisService.setCacheMapValue(CacheConstants.CLIENT_USER_POOL_KEY, String.valueOf(userId), sessionId);
@@ -49,6 +54,10 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         log.info("接收到ws文本消息 sessionId:{}, msg:{}", session.getId(), message.getPayload());
         LoginUserInfo user = (LoginUserInfo)session.getAttributes().get("user");
+        if (user == null) {
+            log.warn("ws 消息未携带用户信息，忽略消息 sessionId:{}", session.getId());
+            return;
+        }
         Long userId = user.getUserId();
         String payload = message.getPayload();
         if(StringUtils.isNotBlank(payload)){
@@ -72,9 +81,11 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         log.error("ws 连接异常 sessionId:{},msg:{}", session.getId(), exception.getMessage(), exception);
         LoginUserInfo user = (LoginUserInfo)session.getAttributes().get("user");
-        Long userId = user.getUserId();
+        if (user != null) {
+            Long userId = user.getUserId();
+            redisService.delCacheMapValue(CacheConstants.CLIENT_USER_POOL_KEY, String.valueOf(userId));
+        }
         String sessionId = session.getId();
-        redisService.delCacheMapValue(CacheConstants.CLIENT_USER_POOL_KEY, String.valueOf(userId));
         WsSessionUtil.removeAndClose(sessionId);
     }
 
@@ -82,10 +93,11 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("关闭ws连接 sessionId:{},status:{},{}", session.getId(), status.getCode(), status.getReason());
         LoginUserInfo user = (LoginUserInfo)session.getAttributes().get("user");
+        if (user != null) {
+            Long userId = user.getUserId();
+            redisService.delCacheMapValue(CacheConstants.CLIENT_USER_POOL_KEY, String.valueOf(userId));
+        }
         String sessionId = session.getId();
-        Long userId = user.getUserId();
-        redisService.delCacheMapValue(CacheConstants.CLIENT_USER_POOL_KEY, String.valueOf(userId));
         WsSessionUtil.removeAndClose(sessionId);
-
     }
 }

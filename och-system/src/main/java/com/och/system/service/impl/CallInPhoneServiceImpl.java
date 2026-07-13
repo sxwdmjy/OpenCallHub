@@ -14,27 +14,27 @@ import com.och.system.mapper.CallInPhoneMapper;
 import com.och.system.service.ICallInPhoneRelService;
 import com.och.system.service.ICallInPhoneService;
 import com.och.system.service.ICallScheduleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 呼入号码表(CallInPhone)表服务实现类
+ * 呼入号码管理服务
+ * <p>负责呼入号码的增删改查操作，包括呼入号码与路由规则、时间计划的关联关系维护</p>
  *
  * @author danmo
  * @since 2024-12-10 10:29:11
  */
+@RequiredArgsConstructor
 @Service
 public class CallInPhoneServiceImpl extends BaseServiceImpl<CallInPhoneMapper, CallInPhone> implements ICallInPhoneService {
 
 
-    @Autowired
-    private ICallInPhoneRelService iCallInPhoneRelService;
+    private final ICallInPhoneRelService iCallInPhoneRelService;
 
-    @Autowired
-    private ICallScheduleService iCallScheduleService;
+    private final ICallScheduleService iCallScheduleService;
 
     @Override
     public void add(CallInPhoneAddQuery query) {
@@ -129,9 +129,9 @@ public class CallInPhoneServiceImpl extends BaseServiceImpl<CallInPhoneMapper, C
                     if (CollectionUtil.isNotEmpty(scheduleList)) {
                         Map<Long, List<CallSchedule>> scheduleListMap = scheduleList.stream().collect(Collectors.groupingBy(CallSchedule::getId));
                         for (CallInPhoneVo callInPhone : list) {
-                            for (CallInPhoneRelVo lfsCallInPhoneRel : callInPhone.getRouteList()) {
-                                if (scheduleListMap.containsKey(lfsCallInPhoneRel.getScheduleId())) {
-                                    lfsCallInPhoneRel.setScheduleDetail(scheduleListMap.get(lfsCallInPhoneRel.getScheduleId()).get(0));
+                            for (CallInPhoneRelVo callRel : callInPhone.getRouteList()) {
+                                if (scheduleListMap.containsKey(callRel.getScheduleId())) {
+                                    callRel.setScheduleDetail(scheduleListMap.get(callRel.getScheduleId()).get(0));
                                 }
                             }
                         }

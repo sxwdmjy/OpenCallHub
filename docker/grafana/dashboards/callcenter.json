@@ -1,0 +1,61 @@
+{
+  "title": "openCallHub 联络中心监控",
+  "uid": "och-callcenter",
+  "panels": [
+    {
+      "title": "实时通话数",
+      "type": "stat",
+      "targets": [{"expr": "opencallhub_calls_active", "legendFormat": "活跃通话"}],
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4}
+    },
+    {
+      "title": "排队等待数",
+      "type": "stat",
+      "targets": [{"expr": "opencallhub_queue_waiting", "legendFormat": "排队中"}],
+      "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4}
+    },
+    {
+      "title": "空闲坐席数",
+      "type": "stat",
+      "targets": [{"expr": "opencallhub_agents_idle", "legendFormat": "空闲"}],
+      "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4}
+    },
+    {
+      "title": "外呼接通率 (%)",
+      "type": "gauge",
+      "targets": [{"expr": "opencallhub_outbound_connect_rate * 100", "legendFormat": "接通率"}],
+      "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4}
+    },
+    {
+      "title": "JVM 堆内存 (MB)",
+      "type": "graph",
+      "targets": [
+        {"expr": "jvm_memory_used_bytes{area='heap'} / 1048576", "legendFormat": "已用"},
+        {"expr": "jvm_memory_max_bytes{area='heap'} / 1048576", "legendFormat": "最大"}
+      ],
+      "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8}
+    },
+    {
+      "title": "API 响应时间 P99 (ms)",
+      "type": "graph",
+      "targets": [{"expr": "http_server_requests_seconds{quantile='0.99'}", "legendFormat": "{{uri}}"}],
+      "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8}
+    },
+    {
+      "title": "AI 调用延迟 (ms)",
+      "type": "graph",
+      "targets": [
+        {"expr": "opencallhub_ai_asr_latency_ms", "legendFormat": "ASR"},
+        {"expr": "opencallhub_ai_tts_latency_ms", "legendFormat": "TTS"},
+        {"expr": "opencallhub_ai_llm_latency_ms", "legendFormat": "LLM"}
+      ],
+      "gridPos": {"x": 0, "y": 12, "w": 12, "h": 8}
+    },
+    {
+      "title": "RabbitMQ 消息积压",
+      "type": "graph",
+      "targets": [{"expr": "rabbitmq_queue_messages", "legendFormat": "{{queue}}"}],
+      "gridPos": {"x": 12, "y": 12, "w": 12, "h": 8}
+    }
+  ]
+}

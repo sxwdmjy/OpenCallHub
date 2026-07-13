@@ -1,139 +1,106 @@
 package com.och.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.och.common.base.BaseEntity;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.io.Serializable;
-
+import java.util.Date;
 
 /**
- * SIP网关表(FsSipGateway)表实体类
+ * SIP网关实体
+ * <p>映射 fs_sip_gateway 表，存储 SIP 网关配置信息。</p>
  *
  * @author danmo
- * @since 2023-10-13 10:29:51
  */
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("fs_sip_gateway")
-public class FsSipGateway extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = 159716300935496393L;
+public class FsSipGateway {
 
-    /**
-     * 主键ID
-     */
-
-    @Schema(description = "主键ID")
+    /** 主键ID */
     @TableId(type = IdType.AUTO)
     private Long id;
 
-
-    /**
-     * 网关名称
-     */
-    @Schema(description = "网关名称")
+    /** 网关名称 */
     @TableField("name")
     private String name;
 
-
-    /**
-     * 账号
-     */
-    @Schema(description = "账号")
+    /** 账号 */
     @TableField("user_name")
     private String userName;
 
-
-    /**
-     * 密码
-     */
-    @Schema(description = "密码")
+    /** 密码 */
     @TableField("password")
     private String password;
 
-
-    /**
-     * 认证地址
-     */
-    @Schema(description = "认证地址")
+    /** 认证地址 */
     @TableField("realm")
     private String realm;
 
-
-    /**
-     * 代理地址
-     */
-    @Schema(description = "代理地址")
+    /** 代理地址 */
     @TableField("proxy")
     private String proxy;
 
-
-    /**
-     * 注册类型 0-不注册 1-注册
-     */
-    @Schema(description = "注册类型 0-不注册 1-注册")
+    /** 注册类型：0-不注册 1-注册 */
     @TableField("register")
     private Integer register;
 
-
-    /**
-     * 注册协议 1-udp, 2-tcp
-     */
-    @Schema(description = "注册协议 1-udp, 2-tcp")
+    /** 注册协议：1-udp 2-tcp */
     @TableField("transport")
     private Integer transport;
 
-
-    /**
-     * 通过此网关出站呼叫时，在from字段中使用入站呼叫的callerid(0-true 1-false)
-     */
-    @Schema(description = "通过此网关出站呼叫时，在from字段中使用入站呼叫的callerid(0-true 1-false)")
+    /** 出站呼叫时from字段使用入站callerid：0-true 1-false */
     @TableField("caller_id_in_from")
     private Integer callerIdInFrom;
 
-
-    /**
-     * from域
-     */
-    @Schema(description = "from域")
+    /** from域 */
     @TableField("from_domain")
     private String fromDomain;
 
-
-    /**
-     * 重试时间（秒）
-     */
-    @Schema(description = "重试时间（秒）")
+    /** 重试时间（秒） */
     @TableField("retry_time")
     private Integer retryTime;
 
-
-    /**
-     * 心跳时间（秒）
-     */
-    @Schema(description = "心跳时间（秒）")
+    /** 心跳时间（秒） */
     @TableField("ping_time")
     private Integer pingTime;
 
-
-    /**
-     * 超时时间
-     */
-    @Schema(description = "超时时间(秒)")
+    /** 超时时间（秒） */
     @TableField("expire_time")
     private Integer expireTime;
 
-    @Schema(description = "网关类型 1-internal 2-external")
+    /** 网关类型：1-internal 2-external */
     @TableField("type")
     private Integer type;
 
-    @Schema(description = "网关类型 0-非外线 1-外线")
+    /** 外线标识：0-非外线 1-外线 */
     @TableField("gateway_type")
     private Integer gatewayType;
+
+    /** 创建人 */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    /** 更新人 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Long updateBy;
+
+    /** 更新时间 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    /** 逻辑删除：0-正常 1-已删除 */
+    @TableLogic
+    @TableField("del_flag")
+    private Integer delFlag;
+
 }
 

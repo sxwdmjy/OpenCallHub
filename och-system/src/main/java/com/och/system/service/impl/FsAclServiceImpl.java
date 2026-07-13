@@ -4,7 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.github.pagehelper.PageInfo;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
-import com.och.common.exception.CommonException;
+import com.och.common.error.BizException;
+import com.och.common.error.ErrorCode;
 import com.och.system.domain.entity.FsAcl;
 import com.och.system.domain.query.acl.FsAclAddQuery;
 import com.och.system.domain.query.acl.FsAclNodeAddQuery;
@@ -13,7 +14,7 @@ import com.och.system.domain.vo.acl.FsAclVo;
 import com.och.system.mapper.FsAclMapper;
 import com.och.system.service.IFsAclService;
 import com.och.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -22,16 +23,17 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * fs访问控制表(FsAcl)
+ * FS访问控制列表管理服务
+ * <p>负责FreeSWITCH ACL规则的管理，包括列表节点和CIDR规则的增删改查</p>
  *
  * @author danmo
  * @date 2023-09-13 13:53:45
  */
+@RequiredArgsConstructor
 @Service
 public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implements IFsAclService {
 
-    @Autowired
-    private ISysUserService sysUserService;
+    private final ISysUserService sysUserService;
 
     @Override
     public void addList(FsAclAddQuery query) {
@@ -44,7 +46,7 @@ public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implem
     @Override
     public void addNode(FsAclNodeAddQuery query) {
         if (Objects.isNull(query.getListId())) {
-            throw new CommonException("规则表ID不能为空");
+            throw new BizException(ErrorCode.BIZ_RESOURCE_ID_REQUIRED);
         }
         FsAcl fsAcl = new FsAcl();
         fsAcl.setName(query.getName());
@@ -60,7 +62,7 @@ public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implem
     public void editList(FsAclAddQuery query) {
         FsAcl fsAcl = getById(query.getId());
         if (Objects.isNull(fsAcl)) {
-            throw new CommonException("无效ID");
+            throw new BizException(ErrorCode.BIZ_RESOURCE_ID_REQUIRED);
         }
         FsAcl updateFsAcl = new FsAcl();
         updateFsAcl.setName(query.getName());
@@ -73,7 +75,7 @@ public class FsAclServiceImpl extends BaseServiceImpl<FsAclMapper, FsAcl> implem
     public void editNode(FsAclNodeAddQuery query) {
         FsAcl fsAcl = getById(query.getId());
         if (Objects.isNull(fsAcl)) {
-            throw new CommonException("无效ID");
+            throw new BizException(ErrorCode.BIZ_RESOURCE_ID_REQUIRED);
         }
         FsAcl updateFsAcl = new FsAcl();
         updateFsAcl.setId(query.getId());

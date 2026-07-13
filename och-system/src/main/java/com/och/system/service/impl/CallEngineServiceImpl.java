@@ -2,7 +2,6 @@ package com.och.system.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.och.common.base.BaseEntity;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
 import com.och.system.domain.entity.CallEngine;
@@ -107,7 +106,7 @@ public class CallEngineServiceImpl extends BaseServiceImpl<CallEngineMapper, Cal
     }
 
     private void checkParams(CallEngineAddQuery query) {
-        List<CallEngine> callEngines = list(new LambdaQueryWrapper<CallEngine>().eq(CallEngine::getName, query.getName()).eq(BaseEntity::getDelFlag, DeleteStatusEnum.DELETE_NO.getIndex()));
+        List<CallEngine> callEngines = list(new LambdaQueryWrapper<CallEngine>().eq(CallEngine::getName, query.getName()).eq(CallEngine::getDelFlag, DeleteStatusEnum.DELETE_NO.getIndex()));
         if(!CollectionUtils.isEmpty(callEngines)){
             throw new RuntimeException("名称已存在");
         }

@@ -35,6 +35,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- H2 内存数据库，用于测试 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
         <!--阿里数据库连接池-->
         <dependency>
@@ -51,23 +58,118 @@
 
         <dependency>
             <groupId>com.och</groupId>
-            <artifactId>och-security</artifactId>
-            <version>0.0.1</version>
+            <artifactId>och-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        
-
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-infra</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-resource</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-call</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-acd</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-ticket</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-knowledge</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-quality</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.och</groupId>
             <artifactId>och-call-task</artifactId>
-            <version>0.0.1</version>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-system</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-customer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-esl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-ai</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-ivr</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-compliance</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-report</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-notice</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-batch</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
 
         <!-- rabbitmq依赖-->
-        <!--<dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>-->
+        </dependency>
 
     </dependencies>
 

@@ -18,6 +18,14 @@
     </properties>
     <dependencies>
 
+        <!-- 本地公共模块 -->
+        <dependency>
+            <groupId>com.och</groupId>
+            <artifactId>och-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 外部的 och-common（第三方工具类） -->
         <dependency>
             <groupId>io.github.sxwdmjy</groupId>
             <artifactId>och-common</artifactId>
@@ -27,6 +35,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+
+        <!-- MyBatis-Plus（用于 Mapper 接口和实体注解） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.och</groupId>
             <artifactId>och-file</artifactId>
@@ -36,6 +51,19 @@
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
+        </dependency>
+
+        <!-- Spring Security（用于 @PreAuthorize 注解） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- 测试依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

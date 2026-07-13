@@ -13,7 +13,8 @@ import com.och.system.domain.vo.agent.SipAgentStatusVo;
 import com.och.system.domain.vo.agent.SipAgentVo;
 import com.och.system.mapper.SipAgentMapper;
 import com.och.system.service.ISipAgentService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +26,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 坐席管理表(SipAgent)
+ * 坐席管理服务实现
+ * <p>实现 SIP 坐席的增删改查、在线状态同步和缓存更新等核心功能。
+ * 在线状态通过 Redis 缓存实时同步：坐席上线时写入缓存，下线或状态变更时更新缓存，
+ * ACD 模块通过查询缓存获取当前坐席状态，无需直接访问数据库，确保高并发场景下的实时性与性能。</p>
  *
  * @author danmo
- * @date 2023-09-26 11:08:58
  */
-@AllArgsConstructor
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgent> implements ISipAgentService {
 
@@ -38,12 +42,12 @@ public class SipAgentServiceImpl extends BaseServiceImpl<SipAgentMapper, SipAgen
 
     @Override
     public void add(SipAgentAddQuery query) {
-        SipAgent lfsAgent = new SipAgent();
-        lfsAgent.setName(query.getName());
-        lfsAgent.setStatus(query.getStatus());
-        lfsAgent.setUserId(query.getUserId());
-        lfsAgent.setAgentNumber(query.getAgentNumber());
-        save(lfsAgent);
+        SipAgent agent = new SipAgent();
+        agent.setName(query.getName());
+        agent.setStatus(query.getStatus());
+        agent.setUserId(query.getUserId());
+        agent.setAgentNumber(query.getAgentNumber());
+        save(agent);
     }
 
     @Override

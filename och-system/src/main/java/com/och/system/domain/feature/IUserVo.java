@@ -10,5 +10,5 @@ public interface IUserVo {
     Long getUpdateBy();
 
     void setCreateName(String createName);
-    void setUpdateName(String createName);
+    void setUpdateName(String updateName);
 }

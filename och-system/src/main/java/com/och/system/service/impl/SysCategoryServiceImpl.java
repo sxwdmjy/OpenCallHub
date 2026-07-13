@@ -7,7 +7,8 @@ import cn.hutool.core.lang.tree.TreeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
-import com.och.common.exception.CommonException;
+import com.och.common.error.BizException;
+import com.och.common.error.ErrorCode;
 import com.och.system.domain.entity.SysCategory;
 import com.och.system.domain.query.category.SysCategoryAddQuery;
 import com.och.system.domain.query.category.SysCategoryQuery;
@@ -30,9 +31,9 @@ public class SysCategoryServiceImpl extends BaseServiceImpl<SysCategoryMapper, S
 
     @Override
     public void add(SysCategoryAddQuery query) {
-        SysCategory lfsCategory = checkName(query);
-        if (null != lfsCategory) {
-            throw new CommonException("名称已存在！");
+        SysCategory existing = checkName(query);
+        if (null != existing) {
+            throw new BizException(ErrorCode.BIZ_NAME_DUPLICATE);
         }
         SysCategory category = new SysCategory();
         BeanUtil.copyProperties(query, category);
@@ -43,9 +44,9 @@ public class SysCategoryServiceImpl extends BaseServiceImpl<SysCategoryMapper, S
     @Override
     public void edit(SysCategoryAddQuery query) {
         //判断是否存在相同的名称
-        SysCategory lfsCategory = checkName(query);
-        if (null != lfsCategory) {
-            throw new CommonException("名称已存在！");
+        SysCategory existing = checkName(query);
+        if (null != existing) {
+            throw new BizException(ErrorCode.BIZ_NAME_DUPLICATE);
         }
         SysCategory category = new SysCategory();
         BeanUtil.copyProperties(query, category);
@@ -56,11 +57,11 @@ public class SysCategoryServiceImpl extends BaseServiceImpl<SysCategoryMapper, S
     @Override
     public void delete(SysCategoryQuery query) {
         if (query.getId() == null) {
-            throw new CommonException("分类ID不能为空");
+            throw new BizException(ErrorCode.BIZ_RESOURCE_ID_REQUIRED);
         }
         SysCategory category = getById(query.getId());
         if (Objects.nonNull(category) && category.getFlag() == 1) {
-            throw new CommonException("分类不可删除");
+            throw new BizException(ErrorCode.BIZ_OPERATION_DENIED, "分类不可删除");
         }
         SysCategory delCategory = new SysCategory();
         delCategory.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
@@ -76,12 +77,12 @@ public class SysCategoryServiceImpl extends BaseServiceImpl<SysCategoryMapper, S
     @Override
     public List<Tree<Long>> treeList(SysCategoryQuery query) {
         List<SysCategory> list = new ArrayList<>();
-        SysCategory weCategoryVo = new SysCategory();
-        weCategoryVo.setId(0L);
-        weCategoryVo.setName("默认分组");
-        weCategoryVo.setFlag(1);
-        weCategoryVo.setParentId(0L);
-        list.add(0, weCategoryVo);
+        SysCategory rootCategory = new SysCategory();
+        rootCategory.setId(0L);
+        rootCategory.setName("默认分组");
+        rootCategory.setFlag(1);
+        rootCategory.setParentId(0L);
+        list.add(0, rootCategory);
 
         List<SysCategory> weCategories = baseMapper.categoryList(query.getType());
         list.addAll(weCategories);

@@ -14,7 +14,7 @@ import com.och.system.mapper.CallSkillMapper;
 import com.och.system.service.ICallSkillAgentRelService;
 import com.och.system.service.ICallSkillService;
 import com.och.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -24,18 +24,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * 技能表(CallSkill)表服务实现类
+ * 技能组管理服务
+ * <p>负责呼叫技能组的增删改查操作，包括技能组与坐席的关联关系维护</p>
  *
  * @author danmo
  * @since 2024-10-29 14:21:52
  */
+@RequiredArgsConstructor
 @Service
 public class CallSkillServiceImpl extends BaseServiceImpl<CallSkillMapper, CallSkill> implements ICallSkillService {
 
-    @Autowired
-    private ICallSkillAgentRelService iCallSkillAgentRelService;
-    @Autowired
-    private ISysUserService iSysUserService;
+    private final ICallSkillAgentRelService iCallSkillAgentRelService;
+    private final ISysUserService iSysUserService;
 
     @Override
     public void add(CallSkillAddQuery query) {
@@ -68,10 +68,10 @@ public class CallSkillServiceImpl extends BaseServiceImpl<CallSkillMapper, CallS
             return;
         }
         List<CallSkill> list = ids.stream().map(id -> {
-            CallSkill lfsSkill = new CallSkill();
-            lfsSkill.setId(id);
-            lfsSkill.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
-            return lfsSkill;
+            CallSkill skill = new CallSkill();
+            skill.setId(id);
+            skill.setDelFlag(DeleteStatusEnum.DELETE_YES.getIndex());
+            return skill;
         }).collect(Collectors.toList());
         if(updateBatchById(list)){
             iCallSkillAgentRelService.deleteBySkillId(ids);
@@ -89,10 +89,10 @@ public class CallSkillServiceImpl extends BaseServiceImpl<CallSkillMapper, CallS
         if (CollectionUtil.isEmpty(ids)) {
             return new PageInfo<>(new LinkedList<>());
         }
-        CallSkillQuery lfsSkillQuery = new CallSkillQuery();
-        lfsSkillQuery.setIds(ids);
+        CallSkillQuery skillQuery = new CallSkillQuery();
+        skillQuery.setIds(ids);
         startPage(query.getPageIndex(), query.getPageSize(),query.getSortField(),query.getSort());
-        List<CallSkillVo> list = getList(lfsSkillQuery);
+        List<CallSkillVo> list = getList(skillQuery);
 
         PageInfo<Long> pageIdInfo = new PageInfo<>(ids);
         PageInfo<CallSkillVo> pageInfo = new PageInfo<>(list);

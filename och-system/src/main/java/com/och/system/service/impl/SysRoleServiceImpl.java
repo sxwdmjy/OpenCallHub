@@ -3,20 +3,22 @@ package com.och.system.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.och.common.base.BaseServiceImpl;
 import com.och.common.enums.DeleteStatusEnum;
+import com.och.common.exception.CommonException;
 import com.och.common.utils.SpringUtils;
+import com.och.common.base.BaseServiceImpl;
 import com.och.system.domain.entity.SysRole;
 import com.och.system.domain.entity.SysRoleMenu;
 import com.och.system.domain.query.role.SysRoleAddQuery;
 import com.och.system.domain.query.role.SysRoleQuery;
 import com.och.system.domain.vo.role.SysRoleVo;
+import com.och.system.service.ISysRoleService;
 import com.och.system.mapper.SysRoleMapper;
 import com.och.system.service.ISysRoleMenuService;
-import com.och.system.service.ISysRoleService;
 import com.och.system.service.ISysUserRoleService;
 import com.och.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,21 +30,19 @@ import java.util.stream.Collectors;
  * @author danmo
  * @since 2024-02-22 11:22:25
  */
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
 
-    @Autowired
-    private ISysUserRoleService iSysUserRoleService;
+    private final ISysUserRoleService iSysUserRoleService;
 
-    @Autowired
-    private ISysRoleMenuService iSysRoleMenuService;
+    private final ISysRoleMenuService iSysRoleMenuService;
 
-    @Override
     public List<SysRoleVo> getRoleByUserId(Long userId) {
         return  this.baseMapper.getRoleByUserId(userId);
     }
 
-    @Override
     public void add(SysRoleAddQuery query) {
         SysRole sysRole = new SysRole();
         BeanUtil.copyProperties(query, sysRole);
@@ -57,10 +57,8 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleMapper, SysRole> 
                 iSysRoleMenuService.saveBatch(sysRoleMenus);
             }
         }
-        ;
     }
 
-    @Override
     public void edit(SysRoleAddQuery query) {
         SysRole sysRole = new SysRole();
         BeanUtil.copyProperties(query, sysRole);
@@ -72,12 +70,10 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleMapper, SysRole> 
         }
     }
 
-    @Override
     public SysRoleVo getDetail(SysRoleQuery query) {
         return this.baseMapper.getDetail(query);
     }
 
-    @Override
     public void delete(SysRoleQuery query) {
         if (CollectionUtil.isEmpty(query.getRoleIds())) {
             return;
@@ -94,7 +90,6 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleMapper, SysRole> 
         }
     }
 
-    @Override
     public List<SysRoleVo> getList(SysRoleQuery query) {
         List<SysRoleVo> list = this.baseMapper.getList(query);
         ISysUserService bean = SpringUtils.getBean(ISysUserService.class);
@@ -102,7 +97,6 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleMapper, SysRole> 
         return list;
     }
 
-    @Override
     public List<SysRoleVo> getPageList(SysRoleQuery query)
     {
         startPage(query.getPageIndex(), query.getPageSize());

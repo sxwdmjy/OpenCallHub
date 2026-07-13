@@ -1,54 +1,59 @@
 package com.och.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.och.common.base.BaseEntity;
+import com.baomidou.mybatisplus.annotation.*;
 import com.och.system.domain.query.callin.CallInPhoneAddQuery;
-import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.io.Serializable;
-
+import java.util.Date;
 
 /**
- * 呼入号码表(CallInPhone)表实体类
+ * 呼入号码实体
+ * <p>映射 call_in_phone 表，存储呼入号码配置信息。</p>
  *
  * @author danmo
- * @since 2024-12-10 10:29:11
  */
-@Schema
 @Data
-@SuppressWarnings("serial")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("call_in_phone")
-public class CallInPhone extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = -88350276197174009L;
+public class CallInPhone {
 
-    /**
-     * 主键
-     */
-
-    @Schema(description = "主键")
+    /** 主键ID */
     @TableId(type = IdType.AUTO)
     private Long id;
 
-
-    /**
-     * 名称
-     */
-    @Schema(description = "名称")
+    /** 名称 */
     @TableField("name")
     private String name;
 
-
-    /**
-     * 呼入号码
-     */
-    @Schema(description = "呼入号码")
+    /** 呼入号码 */
     @TableField("phone")
     private String phone;
 
+    /** 创建人 */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
+
+    /** 更新人 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Long updateBy;
+
+    /** 更新时间 */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
+
+    /** 逻辑删除：0-正常 1-已删除 */
+    @TableLogic
+    @TableField("del_flag")
+    private Integer delFlag;
 
     public void setQuery2Entity(CallInPhoneAddQuery query) {
         this.id = query.getId();

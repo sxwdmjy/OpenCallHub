@@ -1,31 +1,28 @@
 package com.och.calltask.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.och.calltask.domain.query.CrowdCustomerQuery;
-import com.och.calltask.domain.query.CustomerCrowdQuery;
-import com.och.calltask.domain.vo.CrowdCustomerVo;
-import com.och.calltask.domain.vo.CustomerCrowdVo;
+import com.och.calltask.domain.CustomerCrowd;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-import com.och.calltask.domain.entity.CustomerCrowd;
-
-import java.util.List;
+import org.apache.ibatis.annotations.Select;
 
 /**
- * 客户人群管理表(CustomerCrowd)表数据库访问层
- *
- * @author danmo
- * @since 2025-06-27 14:13:06
+ * 客户人群数据访问层
+ * <p>
+ * 基于 MyBatis-Plus BaseMapper 提供人群定义的基本 CRUD 操作。
+ * 按筛选条件匹配客户档案的查询逻辑在 CustomerCrowdService 中通过 MyBatis-Plus QueryWrapper 实现。
+ * </p>
  */
-@Repository()
 @Mapper
 public interface CustomerCrowdMapper extends BaseMapper<CustomerCrowd> {
 
-    CustomerCrowdVo getDetail(@Param("id") Long id);
-
-    List<CustomerCrowdVo> getList(CustomerCrowdQuery query);
-
-    List<CrowdCustomerVo> pageCustomerList(CrowdCustomerQuery query);
+    /**
+     * 统计人群成员数量（通过关联表）
+     *
+     * @param crowdId 人群ID
+     * @return 人群成员数量
+     */
+    @Select("SELECT COUNT(*) FROM customer_crowd_rel ccr " +
+            "WHERE ccr.crowd_id = #{crowdId} AND ccr.deleted = 0")
+    int countCrowdMembers(@Param("crowdId") Long crowdId);
 }
-

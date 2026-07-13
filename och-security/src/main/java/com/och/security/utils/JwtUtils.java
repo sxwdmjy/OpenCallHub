@@ -1,11 +1,13 @@
 package com.och.security.utils;
 
+import com.alibaba.fastjson2.JSON;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.och.common.constant.CacheConstants;
 import com.och.common.constant.SecurityConstants;
 import com.och.common.constant.TokenConstants;
 import com.och.security.authority.LoginUserInfo;
@@ -86,5 +88,28 @@ public class JwtUtils {
      */
     public static boolean isTokenExpired(String token) {
         return JWT.decode(token).getExpiresAt().before(new Date());
+    }
+
+    /**
+     * 创建 JWT Token
+     * <p>根据用户信息生成带签名的 JWT Token，包含用户名、用户ID和完整用户信息。
+     * Token 过期时间从 CacheConstants.EXPIRATION 读取（默认30分钟）。</p>
+     *
+     * @param loginUserInfo 登录用户信息
+     * @return JWT Token 字符串
+     */
+    public static String createToken(LoginUserInfo loginUserInfo) {
+        long nowMillis = System.currentTimeMillis();
+        long expMillis = nowMillis + CacheConstants.EXPIRATION * 60 * 1000L;
+        Date now = new Date(nowMillis);
+        Date exp = new Date(expMillis);
+
+        return JWT.create()
+                .withClaim(SecurityConstants.USER_ID, loginUserInfo.getUserId())
+                .withClaim(SecurityConstants.USER_NAME, loginUserInfo.getUsername())
+                .withClaim(SecurityConstants.LOGIN_USER, JSON.toJSONString(loginUserInfo))
+                .withIssuedAt(now)
+                .withExpiresAt(exp)
+                .sign(Algorithm.HMAC512(TokenConstants.SECRET));
     }
 }
